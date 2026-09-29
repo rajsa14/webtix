@@ -7,7 +7,7 @@ import type { InquiryPayload } from './inquiry'
  * The site is frontend only, so it cannot send e-mail by itself and it never
  * holds API keys. Point VITE_INQUIRY_ENDPOINT at a service that does:
  *
- *  - Own backend / serverless function: see /api/inquiry.ts (Resend, key lives
+ *  - Own backend / serverless function: see netlify/functions/inquiry.mts (Resend, key lives
  *    on the server as RESEND_API_KEY). Set VITE_INQUIRY_ENDPOINT=/api/inquiry
  *  - Formspree: VITE_INQUIRY_ENDPOINT=https://formspree.io/f/<form-id>
  *    (the form id is public by design, it is not a secret key)

@@ -1,14 +1,12 @@
 /**
- * Example serverless endpoint (Vercel style, Web Request/Response API) that
- * e-mails an inquiry to WebTix through Resend.
+ * Netlify Function that e-mails an inquiry to WebTix through Resend.
+ * Served at /api/inquiry (see config below).
  *
- * Setup:
- *  1. Create a Resend account and verify your sending domain.
- *  2. Set RESEND_API_KEY and INQUIRY_FROM in the hosting environment
- *     (never in the frontend, never with the VITE_ prefix).
- *  3. Set VITE_INQUIRY_ENDPOINT=/api/inquiry for the frontend build.
- *
- * Not part of the Vite bundle. Adapt it for Netlify, Cloudflare or your own server as needed.
+ * Setup in Netlify: Site configuration > Environment variables
+ *  - RESEND_API_KEY   (secret, never in the frontend)
+ *  - INQUIRY_FROM     e.g. "WebTix <poptavky@vase-domena.cz>" (verified in Resend)
+ *  - VITE_INQUIRY_ENDPOINT = /api/inquiry   (tells the frontend to use this)
+ * Then trigger a new deploy.
  */
 
 const TO = 'webtixx1@gmail.com'
@@ -20,7 +18,11 @@ interface Body {
   website?: string
 }
 
-export async function POST(request: Request): Promise<Response> {
+export const config = { path: '/api/inquiry' }
+
+export default async function handler(request: Request): Promise<Response> {
+  if (request.method !== 'POST') return new Response(null, { status: 405 })
+
   let body: Body
   try {
     body = await request.json()

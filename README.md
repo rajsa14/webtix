@@ -39,11 +39,15 @@ Web je frontend a sám e-maily neposílá. Bez nastavení formulář nic nepřed
 
 Pro automatické odesílání nastavte proměnnou `VITE_INQUIRY_ENDPOINT` (viz `.env.example`):
 
-- **Vlastní serverless funkce s Resend**: `api/inquiry.ts` je připravená pro Vercel. Na hostingu nastavte `RESEND_API_KEY` a `INQUIRY_FROM` (jen na serveru, nikdy s prefixem `VITE_`) a `VITE_INQUIRY_ENDPOINT=/api/inquiry`.
+- **Netlify Function s Resend**: `netlify/functions/inquiry.mts` běží na adrese `/api/inquiry`. V Netlify (Site configuration → Environment variables) nastavte `RESEND_API_KEY`, `INQUIRY_FROM` (jen na serveru, nikdy s prefixem `VITE_`) a `VITE_INQUIRY_ENDPOINT=/api/inquiry`, pak spusťte nový deploy.
 - **Formspree**: vytvořte formulář s cílovým e-mailem webtixx1@gmail.com a nastavte `VITE_INQUIRY_ENDPOINT=https://formspree.io/f/<id>`.
 - **Lokální test**: `VITE_INQUIRY_ENDPOINT=/api/dev-inquiry` v `.env.local`. Poptávka se jen vypíše do terminálu dev serveru.
 
 Integrace je v `src/lib/sendInquiry.ts`, text e-mailu se skládá v `src/lib/inquiry.ts`.
+
+## Hosting (Netlify)
+
+Nastavení buildu je v `netlify.toml` (`npm run build`, složka `dist`). Po propojení s GitHubem se web nasadí automaticky po každém `git push` do `main`.
 
 ## Výběr v prohlížeči
 
