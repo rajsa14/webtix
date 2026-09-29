@@ -1,0 +1,272 @@
+@import 'tailwindcss';
+
+/*
+ * WebTix design tokens
+ * Radius rule: cards 20px, inner surfaces 12px, every interactive button is a pill.
+ * Z-index scale: nav 40, selection button 45, drawer 50, menu 55, toasts 60, grain 70.
+ */
+@theme {
+  --font-display: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+
+  --color-ink-950: #07080b;
+  --color-ink-900: #0b0d11;
+  --color-ink-850: #0f1217;
+  --color-ink-800: #14181f;
+  --color-ink-700: #1c212a;
+  --color-fg: #eef0f5;
+  --color-muted: #a0a7b6;
+  --color-faint: #6b7282;
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.15);
+  --color-accent: #4f6bff;
+  --color-accent-strong: #4460f5;
+  --color-accent-soft: #8fa0ff;
+  --color-danger: #ff7b7b;
+  --color-success: #4ade9b;
+
+  --radius-card: 20px;
+  --radius-inner: 12px;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 88px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background: var(--color-ink-950);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: rgb(79 107 255 / 0.45);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent-soft);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  img {
+    color: transparent;
+  }
+}
+
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: 16px;
+  }
+
+  @media (min-width: 640px) {
+    .container-x {
+      padding-inline: 28px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-x {
+      padding-inline: 40px;
+    }
+  }
+
+  /* Soft film grain over the whole page, fixed so it never repaints on scroll. */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Cursor-following light inside cards. --mx/--my are set on pointermove. */
+  .spotlight {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .spotlight::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgb(143 160 255 / 0.1), transparent 45%);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out-expo);
+    pointer-events: none;
+  }
+
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+
+  .hairline-top {
+    background-image: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.14), transparent);
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
+  }
+
+  /*
+   * Catalog button samples. Colors come from CSS variables so the same
+   * styles render in the catalog (WebTix colors) and in the live preview
+   * (the client's palette).
+   */
+  .wbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.8em 1.4em;
+    border-radius: var(--b-radius);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      transform 0.3s var(--ease-out-expo),
+      background-color 0.3s,
+      background-position 0.6s var(--ease-out-expo),
+      box-shadow 0.3s var(--ease-out-expo),
+      color 0.3s,
+      filter 0.3s;
+  }
+
+  .wbtn[data-upper] {
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-size: 0.86em;
+    padding: 0.95em 1.6em;
+  }
+
+  .wbtn--filled {
+    background: var(--b-accent);
+    color: var(--b-on);
+  }
+
+  .wbtn--filled[data-shadow] {
+    box-shadow: 0 0.55em 1.3em -0.45em color-mix(in srgb, var(--b-accent) 75%, transparent);
+  }
+
+  .wbtn--outline {
+    box-shadow: inset 0 0 0 1.5px var(--b-text);
+    color: var(--b-text);
+  }
+
+  .wbtn--link {
+    padding: 0.2em 0 0.45em;
+    border-radius: 0;
+    color: var(--b-text);
+    box-shadow: inset 0 -1.5px 0 currentColor;
+  }
+
+  .wbtn--gradient {
+    background-image: linear-gradient(110deg, var(--b-accent), var(--b-accent2), var(--b-accent));
+    background-size: 220% 100%;
+    color: var(--b-on);
+  }
+
+  .wbtn--soft {
+    background: color-mix(in srgb, var(--b-accent) 20%, transparent);
+    color: var(--b-soft-text, var(--b-accent));
+  }
+
+  .wbtn--brutal {
+    background: var(--b-accent);
+    color: var(--b-on);
+    box-shadow:
+      inset 0 0 0 2px var(--b-text),
+      0.28em 0.28em 0 var(--b-text);
+  }
+
+  .wbtn-host:hover .wbtn--filled {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+  }
+
+  .wbtn-host:hover .wbtn--outline {
+    background: var(--b-text);
+    color: var(--b-bg, #0b0d11);
+  }
+
+  .wbtn-host:hover .wbtn--link .wbtn-arrow {
+    transform: translateX(4px);
+  }
+
+  .wbtn-host:hover .wbtn--gradient {
+    background-position: 100% 0;
+  }
+
+  .wbtn-host:hover .wbtn--soft {
+    background: color-mix(in srgb, var(--b-accent) 32%, transparent);
+  }
+
+  .wbtn-host:hover .wbtn--brutal {
+    transform: translate(0.14em, 0.14em);
+    box-shadow:
+      inset 0 0 0 2px var(--b-text),
+      0.14em 0.14em 0 var(--b-text);
+  }
+
+  .wbtn-arrow {
+    transition: transform 0.3s var(--ease-out-expo);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass-fallback {
+    backdrop-filter: none !important;
+    background: var(--color-ink-900) !important;
+  }
+}
