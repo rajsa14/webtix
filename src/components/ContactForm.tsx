@@ -194,7 +194,10 @@ export function ContactForm() {
                   {liveErrors.selection && (
                     <>
                       {liveErrors.selection}{' '}
-                      <button type="button" className="underline underline-offset-2" onClick={() => scrollToId('katalog')}>
+                      <button type="button" className="underline underline-offset-2" onClick={() => {
+                          useUi.getState().openCatalog()
+                          scrollToId('katalog')
+                        }}>
                         Otevřít katalog
                       </button>
                     </>
