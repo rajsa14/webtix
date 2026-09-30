@@ -138,6 +138,7 @@ function SelectionDrawer({
 
   const goTo = (id: string) => {
     onClose()
+    useUi.getState().openCatalog()
     window.setTimeout(() => scrollToId(id), 60)
   }
 
