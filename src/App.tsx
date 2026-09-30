@@ -8,6 +8,7 @@ import { Footer } from './components/Footer'
 import { Hero } from './components/Hero'
 import { HowItWorks } from './components/HowItWorks'
 import { Navbar } from './components/Navbar'
+import { References } from './components/References'
 import { SelectionPanel } from './components/SelectionPanel'
 import { Toaster } from './components/Toaster'
 import { WhyWebTix } from './components/WhyWebTix'
@@ -27,6 +28,7 @@ export default function App() {
         <HowItWorks />
         <Catalog />
         <ContactForm />
+        <References />
         <About />
         <WhyWebTix />
         <FAQ />

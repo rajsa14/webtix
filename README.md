@@ -25,8 +25,9 @@ npm run preview  # náhled produkčního buildu
 | Layouty | `src/data/layouts.ts` |
 | Pořadí kategorií, limity výběru | `src/data/catalog.ts` |
 | Tým (role, popisy, fotky) | `src/data/team.ts` |
+| Reference (hotové weby) | `src/data/references.ts` |
 | Kroky, FAQ, texty O nás, typy webu, rozpočty | `src/data/content.ts` |
-| E-mail, název, navigace | `src/data/site.ts` |
+| E-mail, název, navigace, IČO v patičce | `src/data/site.ts` |
 | Ochrana osobních údajů, obchodní podmínky | `src/components/LegalDialog.tsx` |
 
 Novou položku katalogu přidáte tak, že do příslušného souboru připíšete objekt. Komponenty se nemění.

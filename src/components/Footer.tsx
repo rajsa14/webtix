@@ -53,9 +53,12 @@ export function Footer() {
         </p>
 
         <div className="mt-8 flex flex-col-reverse gap-4 border-t border-line pt-6 text-[14px] text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {SITE.year} {SITE.name}
-          </p>
+          <div>
+            <p>
+              © {SITE.year} {SITE.name}
+            </p>
+            {SITE.legal.length > 0 && <p className="mt-1 text-[13px] text-faint">{SITE.legal.join(' · ')}</p>}
+          </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             <button type="button" onClick={() => setDoc('privacy')} className="transition-colors hover:text-fg">
               Ochrana osobních údajů
