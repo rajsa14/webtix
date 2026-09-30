@@ -45,11 +45,11 @@ export const DEFAULT_CONTENT: MiniContent = {
 }
 
 const WIRE: ThemeRoles = {
-  bg: '#0f1217',
-  surface: 'rgba(255,255,255,0.05)',
-  text: 'rgba(238,240,245,0.78)',
-  muted: 'rgba(238,240,245,0.22)',
-  accent: '#4f6bff',
+  bg: '#e7e6de',
+  surface: 'rgba(18,18,16,0.07)',
+  text: 'rgba(18,18,16,0.72)',
+  muted: 'rgba(18,18,16,0.2)',
+  accent: '#2433ff',
   onAccent: '#ffffff',
 }
 

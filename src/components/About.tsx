@@ -2,6 +2,7 @@ import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } f
 import { useRef, type ReactNode } from 'react'
 import { aboutParagraphs } from '../data/content'
 import { nb } from '../lib/text'
+import { SectionLabel } from './Decor'
 import { Reveal } from './Reveal'
 import { Team } from './Team'
 
@@ -10,8 +11,8 @@ export function About() {
     <section id="o-nas" className="relative py-24 sm:py-32">
       <div className="container-x">
         <Reveal>
-          <p className="mb-5 font-mono text-[12px] uppercase tracking-[0.16em] text-accent-soft">O nás</p>
-          <h2 className="text-[clamp(2.3rem,5vw,4rem)] font-semibold leading-[0.98] tracking-[-0.035em]">
+          <SectionLabel number="05">O nás</SectionLabel>
+          <h2 className="display-xl">
             Kdo stojí za WebTix?
           </h2>
         </Reveal>

@@ -6,10 +6,10 @@ import { Logo } from './Logo'
 
 export function Footer() {
   const [doc, setDoc] = useState<LegalDoc | null>(null)
-  const heading = 'mb-4 font-sans text-[13px] font-medium text-muted'
+  const heading = 'mb-4 font-mono text-[12px] uppercase tracking-[0.12em] text-muted'
 
   return (
-    <footer className="relative overflow-hidden border-t border-line pb-28 pt-16">
+    <footer className="relative overflow-hidden border-t border-fg pb-28 pt-16">
       <div className="container-x">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
@@ -24,7 +24,7 @@ export function Footer() {
             <ul className="grid gap-2.5">
               {NAV_LINKS.map((link) => (
                 <li key={link.id}>
-                  <a href={`#${link.id}`} className="text-fg/85 transition-colors hover:text-accent-soft">
+                  <a href={`#${link.id}`} className="text-fg/85 transition-colors hover:text-accent">
                     {link.label}
                   </a>
                 </li>
@@ -34,7 +34,7 @@ export function Footer() {
 
           <div>
             <h2 className={heading}>Kontakt</h2>
-            <a href={`mailto:${SITE.email}`} className="text-fg/85 transition-colors hover:text-accent-soft">
+            <a href={`mailto:${SITE.email}`} className="text-fg/85 transition-colors hover:text-accent">
               {SITE.email}
             </a>
           </div>
@@ -47,9 +47,9 @@ export function Footer() {
 
         <p
           aria-hidden="true"
-          className="pointer-events-none mt-16 select-none text-center font-display text-[clamp(5rem,23vw,21rem)] font-bold leading-[0.78] tracking-[-0.06em] text-white/[0.035]"
+          className="pointer-events-none mt-16 select-none font-display text-[clamp(5rem,25vw,24rem)] font-extrabold leading-[0.78] tracking-[-0.075em] text-fg"
         >
-          WebTix
+          WebTix<span className="text-accent">.</span>
         </p>
 
         <div className="mt-8 flex flex-col-reverse gap-4 border-t border-line pt-6 text-[14px] text-muted sm:flex-row sm:items-center sm:justify-between">

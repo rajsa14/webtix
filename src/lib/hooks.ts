@@ -1,4 +1,4 @@
-import { useEffect, useState, type PointerEvent, type RefObject } from 'react'
+import { useEffect, useState, type RefObject } from 'react'
 
 /** Returns the id of the section currently crossing the middle of the viewport. */
 export function useActiveSection(ids: readonly string[], rootMargin = '-45% 0px -50% 0px') {
@@ -72,14 +72,6 @@ export function useFocusTrap(active: boolean, container: RefObject<HTMLElement |
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [active, container])
-}
-
-/** Sets --mx / --my on the element for the .spotlight hover light. No React re-renders. */
-export function spotlightMove(e: PointerEvent<HTMLElement>) {
-  const el = e.currentTarget
-  const rect = el.getBoundingClientRect()
-  el.style.setProperty('--mx', `${e.clientX - rect.left}px`)
-  el.style.setProperty('--my', `${e.clientY - rect.top}px`)
 }
 
 /** Czech plural: plural(5, ['položka', 'položky', 'položek']) → "položek". */

@@ -2,6 +2,7 @@ import { MotionConfig } from 'motion/react'
 import { About } from './components/About'
 import { Catalog } from './components/Catalog'
 import { Contact } from './components/Contact'
+import { Marquee } from './components/Decor'
 import { ContactForm } from './components/ContactForm'
 import { FAQ } from './components/FAQ'
 import { Footer } from './components/Footer'
@@ -25,6 +26,12 @@ export default function App() {
       <Navbar />
       <main id="obsah">
         <Hero />
+        <div className="overflow-hidden py-6">
+          <Marquee
+            items={['Weby na míru', 'Žádné šablony', 'Přímo s tvůrci', 'Design i vývoj', 'Rychlé a responzivní']}
+            className="-mx-[3%] w-[106%] -rotate-[1.2deg] bg-fg py-5 font-display text-[clamp(1.8rem,4vw,3.4rem)] font-extrabold tracking-[-0.04em] text-ink-950"
+          />
+        </div>
         <HowItWorks />
         <Catalog />
         <ContactForm />
@@ -37,7 +44,6 @@ export default function App() {
       <Footer />
       <SelectionPanel />
       <Toaster />
-      <div className="grain" aria-hidden="true" />
     </MotionConfig>
   )
 }

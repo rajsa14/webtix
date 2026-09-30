@@ -76,7 +76,7 @@ export function LegalDialog({ doc, onClose }: { doc: LegalDoc | null; onClose: (
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
       aria-labelledby="legal-title"
-      className="m-auto w-[calc(100%-24px)] max-w-2xl rounded-card border border-line-strong bg-ink-900 p-0 text-fg backdrop:bg-black/70 backdrop:backdrop-blur-sm"
+      className="m-auto w-[calc(100%-24px)] max-w-2xl rounded-card border border-line-strong bg-ink-900 p-0 text-fg backdrop:bg-fg/45 backdrop:backdrop-blur-sm"
     >
       {content && (
         <div className="max-h-[82dvh] overflow-y-auto p-7 sm:p-10">
@@ -89,7 +89,7 @@ export function LegalDialog({ doc, onClose }: { doc: LegalDoc | null; onClose: (
               onClick={onClose}
               aria-label="Zavřít"
               autoFocus
-              className="grid size-10 shrink-0 place-items-center rounded-full border border-line text-muted transition-colors hover:bg-white/[0.06] hover:text-fg"
+              className="grid size-10 shrink-0 place-items-center rounded-full border border-line text-muted transition-colors hover:bg-fg/[0.06] hover:text-fg"
             >
               <XIcon size={18} />
             </button>

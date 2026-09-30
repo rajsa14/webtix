@@ -28,7 +28,7 @@ export function Toaster() {
               transition={{ type: 'spring', stiffness: 420, damping: 32 }}
               role={t.tone === 'error' ? 'alert' : 'status'}
               onClick={() => dismiss(t.id)}
-              className="glass-fallback pointer-events-auto flex max-w-[min(420px,calc(100vw-24px))] cursor-pointer items-center gap-2.5 rounded-full border border-line-strong bg-ink-800/95 py-2.5 pl-3 pr-4 text-[14px] shadow-[0_20px_40px_-20px_rgb(0_0_0/0.9)] backdrop-blur-xl"
+              className="pointer-events-auto flex max-w-[min(420px,calc(100vw-24px))] cursor-pointer items-center gap-2.5 rounded-full border border-line-strong bg-ink-800/95 py-2.5 pl-3 pr-4 text-[14px] shadow-[0_20px_40px_-20px_rgb(17_17_16/0.22)] backdrop-blur-xl"
             >
               <Icon
                 size={18}
@@ -36,7 +36,7 @@ export function Toaster() {
                 className={cx(
                   'shrink-0',
                   t.tone === 'success' && 'text-success',
-                  t.tone === 'info' && 'text-accent-soft',
+                  t.tone === 'info' && 'text-accent',
                   t.tone === 'error' && 'text-danger',
                 )}
               />

@@ -41,12 +41,8 @@ export function ResultDialog({ result, onClose }: { result: InquiryResult | null
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.98 }}
             transition={{ duration: 0.6, ease: EASE }}
-            className="relative w-full max-w-lg overflow-hidden rounded-card border border-line-strong bg-ink-900 p-7 text-center shadow-[0_40px_100px_-30px_rgb(0_0_0/0.9)] sm:p-10"
+            className="relative w-full max-w-lg overflow-hidden rounded-card border border-line-strong bg-ink-900 p-7 text-center shadow-[0_40px_100px_-30px_rgb(17_17_16/0.22)] sm:p-10"
           >
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -top-32 left-1/2 size-80 -translate-x-1/2 rounded-full bg-accent/25 blur-[90px]"
-            />
             {result.type === 'sent' ? <Sent onClose={onClose} /> : <NotConfigured payload={result.payload} onClose={onClose} />}
           </motion.div>
         </motion.div>
@@ -61,7 +57,7 @@ function Badge({ children }: { children: ReactNode }) {
       initial={{ scale: 0.3, rotate: -20, opacity: 0 }}
       animate={{ scale: 1, rotate: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.15 }}
-      className="relative mx-auto grid size-16 place-items-center rounded-full bg-accent-strong text-white shadow-[0_16px_40px_-12px_rgb(79_107_255/0.9)]"
+      className="relative mx-auto grid size-16 place-items-center rounded-full bg-accent-strong text-white "
     >
       {children}
     </motion.span>
@@ -105,7 +101,7 @@ function NotConfigured({ payload, onClose }: { payload: InquiryPayload; onClose:
         type="button"
         onClick={onClose}
         aria-label="Zavřít"
-        className="absolute -right-2 -top-2 grid size-10 place-items-center rounded-full text-muted transition-colors hover:bg-white/[0.06] hover:text-fg"
+        className="absolute -right-2 -top-2 grid size-10 place-items-center rounded-full text-muted transition-colors hover:bg-fg/[0.06] hover:text-fg"
       >
         <XIcon size={18} />
       </button>

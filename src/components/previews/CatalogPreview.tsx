@@ -134,7 +134,7 @@ function WebStylePreview({ item }: { item: WebStyleItem }) {
 
 function ButtonPreview({ item }: { item: ButtonItem }) {
   return (
-    <div className="wbtn-host grid aspect-[5/4] place-items-center bg-ink-850 bg-[radial-gradient(circle_at_50%_40%,rgb(79_107_255/0.1),transparent_65%)] px-3">
+    <div className="wbtn-host grid aspect-[5/4] place-items-center bg-ink-850 px-3">
       <ButtonSample item={item} label="Začít projekt" className="text-[14px]" />
     </div>
   )

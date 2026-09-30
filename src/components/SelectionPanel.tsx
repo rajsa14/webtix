@@ -54,17 +54,17 @@ function SelectionFab({
         aria-haspopup="dialog"
         aria-label={`Můj výběr, ${total} ${plural(total, ['položka', 'položky', 'položek'])}`}
         tabIndex={hidden ? -1 : 0}
-        className="glass-fallback group flex h-14 w-full items-center gap-3 rounded-full border border-line-strong bg-ink-800/90 pl-2 pr-5 shadow-[0_24px_50px_-18px_rgb(0_0_0/0.95)] backdrop-blur-xl transition-[transform,border-color] duration-300 hover:-translate-y-0.5 hover:border-white/25 active:scale-[0.98] sm:w-auto"
+        className="group flex h-14 w-full items-center gap-3 rounded-full bg-fg pl-2 pr-2 text-ink-950 shadow-[0_18px_40px_-18px_rgb(18_18_16/0.5)] transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.98] sm:w-auto"
       >
         <span className="relative grid size-10 place-items-center">
           <svg viewBox="0 0 36 36" className="absolute inset-0 -rotate-90" aria-hidden="true">
-            <circle cx="18" cy="18" r="15" fill="none" stroke="rgb(255 255 255 / 0.1)" strokeWidth="2.5" />
+            <circle cx="18" cy="18" r="15" fill="none" stroke="rgb(239 238 232 / 0.2)" strokeWidth="2.5" />
             <circle
               cx="18"
               cy="18"
               r="15"
               fill="none"
-              stroke="#4f6bff"
+              stroke="#2433ff"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeDasharray={circumference}
@@ -72,11 +72,11 @@ function SelectionFab({
               style={{ transition: 'stroke-dashoffset 0.6s cubic-bezier(0.16,1,0.3,1)' }}
             />
           </svg>
-          <SquaresFourIcon size={17} weight="duotone" className="text-fg" />
+          <SquaresFourIcon size={17} weight="duotone" className="text-ink-950" />
         </span>
         <span className="flex flex-1 flex-col items-start leading-tight">
-          <span className="text-[14.5px] font-medium text-fg">Můj výběr</span>
-          <span className="text-[12px] text-muted">
+          <span className="text-[14.5px] font-medium">Můj výběr</span>
+          <span className="text-[12px] text-ink-950/60">
             {done}/{catalog.length} kategorií
           </span>
         </span>
@@ -87,7 +87,7 @@ function SelectionFab({
           transition={{ type: 'spring', stiffness: 500, damping: 18 }}
           className={cx(
             'ml-2 grid h-7 min-w-7 place-items-center rounded-full px-2 font-mono text-[13px] font-medium',
-            total ? 'bg-accent-strong text-white' : 'bg-white/[0.08] text-muted',
+            total ? 'bg-accent text-white' : 'bg-ink-950/15 text-ink-950/70',
           )}
         >
           {total}
@@ -154,7 +154,7 @@ function SelectionDrawer({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             onClick={close}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-[2px]"
+            className="fixed inset-0 z-50 bg-fg/40 backdrop-blur-[2px]"
             aria-hidden="true"
           />
           <motion.div
@@ -175,14 +175,14 @@ function SelectionDrawer({
             onDragEnd={(_, info) => {
               if (info.offset.y > 110 || info.velocity.y > 600) close()
             }}
-            className="fixed inset-x-0 bottom-0 z-50 flex max-h-[90dvh] flex-col rounded-t-[24px] border border-line-strong bg-ink-900 shadow-[0_-30px_80px_-30px_rgb(0_0_0/0.9)] sm:inset-y-3 sm:left-auto sm:right-3 sm:max-h-none sm:w-[440px] sm:rounded-card"
+            className="fixed inset-x-0 bottom-0 z-50 flex max-h-[90dvh] flex-col rounded-t-[24px] border border-line-strong bg-ink-900 shadow-[0_-30px_80px_-30px_rgb(17_17_16/0.22)] sm:inset-y-3 sm:left-auto sm:right-3 sm:max-h-none sm:w-[440px] sm:rounded-card"
           >
             <div
               className="flex cursor-grab touch-none justify-center pb-1 pt-3 sm:hidden"
               aria-hidden="true"
               onPointerDown={(e) => dragControls.start(e)}
             >
-              <span className="h-1.5 w-11 rounded-full bg-white/20" />
+              <span className="h-1.5 w-11 rounded-full bg-fg/20" />
             </div>
             <DrawerBody onClose={close} closeRef={closeRef} goTo={goTo} />
           </motion.div>
@@ -230,7 +230,7 @@ function DrawerBody({
           type="button"
           onClick={onClose}
           aria-label="Zavřít výběr"
-          className="grid size-10 shrink-0 place-items-center rounded-full border border-line text-muted transition-colors hover:bg-white/[0.06] hover:text-fg"
+          className="grid size-10 shrink-0 place-items-center rounded-full border border-line text-muted transition-colors hover:bg-fg/[0.06] hover:text-fg"
         >
           <XIcon size={18} />
         </button>
@@ -249,7 +249,7 @@ function DrawerBody({
                   <button
                     type="button"
                     onClick={() => goTo(`kategorie-${cat.id}`)}
-                    className="rounded-full px-2 py-1 text-[12.5px] text-accent-soft transition-colors hover:bg-accent/10 hover:text-white"
+                    className="rounded-full px-2 py-1 text-[12.5px] text-accent transition-colors hover:bg-accent/10 hover:text-fg"
                   >
                     {ids.length ? 'Upravit' : 'Vybrat'}
                     <span className="sr-only">: {cat.label}</span>
@@ -271,7 +271,7 @@ function DrawerBody({
                             transition={{ duration: 0.25, ease: EASE }}
                             className="overflow-hidden"
                           >
-                            <div className="flex items-center gap-3 rounded-[12px] bg-white/[0.03] p-1.5 pr-1">
+                            <div className="flex items-center gap-3 rounded-[12px] bg-fg/[0.03] p-1.5 pr-1">
                               <ItemToken category={cat.id} item={item} />
                               <span className="min-w-0 flex-1 truncate text-[14.5px] font-medium">{item.name}</span>
                               <button
@@ -310,7 +310,7 @@ function DrawerBody({
           }}
           className={cx(
             'inline-flex h-11 items-center gap-2 rounded-full px-4 text-sm transition-colors disabled:pointer-events-none disabled:opacity-40',
-            confirmClear ? 'bg-danger/15 text-danger' : 'text-muted hover:bg-white/[0.06] hover:text-fg',
+            confirmClear ? 'bg-danger/15 text-danger' : 'text-muted hover:bg-fg/[0.06] hover:text-fg',
           )}
         >
           <TrashIcon size={16} />
@@ -319,7 +319,7 @@ function DrawerBody({
         <button
           type="button"
           onClick={() => goTo(total ? 'poptavka' : 'katalog')}
-          className="group/cta ml-auto inline-flex h-11 items-center gap-2 rounded-full bg-accent-strong px-5 text-[14.5px] font-medium text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.22)] transition-[background-color,transform] hover:bg-accent active:scale-[0.98]"
+          className="group/cta ml-auto inline-flex h-11 items-center gap-2 rounded-full bg-accent-strong px-5 text-[14.5px] font-medium text-white  transition-[background-color,transform] hover:bg-accent active:scale-[0.98]"
         >
           {total ? 'Pokračovat k odeslání' : 'Otevřít katalog'}
           <ArrowRightIcon size={16} weight="bold" className="transition-transform group-hover/cta:translate-x-0.5" />

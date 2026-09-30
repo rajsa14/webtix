@@ -48,18 +48,18 @@ export function Navbar() {
   }, [])
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-5">
+    <header
+      className={cx(
+        'fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color] duration-500',
+        scrolled || open ? 'border-line bg-ink-950/92 backdrop-blur-md' : 'border-transparent bg-transparent',
+      )}
+    >
       <motion.nav
         aria-label="Hlavní navigace"
         initial={{ y: -24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
-        className={cx(
-          'glass-fallback mx-auto flex h-14 max-w-[1240px] items-center justify-between rounded-full border pl-5 pr-2 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-500 sm:h-16',
-          scrolled || open
-            ? 'border-line-strong bg-ink-900/80 shadow-[0_20px_50px_-25px_rgb(0_0_0/0.9)]'
-            : 'border-transparent bg-ink-900/30',
-        )}
+        className="container-x flex h-16 items-center justify-between"
       >
         <a href="#domu" className="shrink-0 rounded-full" aria-label={`${SITE.name}, zpět nahoru`}>
           <Logo />
@@ -74,14 +74,14 @@ export function Navbar() {
                   href={`#${link.id}`}
                   aria-current={isActive ? 'location' : undefined}
                   className={cx(
-                    'relative block rounded-full px-4 py-2 text-[14.5px] transition-colors duration-300',
+                    'relative flex items-center gap-2 px-3.5 py-2 font-mono text-[12.5px] uppercase tracking-[0.1em] transition-colors duration-300',
                     isActive ? 'text-fg' : 'text-muted hover:text-fg',
                   )}
                 >
                   {isActive && (
                     <motion.span
                       layoutId="nav-pill"
-                      className="absolute inset-0 rounded-full bg-white/[0.07]"
+                      className="absolute left-0.5 top-1/2 size-1.5 -translate-y-1/2 rounded-full bg-accent"
                       transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                     />
                   )}
@@ -105,7 +105,7 @@ export function Navbar() {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? 'Zavřít menu' : 'Otevřít menu'}
-            className="grid size-11 place-items-center rounded-full text-fg transition-colors hover:bg-white/[0.07] lg:hidden"
+            className="grid size-11 place-items-center rounded-full border border-fg text-fg transition-colors hover:bg-fg hover:text-ink-950 lg:hidden"
           >
             {open ? <XIcon size={22} /> : <ListIcon size={22} />}
           </button>
@@ -124,7 +124,7 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.35, ease: EASE }}
-            className="glass-fallback fixed inset-x-3 top-[4.6rem] z-[55] flex max-h-[calc(100dvh-5.5rem)] flex-col overflow-y-auto rounded-card border border-line-strong bg-ink-900/95 p-3 backdrop-blur-xl sm:inset-x-5 sm:top-[5.2rem] lg:hidden"
+            className="fixed inset-x-0 top-16 z-[55] flex max-h-[calc(100dvh-4rem)] flex-col overflow-y-auto border-b border-fg bg-ink-950 p-3 lg:hidden"
           >
             <ul>
               {NAV_LINKS.map((link, i) => (
@@ -139,8 +139,8 @@ export function Navbar() {
                     onClick={close}
                     aria-current={active === link.id ? 'location' : undefined}
                     className={cx(
-                      'flex items-center justify-between rounded-[14px] px-4 py-3.5 font-display text-2xl font-semibold tracking-[-0.02em] transition-colors',
-                      active === link.id ? 'bg-white/[0.06] text-fg' : 'text-fg/85 hover:bg-white/[0.04]',
+                      'flex items-center justify-between rounded-[14px] px-4 py-3 font-display text-[2.4rem] font-extrabold leading-none tracking-[-0.05em] transition-colors',
+                      active === link.id ? 'text-accent' : 'text-fg hover:text-accent',
                     )}
                   >
                     {link.label}
