@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, type Ref, type RefObject } fr
 import { catalog } from '../data/catalog'
 import { plural, useEscape, useFocusTrap, useScrollLock } from '../lib/hooks'
 import { cx, scrollToId } from '../lib/text'
-import { countCategoriesDone, countSelected, useSelection } from '../store/selection'
+import { countCategoriesDone, countSelected, isUnlocked, nextOpenCategory, resetNote, useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
 import { LivePreview } from './LivePreview'
 import { ItemToken } from './previews/ItemToken'
@@ -248,7 +248,8 @@ function DrawerBody({
                   <h3 className="font-sans text-[13px] font-medium text-muted">{cat.label}</h3>
                   <button
                     type="button"
-                    onClick={() => goTo(`kategorie-${cat.id}`)}
+                    // A locked category is not on the page yet, so go to the step that opens it.
+                    onClick={() => goTo(`kategorie-${isUnlocked(selected, cat.id) ? cat.id : nextOpenCategory(selected)?.id}`)}
                     className="rounded-full px-2 py-1 text-[12.5px] text-accent transition-colors hover:bg-accent/10 hover:text-fg"
                   >
                     {ids.length ? 'Upravit' : 'Vybrat'}
@@ -277,8 +278,8 @@ function DrawerBody({
                               <button
                                 type="button"
                                 onClick={() => {
-                                  remove(cat.id, id)
-                                  toast(`${item.name} odebráno z výběru`, 'info')
+                                  const cleared = remove(cat.id, id)
+                                  toast(`${item.name} odebráno z výběru${resetNote(cleared)}`, 'info')
                                 }}
                                 aria-label={`Odebrat ${item.name}`}
                                 className="grid size-9 place-items-center rounded-full text-muted transition-colors hover:bg-danger/10 hover:text-danger"

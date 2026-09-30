@@ -6,6 +6,7 @@ import { colorPalettes } from '../data/colorPalettes'
 import { fonts } from '../data/fonts'
 import { imageStyles } from '../data/imageStyles'
 import { layouts } from '../data/layouts'
+import { webStyles } from '../data/webStyles'
 import { cx, nb } from '../lib/text'
 import { useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
@@ -30,6 +31,7 @@ const REELS = [
   { key: 'layout', label: 'Layout', size: layouts.length },
   { key: 'button', label: 'Tlačítka', size: buttonStyles.length },
   { key: 'photo', label: 'Fotky', size: imageStyles.length },
+  { key: 'style', label: 'Styl', size: webStyles.length },
 ] as const
 
 type ReelKey = (typeof REELS)[number]['key']
@@ -42,13 +44,13 @@ const rand = (n: number, not?: number) => {
   return r
 }
 
-const START: Combo = { font: 2, palette: 1, layout: 2, button: 0, photo: 0, brand: 0 }
+const START: Combo = { font: 2, palette: 1, layout: 2, button: 0, photo: 0, style: 0, brand: 0 }
 
 export function Playground() {
   const reduce = useReducedMotion()
   const [combo, setCombo] = useState<Combo>(START)
-  const [locked, setLocked] = useState<Record<ReelKey, boolean>>({ font: false, palette: false, layout: false, button: false, photo: false })
-  const [spinning, setSpinning] = useState<Record<ReelKey, boolean>>({ font: false, palette: false, layout: false, button: false, photo: false })
+  const [locked, setLocked] = useState<Record<ReelKey, boolean>>({ font: false, palette: false, layout: false, button: false, photo: false, style: false })
+  const [spinning, setSpinning] = useState<Record<ReelKey, boolean>>({ font: false, palette: false, layout: false, button: false, photo: false, style: false })
   const [spins, setSpins] = useState(0)
   const timers = useRef<number[]>([])
   const apply = useSelection((s) => s.apply)
@@ -90,9 +92,18 @@ export function Playground() {
   const layout = layouts[combo.layout]
   const button = buttonStyles[combo.button]
   const photo = imageStyles[combo.photo]
+  const style = webStyles[combo.style]
 
   const keep = () => {
-    apply({ fonts: [font.id], palettes: [palette.id], layouts: [layout.id], buttons: [button.id], photos: [photo.id] })
+    // Fills every catalog step at once, so the whole catalog opens up.
+    apply({
+      fonts: [font.id],
+      palettes: [palette.id],
+      photos: [photo.id],
+      webStyles: [style.id],
+      buttons: [button.id],
+      layouts: [layout.id],
+    })
     toast('Kombinace je ve vašem výběru. Doplňte zbytek ve formuláři.')
     document.getElementById('poptavka')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' })
   }
@@ -112,6 +123,7 @@ export function Playground() {
     layout: layout.name,
     button: button.name,
     photo: photo.name,
+    style: style.name,
   }
 
   return (
@@ -142,6 +154,8 @@ export function Playground() {
                 font={{ family: font.family, weight: font.weight, uppercase: font.uppercase, scale: font.scale }}
                 button={button}
                 images={[photo.image]}
+                radius={Math.max(style.radius, 0.4)}
+                effect={style.effect}
                 content={BRANDS[combo.brand]}
               />
             </BrowserFrame>

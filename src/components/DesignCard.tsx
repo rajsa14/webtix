@@ -1,10 +1,10 @@
 import { CheckIcon, PlusIcon } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { MouseEvent } from 'react'
-import { categoryById } from '../data/catalog'
+import { catalog, categoryById } from '../data/catalog'
 import type { CatalogItem, CategoryId } from '../data/types'
 import { cx, nb } from '../lib/text'
-import { useSelection } from '../store/selection'
+import { resetNote, unlockedCount, useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
 import { CatalogPreview } from './previews/CatalogPreview'
 
@@ -24,18 +24,20 @@ export function DesignCard({
 
   const handle = () => {
     const cat = categoryById[category]
+    const before = unlockedCount(useSelection.getState().selected)
     const result = toggle(category, item.id)
+    const unlocked = unlockedCount(useSelection.getState().selected) > before ? catalog[before] : undefined
     switch (result.type) {
       case 'added':
-        toast(`${cat.label}: ${item.name} je ve výběru`)
+        toast(`${cat.label}: ${item.name} je ve výběru${unlocked ? `. Odemkli jsme další krok: ${unlocked.label}` : ''}`)
         break
       case 'replaced': {
         const prev = cat.items.find((i) => i.id === result.previousId)?.name
-        toast(`${cat.label}: ${prev} nahrazeno za ${item.name}`, 'info')
+        toast(`${cat.label}: ${prev} nahrazeno za ${item.name}${resetNote(result.reset)}`, 'info')
         break
       }
       case 'removed':
-        toast(`${item.name} odebráno z výběru`, 'info')
+        toast(`${item.name} odebráno z výběru${resetNote(result.reset)}`, 'info')
         break
       case 'limit':
         toast(`${cat.label}: vybrat můžete nejvýše ${result.max} možnosti. Nejdřív některou odeberte.`, 'error')
