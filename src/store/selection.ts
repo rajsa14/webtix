@@ -18,6 +18,8 @@ interface SelectionState {
   selected: Selection
   toggle: (category: CategoryId, id: string) => ToggleResult
   remove: (category: CategoryId, id: string) => void
+  /** Replaces whole categories at once, e.g. from the playground. */
+  apply: (partial: Partial<Selection>) => void
   clear: () => void
 }
 
@@ -49,6 +51,8 @@ export const useSelection = create<SelectionState>()(
         set((s) => ({
           selected: { ...s.selected, [category]: s.selected[category].filter((x) => x !== id) },
         })),
+
+      apply: (partial) => set((s) => ({ selected: { ...s.selected, ...partial } })),
 
       clear: () => set({ selected: emptySelection() }),
     }),

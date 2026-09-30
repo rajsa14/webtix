@@ -1,6 +1,7 @@
 import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react'
 import { useEffect, useState, type PointerEvent, type ReactNode } from 'react'
 import { findItem } from '../data/catalog'
+import { fonts } from '../data/fonts'
 import { heroShowcase } from '../data/content'
 import { SITE } from '../data/site'
 import type { ButtonItem, FontItem, LayoutItem, PaletteItem } from '../data/types'
@@ -31,10 +32,7 @@ export function Hero() {
             <h1 className="font-display text-[clamp(3.6rem,9.4vw,9.6rem)] font-extrabold leading-[0.86] tracking-[-0.065em]">
               <Line delay={0.2}>Web podle</Line>
               <Line delay={0.3}>
-                <span className="relative inline-block">
-                  vašich
-                  <Scribble className="-inset-x-[6%] -inset-y-[14%] h-[128%] w-[112%]" delay={1.1} />
-                </span>
+                <FontSwapWord />
               </Line>
               <Line delay={0.4}>
                 představ<span className="text-accent">.</span>
@@ -71,6 +69,49 @@ export function Hero() {
         </div>
       </div>
     </section>
+  )
+}
+
+/**
+ * "vašich" in the headline trades its font for the next one from the catalog
+ * on every hover or click. A small taste of what the catalog does.
+ */
+function FontSwapWord() {
+  const [index, setIndex] = useState(-1)
+  const [touched, setTouched] = useState(false)
+  const font = index >= 0 ? fonts[index] : undefined
+  const next = () => {
+    setTouched(true)
+    setIndex((i) => (i + 1) % fonts.length)
+  }
+
+  return (
+    <span className="relative inline-flex items-baseline gap-4">
+      <button
+        type="button"
+        onPointerEnter={(e) => e.pointerType === 'mouse' && next()}
+        onClick={next}
+        title="Vyzkoušet jiné písmo"
+        className="relative inline-block cursor-pointer rounded-[0.1em] text-left outline-offset-8"
+        style={font ? { fontFamily: font.family, fontWeight: font.weight, fontSize: `${(font.scale ?? 1) * 100}%` } : undefined}
+      >
+        vašich
+        <Scribble className="-inset-x-[6%] -inset-y-[14%] h-[128%] w-[112%]" delay={1.1} />
+      </button>
+      <span className="hidden self-center font-mono text-[12px] font-normal uppercase leading-snug tracking-[0.12em] text-accent sm:inline-block" aria-live="polite">
+        {font ? (
+          <>
+            {font.name}
+            <br />
+            <span className="text-muted">{index + 1}/{fonts.length}</span>
+          </>
+        ) : (
+          !touched && (
+            <span className="inline-block -rotate-6 rounded-full border border-accent px-3 py-1">← zkuste najet</span>
+          )
+        )}
+      </span>
+    </span>
   )
 }
 

@@ -51,7 +51,7 @@ export function DesignCard({
   return (
     <article
       onClick={handle}
-     
+      data-cursor={selected ? 'Odebrat' : 'Vybrat'}
       data-selected={selected || undefined}
       className={cx(
         'wbtn-host group relative flex cursor-pointer flex-col rounded-card border bg-ink-900 transition-[border-color,background-color,box-shadow,transform] duration-300 ease-[var(--ease-out-expo)]',

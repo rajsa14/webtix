@@ -216,16 +216,6 @@
     transition: transform 0.3s var(--ease-out-expo);
   }
 
-  .marquee-track {
-    animation: marquee 38s linear infinite;
-  }
-
-  @keyframes marquee {
-    to {
-      transform: translateX(-50%);
-    }
-  }
-
   /* Huge display type used for section titles. */
   .display-xl {
     font-family: var(--font-display);

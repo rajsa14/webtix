@@ -1,4 +1,14 @@
-import { motion } from 'motion/react'
+import {
+  motion,
+  useAnimationFrame,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+  useVelocity,
+} from 'motion/react'
+import { useRef, useState } from 'react'
 import { cx } from '../lib/text'
 import { EASE } from './Reveal'
 
@@ -49,12 +59,32 @@ export function Scribble({
   )
 }
 
-/** Full-bleed strip of words scrolling sideways. Decorative, hidden from screen readers. */
+/**
+ * Full-bleed strip of words scrolling sideways. Scrolling the page speeds it
+ * up and flips its direction. Decorative, hidden from screen readers.
+ */
 export function Marquee({ items, className }: { items: readonly string[]; className?: string }) {
+  const reduce = useReducedMotion()
+  const base = useMotionValue(0)
+  const { scrollY } = useScroll()
+  const velocity = useSpring(useVelocity(scrollY), { damping: 50, stiffness: 400 })
+  const boost = useTransform(velocity, [-1500, 0, 1500], [-5, 0, 5], { clamp: false })
+  const direction = useRef(-1)
+  const x = useTransform(base, (v) => `${wrap(-50, 0, v)}%`)
+
+  useAnimationFrame((_, delta) => {
+    if (reduce) return
+    const b = boost.get()
+    if (b < 0) direction.current = 1
+    else if (b > 0) direction.current = -1
+    // 2.2 % of the strip per second at rest, much faster while scrolling.
+    base.set(base.get() + direction.current * 2.2 * (delta / 1000) * (1 + Math.abs(b)))
+  })
+
   const row = [...items, ...items]
   return (
     <div aria-hidden="true" className={cx('overflow-hidden whitespace-nowrap', className)}>
-      <div className="marquee-track flex w-max">
+      <motion.div style={{ x }} className="flex w-max">
         {[0, 1].map((copy) => (
           <div key={copy} className="flex shrink-0">
             {row.map((item, i) => (
@@ -65,8 +95,45 @@ export function Marquee({ items, className }: { items: readonly string[]; classN
             ))}
           </div>
         ))}
-      </div>
+      </motion.div>
     </div>
+  )
+}
+
+const wrap = (min: number, max: number, v: number) => {
+  const range = max - min
+  return ((((v - min) % range) + range) % range) + min
+}
+
+/**
+ * Big wordmark whose letters jump and tilt when the mouse passes over them.
+ * Clicking a letter paints it blue.
+ */
+export function PlayfulWord({ text, className }: { text: string; className?: string }) {
+  const [painted, setPainted] = useState<Set<number>>(new Set())
+  const toggle = (i: number) =>
+    setPainted((p) => {
+      const n = new Set(p)
+      if (n.has(i)) n.delete(i)
+      else n.add(i)
+      return n
+    })
+  return (
+    <p aria-label={text} className={cx('select-none', className)}>
+      {[...text].map((ch, i) => (
+        <motion.span
+          key={i}
+          aria-hidden="true"
+          onClick={() => toggle(i)}
+          whileHover={{ y: '-0.12em', rotate: i % 2 ? 6 : -6 }}
+          whileTap={{ scale: 0.9 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 12 }}
+          className={cx('inline-block cursor-pointer transition-colors duration-300', painted.has(i) || ch === '.' ? 'text-accent' : '')}
+        >
+          {ch}
+        </motion.span>
+      ))}
+    </p>
   )
 }
 

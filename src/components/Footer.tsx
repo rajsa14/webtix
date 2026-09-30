@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NAV_LINKS, SITE } from '../data/site'
 import { team } from '../data/team'
 import { LegalDialog, type LegalDoc } from './LegalDialog'
+import { PlayfulWord } from './Decor'
 import { Logo } from './Logo'
 
 export function Footer() {
@@ -45,12 +46,10 @@ export function Footer() {
           </div>
         </div>
 
-        <p
-          aria-hidden="true"
-          className="pointer-events-none mt-16 select-none font-display text-[clamp(5rem,25vw,24rem)] font-extrabold leading-[0.78] tracking-[-0.075em] text-fg"
-        >
-          WebTix<span className="text-accent">.</span>
-        </p>
+        <PlayfulWord
+          text="WebTix."
+          className="mt-16 font-display text-[clamp(5rem,25vw,24rem)] font-extrabold leading-[0.78] tracking-[-0.075em] text-fg"
+        />
 
         <div className="mt-8 flex flex-col-reverse gap-4 border-t border-line pt-6 text-[14px] text-muted sm:flex-row sm:items-center sm:justify-between">
           <div>
