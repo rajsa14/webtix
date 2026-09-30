@@ -46,10 +46,13 @@ export function Footer() {
           </div>
         </div>
 
-        <PlayfulWord
-          text="WebTix."
-          className="mt-16 font-display text-[clamp(5rem,25vw,24rem)] font-extrabold leading-[0.78] tracking-[-0.075em] text-fg"
-        />
+        {/* Sized to the container, not the viewport, so the word always fits on one line. */}
+        <div className="@container mt-16">
+          <PlayfulWord
+            text="WebTix."
+            className="whitespace-nowrap font-display text-[27cqw] font-extrabold leading-[0.78] tracking-[-0.075em] text-fg"
+          />
+        </div>
 
         <div className="mt-8 flex flex-col-reverse gap-4 border-t border-line pt-6 text-[14px] text-muted sm:flex-row sm:items-center sm:justify-between">
           <div>
