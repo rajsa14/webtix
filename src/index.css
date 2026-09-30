@@ -3,30 +3,33 @@
 /*
  * WebTix design tokens
  * Radius rule: cards 20px, inner surfaces 12px, every interactive button is a pill.
- * Z-index scale: nav 40, selection button 45, drawer 50, menu 55, toasts 60, grain 70.
+ * Z-index scale: nav 40, selection button 45, drawer 50, menu 55, toasts 60.
  */
 @theme {
   --font-display: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
 
-  --color-ink-950: #07080b;
-  --color-ink-900: #0b0d11;
-  --color-ink-850: #0f1217;
-  --color-ink-800: #14181f;
-  --color-ink-700: #1c212a;
-  --color-fg: #eef0f5;
-  --color-muted: #a0a7b6;
-  --color-faint: #6b7282;
-  --color-line: rgb(255 255 255 / 0.08);
-  --color-line-strong: rgb(255 255 255 / 0.15);
-  --color-accent: #4f6bff;
-  --color-accent-strong: #4460f5;
-  --color-accent-soft: #8fa0ff;
-  --color-danger: #ff7b7b;
-  --color-success: #4ade9b;
+  /* Paper and ink. Names kept from the old dark theme: ink-950 is the page, ink-900 a card, 800 an inner surface. */
+  --color-ink-950: #efeee8;
+  --color-ink-900: #f8f7f3;
+  --color-ink-850: #e7e6de;
+  --color-ink-800: #dfded5;
+  --color-ink-700: #d1d0c6;
+  --color-fg: #121210;
+  --color-muted: #5d5d56;
+  --color-faint: #8a8a82;
+  --color-line: rgb(18 18 16 / 0.12);
+  --color-line-strong: rgb(18 18 16 / 0.24);
+  /* One loud color, used sparingly: electric blue from the logo. */
+  --color-accent: #2433ff;
+  --color-accent-strong: #1b29e6;
+  --color-accent-soft: #2433ff;
+  --color-accent-tint: #e4e6ff;
+  --color-danger: #d23a26;
+  --color-success: #1d8a52;
 
-  --radius-card: 20px;
+  --radius-card: 24px;
   --radius-inner: 12px;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -34,7 +37,7 @@
 
 @layer base {
   html {
-    color-scheme: dark;
+    color-scheme: light;
     -webkit-text-size-adjust: 100%;
     scroll-padding-top: 88px;
   }
@@ -57,12 +60,12 @@
   }
 
   ::selection {
-    background: rgb(79 107 255 / 0.45);
+    background: var(--color-accent);
     color: #fff;
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-accent-soft);
+    outline: 2px solid var(--color-accent);
     outline-offset: 3px;
     border-radius: 6px;
   }
@@ -102,38 +105,6 @@
     .container-x {
       padding-inline: 40px;
     }
-  }
-
-  /* Soft film grain over the whole page, fixed so it never repaints on scroll. */
-  .grain {
-    position: fixed;
-    inset: 0;
-    z-index: 70;
-    pointer-events: none;
-    opacity: 0.05;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  /* Cursor-following light inside cards. --mx/--my are set on pointermove. */
-  .spotlight {
-    position: relative;
-    isolation: isolate;
-  }
-
-  .spotlight::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgb(143 160 255 / 0.1), transparent 45%);
-    opacity: 0;
-    transition: opacity 0.4s var(--ease-out-expo);
-    pointer-events: none;
-  }
-
-  .spotlight:hover::before {
-    opacity: 1;
   }
 
   .hairline-top {
@@ -219,7 +190,7 @@
 
   .wbtn-host:hover .wbtn--outline {
     background: var(--b-text);
-    color: var(--b-bg, #0b0d11);
+    color: var(--b-bg, #efeee8);
   }
 
   .wbtn-host:hover .wbtn--link .wbtn-arrow {
@@ -243,6 +214,15 @@
 
   .wbtn-arrow {
     transition: transform 0.3s var(--ease-out-expo);
+  }
+
+  /* Huge display type used for section titles. */
+  .display-xl {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.055em;
+    line-height: 0.92;
+    font-size: clamp(2.9rem, 8.4vw, 7.6rem);
   }
 
   .no-scrollbar {

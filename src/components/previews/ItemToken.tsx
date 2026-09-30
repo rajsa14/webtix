@@ -60,7 +60,7 @@ export function ItemToken({ category, item }: { category: CategoryId; item: Cata
             className="h-3 w-6"
             style={{
               borderRadius: b.radius === '999px' ? '99px' : b.radius === '0' ? 0 : 3,
-              background: b.variant === 'outline' || b.variant === 'link' ? 'transparent' : '#4f6bff',
+              background: b.variant === 'outline' || b.variant === 'link' ? 'transparent' : '#2433ff',
               boxShadow:
                 b.variant === 'outline'
                   ? 'inset 0 0 0 1.5px #eef0f5'

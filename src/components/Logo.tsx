@@ -5,14 +5,14 @@ const RIBBON =
 const TRIANGLE = 'M49 0H70L62.6 13.2C61.4 15.3 58.6 15.3 57.4 13.2Z'
 
 /** The WebTix "W" ribbon mark, simplified from the original logo. */
-export function LogoMark({ className }: { className?: string }) {
+export function LogoMark({ className, mono }: { className?: string; mono?: boolean }) {
   return (
     <svg viewBox="-3 0 75 48" className={className} aria-hidden="true">
-      <g fill="#24309a" transform="translate(-2.4 2)">
+      <g fill={mono ? 'currentColor' : '#0d1591'} opacity={mono ? 0.45 : 1} transform="translate(-2.4 2)">
         <path d={RIBBON} />
         <path d={RIBBON} transform="translate(23 0)" />
       </g>
-      <g fill="#4f6bff">
+      <g fill={mono ? 'currentColor' : '#2433ff'}>
         <path d={RIBBON} />
         <path d={RIBBON} transform="translate(23 0)" />
         <path d={TRIANGLE} />
@@ -26,7 +26,7 @@ export function Logo({ className, compact }: { className?: string; compact?: boo
     <span className={cx('inline-flex items-center gap-2.5', className)}>
       <LogoMark className="h-[22px] w-auto" />
       {!compact && (
-        <span className="font-display text-[1.28rem] font-bold leading-none tracking-[-0.03em] text-fg">
+        <span className="font-display text-[1.32rem] font-extrabold leading-none tracking-[-0.045em] text-fg">
           WebTix
         </span>
       )}

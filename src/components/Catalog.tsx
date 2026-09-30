@@ -1,24 +1,22 @@
-import { CheckIcon } from '@phosphor-icons/react'
-import { motion } from 'motion/react'
-import { useEffect, useMemo, useRef } from 'react'
+import { CheckIcon, LockSimpleIcon } from '@phosphor-icons/react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { catalog } from '../data/catalog'
 import { plural, useActiveSection } from '../lib/hooks'
 import { cx, nb } from '../lib/text'
-import { countCategoriesDone, countSelected, useSelection } from '../store/selection'
+import { countCategoriesDone, countSelected, unlockedCount, useSelection } from '../store/selection'
 import { CatalogCategory } from './CatalogCategory'
 import { CtaLink } from './Cta'
-import { Reveal } from './Reveal'
+import { SectionLabel } from './Decor'
+import { EASE, Reveal } from './Reveal'
 
 export function Catalog() {
   return (
     <section id="katalog" className="relative py-24 sm:py-32">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(50%_60%_at_20%_0%,rgb(79_107_255/0.1),transparent_70%)]"
-      />
       <div className="container-x relative">
-        <Reveal className="max-w-3xl">
-          <h2 className="text-[clamp(2.3rem,5vw,4rem)] font-semibold leading-[0.98] tracking-[-0.035em]">
+        <Reveal className="max-w-5xl">
+          <SectionLabel number="02">Katalog</SectionLabel>
+          <h2 className="display-xl">
             {nb('Nevíte přesně, jak má váš web vypadat? Nevadí.')}
           </h2>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
@@ -31,13 +29,86 @@ export function Catalog() {
 
       <CategoryTabs />
 
-      <div className="container-x mt-12 space-y-24 sm:space-y-32">
-        {catalog.map((category) => (
-          <CatalogCategory key={category.id} category={category} />
-        ))}
-        <CatalogDone />
-      </div>
+      <CatalogSteps />
     </section>
+  )
+}
+
+/**
+ * Shows the categories one step at a time: the first is open from the start
+ * and every next one slides in once the one before it has a choice.
+ */
+function CatalogSteps() {
+  const selected = useSelection((s) => s.selected)
+  const open = unlockedCount(selected)
+  const next = catalog[open]
+
+  return (
+    <div className="container-x mt-12">
+      <AnimatePresence initial={false}>
+        {catalog.slice(0, open).map((category, i) => (
+          <Unfold key={category.id} className={i > 0 ? 'pt-24 sm:pt-32' : undefined}>
+            <CatalogCategory category={category} />
+          </Unfold>
+        ))}
+      </AnimatePresence>
+      <AnimatePresence mode="wait" initial={false}>
+        <Unfold key={next ? `next-${next.id}` : 'done'} className="pt-24 sm:pt-32">
+          {next ? <NextStep index={open} /> : <CatalogDone />}
+        </Unfold>
+      </AnimatePresence>
+    </div>
+  )
+}
+
+/** Grows from zero height so content below slides down instead of jumping. */
+function Unfold({ children, className }: { children: ReactNode; className?: string }) {
+  const reduce = useReducedMotion()
+  // Clip only while moving, so card hover lifts are not cut off afterwards.
+  const [moving, setMoving] = useState(false)
+  return (
+    <motion.div
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: 'auto', opacity: 1 }}
+      exit={{ height: 0, opacity: 0 }}
+      transition={reduce ? { duration: 0 } : { height: { duration: 0.7, ease: EASE }, opacity: { duration: 0.45, delay: 0.1 } }}
+      onAnimationStart={() => setMoving(true)}
+      onAnimationComplete={() => setMoving(false)}
+      style={{ overflow: moving ? 'hidden' : 'visible' }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+/** Placeholder for the next locked step, so the visitor knows more is coming. */
+function NextStep({ index }: { index: number }) {
+  const cat = catalog[index]
+  const previous = catalog[index - 1]
+  const later = catalog.slice(index + 1)
+  return (
+    <div className="flex flex-col gap-5 rounded-card border border-dashed border-line-strong p-7 sm:flex-row sm:items-center sm:justify-between sm:p-10">
+      <div className="flex items-center gap-5">
+        <span className="grid size-12 shrink-0 place-items-center rounded-full border border-fg">
+          <LockSimpleIcon size={20} weight="bold" />
+        </span>
+        <div>
+          <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
+            Krok {index + 1} z {catalog.length}
+          </p>
+          <h3 className="mt-1 text-[clamp(1.6rem,3vw,2.2rem)] font-extrabold leading-tight tracking-[-0.04em]">
+            {cat.title}
+          </h3>
+          <p className="mt-1 text-muted">{nb(`Odemkne se, jakmile vyberete ${previous.label.toLowerCase()}.`)}</p>
+        </div>
+      </div>
+      {later.length > 0 && (
+        <p className="text-[13px] text-faint sm:max-w-[16rem] sm:text-right">
+          {nb(`Potom: ${later.map((c) => c.label.toLowerCase()).join(', ')}`)}
+        </p>
+      )}
+    </div>
   )
 }
 
@@ -45,7 +116,10 @@ const TAB_IDS = catalog.map((c) => `kategorie-${c.id}`)
 
 function CategoryTabs() {
   const selected = useSelection((s) => s.selected)
-  const active = useActiveSection(TAB_IDS, '-35% 0px -55% 0px')
+  const open = unlockedCount(selected)
+  // Re-observe whenever a new category appears on the page.
+  const ids = useMemo(() => TAB_IDS.slice(0, open), [open])
+  const active = useActiveSection(ids, '-35% 0px -55% 0px')
   const done = countCategoriesDone(selected)
   const scroller = useRef<HTMLDivElement>(null)
 
@@ -58,17 +132,30 @@ function CategoryTabs() {
   }, [active])
 
   return (
-    <div className="sticky top-[72px] z-30 mt-12 sm:top-[84px]">
+    <div className="sticky top-[76px] z-30 mt-12">
       <div className="container-x">
         <nav
           aria-label="Kategorie katalogu"
-          className="glass-fallback flex items-center gap-2 rounded-full border border-line-strong bg-ink-900/80 p-1.5 shadow-[0_20px_40px_-25px_rgb(0_0_0/0.9)] backdrop-blur-xl"
+          className="flex items-center gap-2 rounded-full border border-fg bg-ink-900 p-1.5"
         >
           <div ref={scroller} className="no-scrollbar relative flex min-w-0 flex-1 gap-1 overflow-x-auto">
-            {catalog.map((cat) => {
+            {catalog.map((cat, i) => {
               const id = `kategorie-${cat.id}`
               const n = selected[cat.id].length
               const isActive = active === id
+              if (i >= open)
+                return (
+                  <span
+                    key={cat.id}
+                    aria-disabled="true"
+                    title="Odemkne se po výběru v předchozí kategorii"
+                    className="flex h-9 shrink-0 cursor-not-allowed items-center gap-1.5 rounded-full px-3.5 text-[13.5px] text-faint"
+                  >
+                    <LockSimpleIcon size={12} weight="bold" aria-hidden="true" />
+                    {cat.label}
+                    <span className="sr-only">(zamčeno)</span>
+                  </span>
+                )
               return (
                 <a
                   key={cat.id}
@@ -83,7 +170,7 @@ function CategoryTabs() {
                   {isActive && (
                     <motion.span
                       layoutId="catalog-tab"
-                      className="absolute inset-0 rounded-full bg-white/[0.08]"
+                      className="absolute inset-0 rounded-full bg-fg/[0.08]"
                       transition={{ type: 'spring', stiffness: 400, damping: 34 }}
                     />
                   )}
@@ -105,7 +192,7 @@ function CategoryTabs() {
                   key={cat.id}
                   className={cx(
                     'h-1.5 w-3 rounded-full transition-colors duration-500',
-                    selected[cat.id].length ? 'bg-accent' : 'bg-white/12',
+                    selected[cat.id].length ? 'bg-accent' : 'bg-fg/12',
                   )}
                 />
               ))}
@@ -127,11 +214,7 @@ function CatalogDone() {
 
   return (
     <Reveal>
-      <div className="relative overflow-hidden rounded-card border border-line-strong bg-ink-900 p-7 sm:p-10">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-20 -top-24 size-80 rounded-full bg-accent/20 blur-[90px]"
-        />
+      <div className="relative overflow-hidden rounded-card border border-fg bg-ink-900 p-7 sm:p-10">
         <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h3 className="text-[clamp(1.6rem,3vw,2.2rem)] font-semibold leading-tight tracking-[-0.025em]">

@@ -54,17 +54,17 @@ export const steps = [
   {
     number: '01',
     title: 'Prohlédnete si katalog',
-    text: 'Projdu si různé možnosti designu a zjistím, co se mi líbí.',
+    text: 'Projdete si různé možnosti designu a zjistíte, co se vám líbí.',
   },
   {
     number: '02',
     title: 'Vyberete si',
-    text: 'Vyberu si například písmo, barvy, styl fotografií nebo celkový vzhled.',
+    text: 'Vyberete si například písmo, barvy, styl fotografií nebo celkový vzhled.',
   },
   {
     number: '03',
     title: 'Odešlete nám svou představu',
-    text: 'Svůj výběr nám jednoduše odešlu přes formulář.',
+    text: 'Svůj výběr nám jednoduše odešlete přes formulář.',
   },
   {
     number: '04',

@@ -12,17 +12,13 @@ export function Contact() {
     <section id="kontakt" className="relative py-16 sm:py-24">
       <div className="container-x">
         <Reveal>
-          <div className="relative overflow-hidden rounded-card border border-line-strong bg-ink-900 px-5 py-20 text-center sm:px-12 sm:py-28">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_60%_at_50%_0%,rgb(79_107_255/0.28),transparent_70%)]"
-            />
-            <LogoMark className="pointer-events-none absolute -bottom-16 -right-10 h-72 w-auto opacity-[0.07] sm:h-96" />
+          <div className="relative overflow-hidden rounded-card bg-accent px-5 py-20 text-center text-white sm:px-12 sm:py-28">
+            <LogoMark mono className="pointer-events-none absolute -bottom-16 -right-10 h-72 w-auto opacity-20 sm:h-96" />
             <div className="relative">
-              <h2 className="mx-auto max-w-4xl text-[clamp(2.6rem,7vw,6rem)] font-semibold leading-[0.95] tracking-[-0.045em] [font-stretch:92%]">
-                Máte projekt? <span className="text-accent-soft">Pojďme ho vytvořit.</span>
+              <h2 className="mx-auto max-w-5xl text-[clamp(3rem,9vw,8.5rem)] font-extrabold leading-[0.93] tracking-[-0.06em]">
+                Máte projekt? Pojďme ho postavit.
               </h2>
-              <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted">
+              <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-white/80">
                 {nb('Pošlete nám svou představu a společně zjistíme, co pro vás můžeme vytvořit.')}
               </p>
               <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -55,17 +51,17 @@ function EmailPill() {
   }
 
   return (
-    <div className="inline-flex h-13 items-center gap-1 rounded-full border border-line-strong bg-white/[0.03] pl-5 pr-1.5">
-      <a href={`mailto:${SITE.email}`} className="rounded-full font-medium text-fg transition-colors hover:text-accent-soft">
+    <div className="inline-flex h-13 items-center gap-1 rounded-full border border-white/60 pl-5 pr-1.5">
+      <a href={`mailto:${SITE.email}`} className="rounded-full font-medium text-white underline-offset-4 hover:underline">
         {SITE.email}
       </a>
       <button
         type="button"
         onClick={copy}
         aria-label="Zkopírovat e-mail"
-        className="ml-1 grid size-10 place-items-center rounded-full text-muted transition-colors hover:bg-white/[0.08] hover:text-fg"
+        className="ml-1 grid size-10 place-items-center rounded-full text-white/80 transition-colors hover:bg-white/15 hover:text-white"
       >
-        {copied ? <CheckIcon size={17} weight="bold" className="text-success" /> : <CopyIcon size={17} />}
+        {copied ? <CheckIcon size={17} weight="bold" className="text-white" /> : <CopyIcon size={17} />}
       </button>
     </div>
   )

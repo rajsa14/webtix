@@ -25,7 +25,7 @@ export function SelectionSummary({ invalid }: { invalid?: boolean }) {
         <button
           type="button"
           onClick={() => openPanel(true)}
-          className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13px] text-accent-soft transition-colors hover:bg-accent/10 hover:text-white"
+          className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13px] text-accent transition-colors hover:bg-accent/10 hover:text-fg"
         >
           <PencilSimpleIcon size={14} />
           Upravit

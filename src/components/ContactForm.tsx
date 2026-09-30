@@ -9,6 +9,7 @@ import { cx, nb, scrollToId } from '../lib/text'
 import { countSelected, useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
 import { LivePreview } from './LivePreview'
+import { SectionLabel } from './Decor'
 import { Reveal } from './Reveal'
 import { ResultDialog, type InquiryResult } from './ResultDialog'
 import { SelectionSummary } from './SelectionSummary'
@@ -111,8 +112,9 @@ export function ContactForm() {
   return (
     <section id="poptavka" className="relative py-24 sm:py-32">
       <div className="container-x">
-        <Reveal className="max-w-3xl">
-          <h2 className="text-[clamp(2.3rem,5vw,4rem)] font-semibold leading-[0.98] tracking-[-0.035em]">
+        <Reveal className="max-w-4xl">
+          <SectionLabel number="03">Poptávka</SectionLabel>
+          <h2 className="display-xl">
             Líbí se vám váš výběr?
           </h2>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
@@ -207,12 +209,12 @@ export function ContactForm() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="group/cta relative inline-flex h-13 shrink-0 items-center justify-center gap-2.5 overflow-hidden rounded-full bg-accent-strong px-7 font-medium text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.22),0_12px_32px_-12px_rgb(79_107_255/0.9)] transition-[background-color,transform] duration-300 hover:-translate-y-px hover:bg-accent active:scale-[0.98] disabled:cursor-wait"
+                  className="group/cta relative inline-flex h-13 shrink-0 items-center justify-center gap-2.5 overflow-hidden rounded-full bg-accent-strong px-7 font-medium text-white  transition-[background-color,transform] duration-300 hover:-translate-y-px hover:bg-accent active:scale-[0.98] disabled:cursor-wait"
                 >
                   {status === 'sending' && (
                     <motion.span
                       aria-hidden="true"
-                      className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+                      className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-fg/25 to-transparent"
                       initial={{ x: '-100%' }}
                       animate={{ x: '320%' }}
                       transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut' }}
@@ -260,7 +262,7 @@ export function ContactForm() {
 /* ---------- Field primitives ---------- */
 
 const inputBase =
-  'w-full rounded-[12px] border bg-ink-850 px-4 text-[15.5px] text-fg placeholder:text-[#80879a] transition-[border-color,box-shadow,background-color] duration-200 outline-none focus:bg-ink-800 focus:border-accent focus:ring-4 focus:ring-accent/20'
+  'w-full rounded-[12px] border bg-ink-850 px-4 text-[15.5px] text-fg placeholder:text-[#8a8a82] transition-[border-color,box-shadow,background-color] duration-200 outline-none focus:bg-ink-800 focus:border-accent focus:ring-4 focus:ring-accent/20'
 
 function Label({ htmlFor, children, optional }: { htmlFor?: string; children: ReactNode; optional?: boolean }) {
   return (
@@ -377,7 +379,7 @@ function SelectField({
           name={name}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={cx(inputBase, 'h-12 appearance-none border-line-strong pr-10', !value && 'text-[#80879a]')}
+          className={cx(inputBase, 'h-12 appearance-none border-line-strong pr-10', !value && 'text-[#8a8a82]')}
         >
           <option value="">Vyberte termín</option>
           {options.map((o) => (
@@ -439,7 +441,7 @@ function ChipGroup({
                 'inline-flex h-10 cursor-pointer select-none items-center rounded-full border px-4 text-[14px] transition-[background-color,border-color,color] duration-200',
                 'peer-checked:border-accent peer-checked:bg-accent-strong peer-checked:text-white',
                 'peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent-soft',
-                error ? 'border-danger/60 text-fg' : 'border-line-strong text-muted hover:border-white/25 hover:text-fg',
+                error ? 'border-danger/60 text-fg' : 'border-line-strong text-muted hover:border-fg/25 hover:text-fg',
               )}
             >
               {option}

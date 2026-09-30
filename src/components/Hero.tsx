@@ -1,90 +1,139 @@
 import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react'
-import { useEffect, useState, type PointerEvent } from 'react'
+import { useEffect, useState, type PointerEvent, type ReactNode } from 'react'
 import { findItem } from '../data/catalog'
+import { fonts } from '../data/fonts'
 import { heroShowcase } from '../data/content'
+import { SITE } from '../data/site'
 import type { ButtonItem, FontItem, LayoutItem, PaletteItem } from '../data/types'
 import { nb } from '../lib/text'
 import { BrowserFrame } from './BrowserFrame'
 import { CtaLink } from './Cta'
-import { LogoMark } from './Logo'
+import { Scribble } from './Decor'
 import { MiniSite } from './previews/MiniSite'
 import { EASE } from './Reveal'
 
-const HEADLINE = ['Web', 'podle', 'vašich', 'představ.']
-
 export function Hero() {
   return (
-    <section id="domu" className="relative flex items-center overflow-hidden pb-16 pt-28 sm:pt-32 lg:min-h-[100dvh] lg:pb-16 lg:pt-28">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_75%_35%,rgb(79_107_255/0.16),transparent_70%),radial-gradient(40%_35%_at_10%_0%,rgb(79_107_255/0.08),transparent_70%)]"
-      />
-      <div className="container-x relative grid items-center gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-8">
-        <div className="max-w-[640px]">
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
-            className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-line-strong bg-white/[0.03] py-1.5 pl-2 pr-4 text-[13px] text-muted"
-          >
-            <span className="grid size-6 place-items-center rounded-full bg-accent/15">
-              <LogoMark className="h-2.5 w-auto" />
-            </span>
-            Kreativní webové studio
-          </motion.p>
+    <section id="domu" className="relative overflow-hidden pb-14 pt-24 sm:pt-28 lg:pb-20">
+      <div className="container-x">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
+          className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-line pb-4 font-mono text-[12px] uppercase tracking-[0.14em] text-muted"
+        >
+          <span>Webové studio</span>
+          <span className="hidden sm:inline">Richard &amp; Daniel</span>
+          <span>Weby na míru · {SITE.year}</span>
+        </motion.div>
 
-          <h1 className="text-[clamp(3rem,7.4vw,6.4rem)] font-semibold leading-[0.93] tracking-[-0.045em] [font-stretch:92%]">
-            {HEADLINE.map((word, i) => (
-              <span key={word} className="inline-block overflow-hidden pb-[0.08em] align-top">
-                <motion.span
-                  className={i >= 2 ? 'inline-block text-accent-soft' : 'inline-block'}
-                  initial={{ y: '105%' }}
-                  animate={{ y: '0%' }}
-                  transition={{ duration: 1, ease: EASE, delay: 0.25 + i * 0.08 }}
-                >
-                  {word}
-                </motion.span>
-                {i < HEADLINE.length - 1 && ' '}
-              </span>
-            ))}
-          </h1>
+        <div className="mt-10 grid items-end gap-12 sm:mt-14 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
+          <div>
+            <h1 className="font-display text-[clamp(3.6rem,9.4vw,9.6rem)] font-extrabold leading-[0.86] tracking-[-0.065em]">
+              <Line delay={0.2}>Web podle</Line>
+              <Line delay={0.3}>
+                <FontSwapWord />
+              </Line>
+              <Line delay={0.4}>
+                představ<span className="text-accent">.</span>
+              </Line>
+            </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: EASE, delay: 0.6 }}
-            className="mt-7 max-w-[34rem] text-lg leading-relaxed text-muted sm:text-[1.2rem]"
-          >
-            {nb(
-              'Vyberte si styl, barvy, písmo a další prvky, které se vám líbí. My z vaší představy vytvoříme konkrétní návrh webu.',
-            )}
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease: EASE, delay: 0.7 }}
+              className="mt-10 max-w-[30rem] text-lg leading-relaxed text-muted sm:text-[1.2rem]"
+            >
+              {nb(
+                'Naklikejte si písmo, barvy a styl, který se vám líbí. My z toho postavíme konkrétní návrh webu. Bez briefů a bez šablon.',
+              )}
+            </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: EASE, delay: 0.72 }}
-            className="mt-10 flex flex-wrap items-center gap-3"
-          >
-            <CtaLink href="#katalog" size="lg" arrow>
-              Prohlédnout katalog
-            </CtaLink>
-            <CtaLink href="#jak-to-funguje" size="lg" variant="secondary">
-              Jak to funguje
-            </CtaLink>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease: EASE, delay: 0.8 }}
+              className="mt-8 flex flex-wrap items-center gap-3"
+            >
+              <CtaLink href="#katalog" size="lg" arrow>
+                Otevřít katalog
+              </CtaLink>
+              <CtaLink href="#jak-to-funguje" size="lg" variant="secondary">
+                Jak to funguje
+              </CtaLink>
+            </motion.div>
+          </div>
+
+          <HeroShowcase />
         </div>
-
-        <HeroShowcase />
       </div>
     </section>
   )
 }
 
+/**
+ * "vašich" in the headline trades its font for the next one from the catalog
+ * on every hover or click. A small taste of what the catalog does.
+ */
+function FontSwapWord() {
+  const [index, setIndex] = useState(-1)
+  const [touched, setTouched] = useState(false)
+  const font = index >= 0 ? fonts[index] : undefined
+  const next = () => {
+    setTouched(true)
+    setIndex((i) => (i + 1) % fonts.length)
+  }
+
+  return (
+    <span className="relative inline-flex items-baseline gap-4">
+      <button
+        type="button"
+        onPointerEnter={(e) => e.pointerType === 'mouse' && next()}
+        onClick={next}
+        title="Vyzkoušet jiné písmo"
+        className="relative inline-block cursor-pointer rounded-[0.1em] text-left outline-offset-8"
+        style={font ? { fontFamily: font.family, fontWeight: font.weight, fontSize: `${(font.scale ?? 1) * 100}%` } : undefined}
+      >
+        vašich
+        <Scribble className="-inset-x-[6%] -inset-y-[14%] h-[128%] w-[112%]" delay={1.1} />
+      </button>
+      <span className="hidden self-center font-mono text-[12px] font-normal uppercase leading-snug tracking-[0.12em] text-accent sm:inline-block" aria-live="polite">
+        {font ? (
+          <>
+            {font.name}
+            <br />
+            <span className="text-muted">{index + 1}/{fonts.length}</span>
+          </>
+        ) : (
+          !touched && (
+            <span className="inline-block -rotate-6 rounded-full border border-accent px-3 py-1">← zkuste najet</span>
+          )
+        )}
+      </span>
+    </span>
+  )
+}
+
+function Line({ children, delay }: { children: ReactNode; delay: number }) {
+  return (
+    <span className="block overflow-hidden pb-[0.06em] pt-[0.12em]">
+      <motion.span
+        className="block"
+        initial={{ y: '110%' }}
+        animate={{ y: '0%' }}
+        transition={{ duration: 1.1, ease: EASE, delay }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  )
+}
+
 const SLOTS = [
-  { x: '0%', y: '0%', scale: 1, rotate: 0, zIndex: 3, opacity: 1, filter: 'brightness(1)' },
-  { x: '-9%', y: '-17%', scale: 0.8, rotate: -4, zIndex: 1, opacity: 1, filter: 'brightness(0.42)' },
-  { x: '10%', y: '-10%', scale: 0.87, rotate: 3.5, zIndex: 2, opacity: 1, filter: 'brightness(0.6)' },
+  { x: '0%', y: '0%', scale: 1, rotate: 0, zIndex: 3, opacity: 1, filter: 'saturate(1) opacity(1)' },
+  { x: '-9%', y: '-17%', scale: 0.8, rotate: -4, zIndex: 1, opacity: 1, filter: 'saturate(0.6) opacity(0.55)' },
+  { x: '10%', y: '-10%', scale: 0.87, rotate: 3.5, zIndex: 2, opacity: 1, filter: 'saturate(0.8) opacity(0.8)' },
 ]
 
 function HeroShowcase() {
@@ -173,7 +222,7 @@ function HeroShowcase() {
         })}
       </motion.div>
 
-      <div className="absolute -bottom-2 left-0 z-10 hidden w-[250px] sm:block lg:-left-6">
+      <div className="absolute -bottom-6 left-2 z-10 hidden w-[250px] -rotate-[4deg] sm:block lg:-left-8">
         <AnimatePresence mode="wait">
           <motion.div
             key={front.address}
@@ -181,9 +230,9 @@ function HeroShowcase() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.45, ease: EASE }}
-            className="glass-fallback rounded-[16px] border border-line-strong bg-ink-900/85 p-4 shadow-[0_30px_60px_-25px_rgb(0_0_0/0.9)] backdrop-blur-xl"
+            className="rounded-[18px] bg-accent p-4 text-white shadow-[0_24px_50px_-24px_rgb(18_18_16/0.5)]"
           >
-            <p className="mb-3 text-[12px] text-muted">Sestaveno z katalogu</p>
+            <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-white/70">Sestaveno z katalogu</p>
             <Recipe demo={front} />
           </motion.div>
         </AnimatePresence>
@@ -205,7 +254,7 @@ function Recipe({ demo }: { demo: (typeof heroShowcase)[number] }) {
         <span className="inline-flex items-center gap-2">
           <span className="flex -space-x-1">
             {palette.colors.map((c) => (
-              <span key={c.hex} className="size-3.5 rounded-full ring-2 ring-ink-900" style={{ background: c.hex }} />
+              <span key={c.hex} className="size-3.5 rounded-full ring-2 ring-accent" style={{ background: c.hex }} />
             ))}
           </span>
           {palette.name}
@@ -219,8 +268,8 @@ function Recipe({ demo }: { demo: (typeof heroShowcase)[number] }) {
     <dl className="grid gap-2 text-[13px]">
       {rows.map((row) => (
         <div key={row.label} className="flex items-center justify-between gap-3">
-          <dt className="text-muted">{row.label}</dt>
-          <dd className="text-fg">{row.value}</dd>
+          <dt className="text-white/70">{row.label}</dt>
+          <dd className="text-white">{row.value}</dd>
         </div>
       ))}
     </dl>
