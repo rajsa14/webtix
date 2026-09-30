@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Výška Boulder · koncept WebTix</title>
+<meta name="description" content="Koncept webu pro boulderovou halu. Ukázková práce studia WebTix, fiktivní značka." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#0c0c0c" />
+<link rel="stylesheet" href="../fonts/fonts.css" />
+<style>
+  :root {
+    --bg: #0c0c0c;
+    --panel: #161616;
+    --panel-2: #1e1e1e;
+    --fg: #f4f4ef;
+    --muted: #9a9a92;
+    --lime: #d4ff3a;
+    --orange: #ff5a1f;
+    --blue: #5b7cff;
+    --pink: #ff8fd0;
+    --line: rgb(255 255 255 / 0.1);
+    --display: 'Anton', Impact, sans-serif;
+    --sans: 'Space Grotesk', system-ui, sans-serif;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: min(1320px, 100% - 32px); margin-inline: auto; }
+
+  .concept-bar { background: var(--lime); color: #0c0c0c; font-size: 13px; font-weight: 600; text-align: center; padding: 8px 16px; }
+  .concept-bar a { text-decoration: underline; text-underline-offset: 3px; }
+
+  header { position: sticky; top: 0; z-index: 30; padding: 14px 0; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; background: rgb(22 22 22 / 0.8); backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: 999px; padding: 8px 8px 8px 22px; }
+  .brand { font-family: var(--display); font-size: 26px; letter-spacing: 0.01em; display: flex; align-items: center; gap: 8px; }
+  .brand i { width: 12px; height: 12px; background: var(--lime); border-radius: 50%; display: inline-block; }
+  nav ul { display: flex; gap: 6px; list-style: none; font-size: 15px; }
+  nav a { padding: 8px 16px; border-radius: 999px; transition: background 0.3s; }
+  nav a:hover { background: var(--panel-2); }
+  .btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 12px 22px; font-weight: 700; font-size: 15px; transition: transform 0.4s var(--ease), background 0.3s, color 0.3s; }
+  .btn-lime { background: var(--lime); color: #0c0c0c; }
+  .btn-lime:hover { transform: scale(1.05) rotate(-2deg); }
+  .btn-ghost { border: 1px solid var(--line); }
+  .btn-ghost:hover { background: var(--fg); color: #0c0c0c; }
+
+  .hero { position: relative; padding: 40px 0 0; min-height: 88vh; overflow: hidden; }
+  .hero h1 { font-family: var(--display); font-weight: 400; text-transform: uppercase; font-size: clamp(5.5rem, 24vw, 23rem); line-height: 0.8; letter-spacing: -0.01em; position: relative; z-index: 2; }
+  .hero h1 .outline { color: transparent; -webkit-text-stroke: 2px var(--fg); }
+  .hero h1 .row { display: block; }
+  .hero h1 .row:last-child { text-align: right; }
+  .hero-meta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 36px; align-items: end; position: relative; z-index: 2; }
+  .hero-meta p { color: var(--muted); max-width: 340px; }
+  .hero-meta .cta { justify-self: end; display: flex; gap: 10px; flex-wrap: wrap; }
+  .live { justify-self: start; display: inline-flex; align-items: center; gap: 10px; font-size: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; }
+  .live b { color: var(--lime); }
+  .live::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 0 var(--lime); animation: ping 1.8s infinite; }
+  @keyframes ping { 70% { box-shadow: 0 0 0 10px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+  .hold { position: absolute; z-index: 1; transition: transform 0.8s var(--ease); will-change: transform; }
+  .hold svg { width: 100%; height: 100%; display: block; }
+
+  .ticker { background: var(--orange); color: #0c0c0c; transform: rotate(-2deg); margin: 40px -20px 0; padding: 16px 0; overflow: hidden; position: relative; z-index: 3; }
+  .ticker-track { display: flex; gap: 40px; width: max-content; animation: slide 22s linear infinite; font-family: var(--display); font-size: clamp(1.8rem, 4vw, 3rem); text-transform: uppercase; white-space: nowrap; }
+  .ticker-track span::after { content: '●'; margin-left: 40px; font-size: 0.5em; vertical-align: middle; }
+  @keyframes slide { to { transform: translateX(-50%); } }
+
+  section { padding: 110px 0; }
+  .tag { display: inline-block; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--lime); }
+  h2 { font-family: var(--display); font-weight: 400; text-transform: uppercase; font-size: clamp(3rem, 8vw, 7rem); line-height: 0.9; margin-top: 10px; }
+  .head { display: flex; justify-content: space-between; align-items: end; gap: 32px; margin-bottom: 48px; flex-wrap: wrap; }
+  .head p { color: var(--muted); max-width: 400px; }
+
+  .bento { display: grid; grid-template-columns: repeat(6, 1fr); grid-auto-rows: minmax(220px, auto); gap: 14px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 28px; padding: 28px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; transition: transform 0.6s var(--ease), border-color 0.4s; }
+  .card:hover { transform: translateY(-6px); border-color: rgb(255 255 255 / 0.22); }
+  .card h3 { font-family: var(--display); font-weight: 400; font-size: 34px; text-transform: uppercase; line-height: 1; }
+  .card p { color: var(--muted); font-size: 15px; }
+  .c-stat { grid-column: span 2; background: var(--lime); color: #0c0c0c; border: 0; }
+  .c-stat .n { font-family: var(--display); font-size: clamp(5rem, 10vw, 8.5rem); line-height: 0.85; }
+  .c-stat p { color: #0c0c0c; font-weight: 600; }
+  .c-grades { grid-column: span 4; }
+  .grades { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+  .grades span { font-weight: 700; font-size: 15px; padding: 8px 14px; border-radius: 12px; color: #0c0c0c; }
+  .bar { display: flex; height: 14px; border-radius: 999px; overflow: hidden; margin-top: 18px; }
+  .bar i { display: block; height: 100%; }
+  .c-kids { grid-column: span 3; background: var(--blue); border: 0; }
+  .c-kids p { color: rgb(255 255 255 / 0.85); }
+  .c-cafe { grid-column: span 3; }
+  .c-cafe .cup { position: absolute; right: -10px; top: 10px; width: 150px; opacity: 0.9; }
+  .c-cafe p { max-width: 62%; }
+  .c-hours { grid-column: span 2; }
+  .c-hours dl { display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; margin-top: 16px; font-size: 15px; }
+  .c-hours dt { color: var(--muted); }
+  .c-hours dd { font-weight: 700; text-align: right; }
+  .c-set { grid-column: span 4; background: var(--panel-2); }
+  .set-row { display: flex; align-items: end; gap: 6px; height: 120px; margin-top: 18px; }
+  .set-row i { flex: 1; border-radius: 8px 8px 3px 3px; background: var(--muted); opacity: 0.35; transition: opacity 0.3s, background 0.3s; }
+  .set-row i.hot { background: var(--orange); opacity: 1; }
+
+  .prices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .price { border: 1px solid var(--line); border-radius: 28px; padding: 32px; display: flex; flex-direction: column; gap: 22px; }
+  .price.hot { background: var(--fg); color: #0c0c0c; border: 0; transform: rotate(-1.5deg); }
+  .price.hot .muted { color: #55554f; }
+  .price .amount { font-family: var(--display); font-size: 84px; line-height: 0.9; }
+  .price .amount small { font-family: var(--sans); font-size: 16px; font-weight: 600; }
+  .price ul { list-style: none; display: grid; gap: 10px; font-size: 15px; }
+  .price li::before { content: '↗ '; color: var(--orange); font-weight: 700; }
+  .muted { color: var(--muted); }
+  .badge { align-self: start; background: var(--orange); color: #0c0c0c; font-weight: 700; font-size: 13px; padding: 4px 12px; border-radius: 999px; }
+
+  .final { text-align: center; padding: 140px 0 120px; position: relative; overflow: hidden; }
+  .final h2 { font-size: clamp(4rem, 16vw, 15rem); line-height: 1.1; }
+  .final h2 span { color: var(--lime); }
+  .final .btn { margin-top: 36px; font-size: 18px; padding: 18px 34px; }
+
+  footer { border-top: 1px solid var(--line); padding: 32px 0 48px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  .reveal { opacity: 0; transform: translateY(50px) scale(0.98); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 960px) {
+    nav { display: none; }
+    .hero { min-height: auto; }
+    .hero-meta { grid-template-columns: 1fr; }
+    .hero-meta .cta { justify-self: start; }
+    .bento { grid-template-columns: 1fr 1fr; }
+    .c-stat, .c-hours { grid-column: span 1; }
+    .c-grades, .c-kids, .c-cafe, .c-set { grid-column: span 2; }
+    .prices { grid-template-columns: 1fr; }
+    .price.hot { transform: none; }
+    section { padding: 80px 0; }
+    .hold { opacity: 0.55; }
+  }
+  @media (max-width: 560px) {
+    .bento { grid-template-columns: 1fr; }
+    .bento > * { grid-column: span 1 !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="concept-bar">Koncept studia <a href="/">WebTix</a>. Výška Boulder je fiktivní značka.</div>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#"><i></i>VÝŠKA</a>
+    <nav aria-label="Hlavní"><ul><li><a href="#hala">Hala</a></li><li><a href="#cenik">Ceník</a></li><li><a href="#kurzy">Kurzy</a></li><li><a href="#kontakt">Kontakt</a></li></ul></nav>
+    <a class="btn btn-lime" href="#cenik">Koupit vstup</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="padding-bottom:0">
+    <div class="wrap">
+      <h1><span class="row">Lez</span><span class="row"><span class="outline">vý</span>š.</span></h1>
+      <div class="hero-meta">
+        <span class="live">Právě v hale: <b>34 lidí</b></span>
+        <p>Boulderová hala v Holešovicích. 180 cest, nové bouldery každý týden a kavárna s výhledem na stěnu.</p>
+        <div class="cta"><a class="btn btn-lime" href="#cenik">První vstup za 190 Kč</a><a class="btn btn-ghost" href="#hala">Prohlédnout halu</a></div>
+      </div>
+    </div>
+
+    <div class="hold" data-depth="18" style="width:170px;height:150px;left:52%;top:40px"><svg viewBox="0 0 100 90"><path d="M20 12c18-10 52-12 68 6 12 14 8 44-8 58-18 16-54 14-68-4C-2 56 2 22 20 12Z" fill="#ff5a1f"/><circle cx="50" cy="44" r="8" fill="#0c0c0c" opacity=".55"/></svg></div>
+    <div class="hold" data-depth="-26" style="width:120px;height:120px;left:8%;top:52%"><svg viewBox="0 0 100 100"><path d="M50 4 94 30 84 82 30 96 6 50Z" fill="#5b7cff"/><circle cx="50" cy="52" r="7" fill="#0c0c0c" opacity=".55"/></svg></div>
+    <div class="hold" data-depth="32" style="width:96px;height:110px;left:40%;top:30%"><svg viewBox="0 0 80 90"><path d="M40 2c22 0 38 22 36 46-2 26-18 40-36 40S2 72 4 46C6 22 18 2 40 2Z" fill="#ff8fd0"/><circle cx="40" cy="46" r="6" fill="#0c0c0c" opacity=".55"/></svg></div>
+    <div class="hold" data-depth="-14" style="width:190px;height:80px;left:30%;top:50%"><svg viewBox="0 0 200 80"><path d="M10 40C10 14 50 4 100 6s90 10 90 34-40 36-90 34S10 66 10 40Z" fill="#d4ff3a"/><circle cx="100" cy="40" r="7" fill="#0c0c0c" opacity=".55"/></svg></div>
+
+    <div class="ticker" aria-hidden="true"><div class="ticker-track">
+      <span>Nové bouldery každé pondělí</span><span>Otevřeno do 23:00</span><span>Kurzy pro začátečníky</span><span>Půjčovna lezeček</span><span>Holešovice, Praha 7</span>
+      <span>Nové bouldery každé pondělí</span><span>Otevřeno do 23:00</span><span>Kurzy pro začátečníky</span><span>Půjčovna lezeček</span><span>Holešovice, Praha 7</span>
+    </div></div>
+  </section>
+
+  <section id="hala">
+    <div class="wrap">
+      <div class="head reveal"><div><span class="tag">Hala</span><h2>1 400 m² stěn</h2></div><p>Od prvních krůčků po převisy, na kterých se zapotí i závodníci. Každá cesta má barvu podle obtížnosti.</p></div>
+      <div class="bento">
+        <div class="card c-stat reveal"><span class="n">180</span><p>boulderů v hale, 40 z nich nově postavených každý měsíc</p></div>
+        <div class="card c-grades reveal" style="transition-delay:.06s">
+          <h3>Barvy obtížnosti</h3>
+          <div class="grades"><span style="background:#d4ff3a">Začátečník</span><span style="background:#5b7cff">Pokročilý</span><span style="background:#ff8fd0">Zkušený</span><span style="background:#ff5a1f">Expert</span><span style="background:#f4f4ef">Projekt</span></div>
+          <div class="bar"><i style="width:30%;background:#d4ff3a"></i><i style="width:28%;background:#5b7cff"></i><i style="width:22%;background:#ff8fd0"></i><i style="width:14%;background:#ff5a1f"></i><i style="width:6%;background:#f4f4ef"></i></div>
+          <p style="margin-top:12px">Rozložení cest podle obtížnosti</p>
+        </div>
+        <div class="card c-kids reveal" id="kurzy"><h3>Kurzy a dětské kroužky</h3><p>Úvodní kurz za dvě hodiny naučí padat, jistit se na zemi a číst cesty. Kroužky pro děti od 6 let.</p><a class="btn btn-ghost" style="align-self:start;border-color:rgb(255 255 255 / .4)" href="#">Rozvrh kurzů →</a></div>
+        <div class="card c-cafe reveal" style="transition-delay:.06s">
+          <h3>Kavárna na galerii</h3><p>Espresso, domácí koláče a výhled na kamarády, jak padají z převisu.</p>
+          <svg class="cup" viewBox="0 0 200 200" aria-hidden="true"><path d="M40 70h110l-12 100H52Z" fill="#d4ff3a"/><path d="M150 90h14a22 22 0 0 1 0 44h-20" stroke="#d4ff3a" stroke-width="12" fill="none"/><path d="M80 20c-10 14 10 22 0 38M110 16c-10 14 10 22 0 38" stroke="#f4f4ef" stroke-width="6" fill="none" stroke-linecap="round" opacity=".6"/></svg>
+        </div>
+        <div class="card c-hours reveal"><h3>Otevřeno</h3><dl><dt>Po – Pá</dt><dd>7:00 – 23:00</dd><dt>So – Ne</dt><dd>9:00 – 22:00</dd><dt>Svátky</dt><dd>10:00 – 20:00</dd></dl></div>
+        <div class="card c-set reveal" style="transition-delay:.06s">
+          <h3>Kdy je nejvolněji</h3>
+          <div class="set-row" aria-label="Vytíženost haly během dne, nejvíc mezi 17. a 20. hodinou">
+            <i style="height:22%"></i><i style="height:30%"></i><i style="height:26%"></i><i style="height:34%"></i><i style="height:40%"></i><i style="height:48%"></i><i style="height:58%"></i><i class="hot" style="height:86%"></i><i class="hot" style="height:100%"></i><i class="hot" style="height:92%"></i><i style="height:64%"></i><i style="height:38%"></i>
+          </div>
+          <p style="margin-top:10px">Ráno a po 21:00 máte stěny skoro pro sebe.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="cenik">
+    <div class="wrap">
+      <div class="head reveal"><div><span class="tag">Ceník</span><h2>Vyber si</h2></div><p>Bez registrace a bez závazků. Lezečky půjčíme za 60 Kč.</p></div>
+      <div class="prices">
+        <div class="price reveal"><span class="muted">Jednorázový vstup</span><span class="amount">240 <small>Kč</small></span><ul><li>Celý den v hale</li><li>Šatna a sprchy</li><li>První vstup za 190 Kč</li></ul><a class="btn btn-ghost" href="#">Koupit</a></div>
+        <div class="price hot reveal" style="transition-delay:.06s"><span class="badge">Nejoblíbenější</span><span class="muted">Měsíční permanentka</span><span class="amount">1 490 <small>Kč</small></span><ul><li>Neomezené vstupy</li><li>Sleva 20 % na kurzy</li><li>Káva zdarma v pondělí</li></ul><a class="btn btn-lime" style="background:#0c0c0c;color:#d4ff3a" href="#">Chci permanentku</a></div>
+        <div class="price reveal" style="transition-delay:.12s"><span class="muted">Desetivstupová karta</span><span class="amount">1 990 <small>Kč</small></span><ul><li>Platí 12 měsíců</li><li>Přenosná na kamaráda</li><li>Vstup vychází na 199 Kč</li></ul><a class="btn btn-ghost" href="#">Koupit</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final" id="kontakt">
+    <div class="wrap reveal">
+      <span class="tag">Holešovice, Praha 7</span>
+      <h2>Tak <span>kdy</span><br/>přijdeš?</h2>
+      <a class="btn btn-lime" href="#cenik">Rezervovat první vstup →</a>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Výška Boulder (fiktivní)</span><span>Design a vývoj: <a href="/" style="text-decoration:underline">WebTix</a></span></div></footer>
+
+<script>
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: 0.12 })
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el))
+  if (matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const holds = document.querySelectorAll('.hold')
+    addEventListener('pointermove', (e) => {
+      const x = e.clientX / innerWidth - 0.5, y = e.clientY / innerHeight - 0.5
+      holds.forEach((h) => { const d = +h.dataset.depth; h.style.transform = `translate(${x * d * 2}px, ${y * d * 2}px) rotate(${x * d * 0.4}deg)` })
+    })
+  }
+</script>
+</body>
+</html>

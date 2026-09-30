@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pražírna Lampa · koncept WebTix</title>
+<meta name="description" content="Koncept webu pro výběrovou pražírnu kávy. Ukázková práce studia WebTix, fiktivní značka." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#f2eadc" />
+<link rel="stylesheet" href="../fonts/fonts.css" />
+<style>
+  :root {
+    --cream: #f2eadc;
+    --paper: #fbf6ec;
+    --espresso: #231510;
+    --roast: #5b3423;
+    --clay: #c4502f;
+    --sage: #8b9a78;
+    --line: rgb(35 21 16 / 0.14);
+    --serif: 'Playfair', Georgia, serif;
+    --sans: 'Manrope', system-ui, sans-serif;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--cream); color: var(--espresso); font-family: var(--sans); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: min(1240px, 100% - 40px); margin-inline: auto; }
+
+  .concept-bar { background: var(--espresso); color: var(--cream); font-size: 13px; text-align: center; padding: 8px 16px; letter-spacing: 0.02em; }
+  .concept-bar a { text-decoration: underline; text-underline-offset: 3px; }
+
+  header { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--cream) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--serif); font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .brand svg { width: 26px; height: 26px; }
+  nav ul { display: flex; gap: 32px; list-style: none; font-size: 15px; }
+  nav a { position: relative; }
+  nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform 0.5s var(--ease); }
+  nav a:hover::after { transform: scaleX(1); transform-origin: left; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; border-radius: 999px; padding: 13px 24px; font-weight: 600; font-size: 15px; transition: transform 0.4s var(--ease), background 0.3s; }
+  .btn-dark { background: var(--espresso); color: var(--cream); }
+  .btn-dark:hover { background: var(--clay); transform: translateY(-2px); }
+  .btn-line { border: 1px solid var(--espresso); }
+  .btn-line:hover { background: var(--espresso); color: var(--cream); }
+
+  .hero { padding: 72px 0 40px; position: relative; }
+  .hero-top { display: flex; justify-content: space-between; font-size: 13px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--roast); }
+  .hero h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(3.6rem, 12.5vw, 11.5rem); line-height: 0.95; letter-spacing: -0.045em; margin-top: 36px; }
+  .hero h1 em { font-style: italic; color: var(--clay); font-weight: 400; }
+  .hero h1 .line { display: block; overflow: hidden; padding-top: 0.08em; margin-top: -0.08em; }
+  .hero h1 .line span { display: inline-block; animation: rise 1.2s var(--ease) both; }
+  .hero h1 .line:nth-child(2) span { animation-delay: 0.1s; }
+  .hero h1 .line:nth-child(3) span { animation-delay: 0.2s; }
+  @keyframes rise { from { transform: translateY(105%); } }
+  .hero-bottom { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 40px; margin-top: 48px; }
+  .hero-bottom p { max-width: 440px; font-size: 19px; color: var(--roast); }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .stamp { position: absolute; right: 4%; top: 150px; width: 150px; height: 150px; animation: spin 24s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .marquee { border-block: 1px solid var(--line); overflow: hidden; padding: 20px 0; margin-top: 56px; background: var(--paper); }
+  .marquee-track { display: flex; gap: 48px; width: max-content; animation: slide 40s linear infinite; font-family: var(--serif); font-size: clamp(1.6rem, 3vw, 2.4rem); font-style: italic; white-space: nowrap; }
+  .marquee-track span { display: inline-flex; align-items: center; gap: 48px; }
+  .marquee-track span::after { content: '✦'; font-style: normal; font-size: 0.6em; color: var(--clay); }
+  @keyframes slide { to { transform: translateX(-50%); } }
+
+  section { padding: 120px 0; }
+  .eyebrow { font-size: 13px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--clay); font-weight: 700; }
+  h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(2.4rem, 5.4vw, 4.6rem); line-height: 0.98; letter-spacing: -0.035em; margin-top: 16px; }
+  h2 em { font-style: italic; color: var(--clay); font-weight: 400; }
+  .section-head { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: end; margin-bottom: 64px; }
+  .section-head p { color: var(--roast); max-width: 420px; }
+
+  .coffees { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .coffee { background: var(--paper); border: 1px solid var(--line); border-radius: 28px; overflow: hidden; transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease); }
+  .coffee:hover { transform: translateY(-8px); box-shadow: 0 30px 60px -30px rgb(35 21 16 / 0.35); }
+  .coffee-art { aspect-ratio: 4 / 3.4; display: grid; place-items: center; position: relative; overflow: hidden; }
+  .coffee-art svg { width: 62%; transition: transform 0.9s var(--ease); }
+  .coffee:hover .coffee-art svg { transform: rotate(-8deg) scale(1.06); }
+  .coffee-art .origin { position: absolute; left: 20px; top: 18px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700; }
+  .coffee-body { padding: 24px 26px 28px; }
+  .coffee-body h3 { font-family: var(--serif); font-size: 30px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; }
+  .notes { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 22px; }
+  .notes li { list-style: none; font-size: 13px; border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; }
+  .coffee-foot { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); padding-top: 18px; }
+  .price { font-family: var(--serif); font-size: 24px; }
+  .price small { font-family: var(--sans); font-size: 13px; color: var(--roast); }
+  .add { width: 44px; height: 44px; border-radius: 50%; background: var(--espresso); color: var(--cream); display: grid; place-items: center; font-size: 22px; transition: background 0.3s, transform 0.4s var(--ease); }
+  .add:hover { background: var(--clay); transform: rotate(90deg); }
+
+  .process { background: var(--espresso); color: var(--cream); border-radius: 40px; margin-inline: 12px; }
+  .process .eyebrow { color: #e88a6c; }
+  .process h2 em { color: #e88a6c; }
+  .process .section-head p { color: rgb(242 234 220 / 0.7); }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid rgb(242 234 220 / 0.18); }
+  .step { padding: 32px 28px 8px 0; border-right: 1px solid rgb(242 234 220 / 0.18); }
+  .step:last-child { border-right: 0; }
+  .step + .step { padding-left: 28px; }
+  .step .num { font-family: var(--serif); font-style: italic; font-size: 64px; line-height: 1; color: #e88a6c; }
+  .step h3 { font-size: 20px; margin: 20px 0 8px; font-weight: 700; }
+  .step p { color: rgb(242 234 220 / 0.7); font-size: 16px; }
+
+  .visit { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .visit-card { border-radius: 32px; padding: 44px; min-height: 420px; display: flex; flex-direction: column; justify-content: space-between; }
+  .visit-card.map { background: var(--sage); color: var(--espresso); position: relative; overflow: hidden; }
+  .visit-card.map svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.5; }
+  .visit-card.map > * { position: relative; }
+  .visit-card.hours { background: var(--paper); border: 1px solid var(--line); }
+  .hours dl { display: grid; grid-template-columns: 1fr auto; gap: 14px 24px; font-size: 18px; }
+  .hours dt { color: var(--roast); }
+  .hours dd { font-weight: 700; text-align: right; }
+  .big-address { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1; letter-spacing: -0.03em; }
+
+  .sub { text-align: center; padding: 140px 0; }
+  .sub h2 { font-size: clamp(3rem, 8vw, 7.5rem); }
+  .sub p { max-width: 520px; margin: 24px auto 36px; color: var(--roast); font-size: 19px; }
+  .sub form { display: flex; gap: 10px; max-width: 520px; margin-inline: auto; background: var(--paper); border: 1px solid var(--line); border-radius: 999px; padding: 6px; }
+  .sub input { flex: 1; border: 0; background: transparent; padding: 0 20px; font: inherit; color: inherit; outline: none; min-width: 0; }
+
+  footer { border-top: 1px solid var(--line); padding: 40px 0 56px; font-size: 14px; color: var(--roast); }
+  footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    nav ul { display: none; }
+    .stamp { display: none; }
+    .hero-bottom, .section-head, .visit { grid-template-columns: 1fr; }
+    .coffees { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .step, .step + .step { padding: 28px 16px 20px 0; border-right: 0; border-bottom: 1px solid rgb(242 234 220 / 0.18); }
+    section { padding: 80px 0; }
+    .process { margin-inline: 0; border-radius: 28px; }
+    .visit-card { padding: 30px; min-height: 340px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="concept-bar">Koncept studia <a href="/">WebTix</a>. Pražírna Lampa je fiktivní značka.</div>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 3c-5 6-8 10-8 15a8 8 0 0 0 16 0c0-5-3-9-8-15Z" fill="#c4502f"/><path d="M16 12c-2 3-3 5-3 7a3 3 0 0 0 6 0c0-2-1-4-3-7Z" fill="#f2eadc"/></svg>
+      Lampa
+    </a>
+    <nav aria-label="Hlavní"><ul><li><a href="#kavy">Kávy</a></li><li><a href="#prazeni">Pražení</a></li><li><a href="#navsteva">Návštěva</a></li><li><a href="#odber">Předplatné</a></li></ul></nav>
+    <a class="btn btn-dark" href="#kavy">E-shop</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero" style="padding-top:72px">
+    <div class="wrap">
+      <div class="hero-top"><span>Výběrová pražírna · Brno</span><span>Od roku 2021</span></div>
+      <h1>
+        <span class="line"><span>Káva, která</span></span>
+        <span class="line"><span>voní <em>jako</em></span></span>
+        <span class="line"><span>ráno.</span></span>
+      </h1>
+      <div class="hero-bottom">
+        <p>Pražíme malé várky dvakrát týdně a posíláme je do tří dnů od pražení. Víme, z jaké farmy každé zrno pochází.</p>
+        <div class="hero-actions"><a class="btn btn-dark" href="#kavy">Vybrat kávu →</a><a class="btn btn-line" href="#odber">Předplatné</a></div>
+      </div>
+    </div>
+    <svg class="stamp" viewBox="0 0 200 200" aria-hidden="true">
+      <defs><path id="c" d="M100 100m-78 0a78 78 0 1 1 156 0a78 78 0 1 1-156 0"/></defs>
+      <circle cx="100" cy="100" r="98" fill="#c4502f"/>
+      <text font-family="Manrope" font-weight="700" font-size="15" letter-spacing="4.5" fill="#f2eadc"><textPath href="#c">ČERSTVĚ PRAŽENO · KAŽDÉ ÚTERÝ A PÁTEK · </textPath></text>
+      <path d="M100 62c-12 14-19 24-19 36a19 19 0 0 0 38 0c0-12-7-22-19-36Z" fill="#f2eadc"/>
+    </svg>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Etiopie Guji</span><span>Kolumbie Huila</span><span>Keňa Nyeri</span><span>Guatemala Huehuetenango</span><span>Rwanda Nyamasheke</span><span>Brazílie Cerrado</span>
+      <span>Etiopie Guji</span><span>Kolumbie Huila</span><span>Keňa Nyeri</span><span>Guatemala Huehuetenango</span><span>Rwanda Nyamasheke</span><span>Brazílie Cerrado</span>
+    </div>
+  </div>
+
+  <section id="kavy">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div><p class="eyebrow">Aktuální nabídka</p><h2>Tři kávy, <em>tři</em> příběhy.</h2></div>
+        <p>Nabídku měníme podle sklizně. Každou kávu si nejdřív sami ochutnáme, a když nás nebaví, nepražíme ji.</p>
+      </div>
+      <div class="coffees">
+        <article class="coffee reveal">
+          <div class="coffee-art" style="background:#e9c9a8">
+            <span class="origin">Etiopie</span>
+            <svg viewBox="0 0 120 120" aria-hidden="true"><ellipse cx="60" cy="60" rx="34" ry="48" fill="#5b3423" transform="rotate(-24 60 60)"/><path d="M44 22c20 22 20 54 32 76" stroke="#e9c9a8" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+          </div>
+          <div class="coffee-body">
+            <h3>Guji Hambela</h3>
+            <ul class="notes"><li>Bergamot</li><li>Broskev</li><li>Jasmín</li></ul>
+            <div class="coffee-foot"><span class="price">349 Kč <small>/ 250 g</small></span><a class="add" href="#" aria-label="Přidat do košíku">+</a></div>
+          </div>
+        </article>
+        <article class="coffee reveal" style="transition-delay:.08s">
+          <div class="coffee-art" style="background:#c9d1b4">
+            <span class="origin">Kolumbie</span>
+            <svg viewBox="0 0 120 120" aria-hidden="true"><ellipse cx="60" cy="60" rx="34" ry="48" fill="#231510" transform="rotate(18 60 60)"/><path d="M72 20c-18 24-16 52-26 80" stroke="#c9d1b4" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+          </div>
+          <div class="coffee-body">
+            <h3>Huila El Mirador</h3>
+            <ul class="notes"><li>Karamel</li><li>Červené jablko</li><li>Kakao</li></ul>
+            <div class="coffee-foot"><span class="price">319 Kč <small>/ 250 g</small></span><a class="add" href="#" aria-label="Přidat do košíku">+</a></div>
+          </div>
+        </article>
+        <article class="coffee reveal" style="transition-delay:.16s">
+          <div class="coffee-art" style="background:#e3a58f">
+            <span class="origin">Keňa</span>
+            <svg viewBox="0 0 120 120" aria-hidden="true"><ellipse cx="60" cy="60" rx="34" ry="48" fill="#7a2e1c" transform="rotate(-6 60 60)"/><path d="M52 16c18 26 12 58 18 88" stroke="#e3a58f" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+          </div>
+          <div class="coffee-body">
+            <h3>Nyeri Gatomboya</h3>
+            <ul class="notes"><li>Černý rybíz</li><li>Grep</li><li>Třtinový cukr</li></ul>
+            <div class="coffee-foot"><span class="price">379 Kč <small>/ 250 g</small></span><a class="add" href="#" aria-label="Přidat do košíku">+</a></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="prazeni" class="process">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div><p class="eyebrow">Jak pražíme</p><h2>Od farmy <em>k vašemu</em> hrnku.</h2></div>
+        <p>Žádné sklady, žádné měsíce v regálu. Zrno putuje od farmáře k nám a od nás rovnou k vám.</p>
+      </div>
+      <div class="steps">
+        <div class="step reveal"><span class="num">01</span><h3>Výběr</h3><p>Ochutnáváme vzorky od importérů, kteří farmáře znají osobně.</p></div>
+        <div class="step reveal" style="transition-delay:.06s"><span class="num">02</span><h3>Pražení</h3><p>Malé várky po 12 kg, každou s vlastním profilem.</p></div>
+        <div class="step reveal" style="transition-delay:.12s"><span class="num">03</span><h3>Odpočinek</h3><p>Káva se dva dny odplyní, aby chutnala čistě.</p></div>
+        <div class="step reveal" style="transition-delay:.18s"><span class="num">04</span><h3>Odeslání</h3><p>Balíme do kompostovatelných sáčků a posíláme do tří dnů.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="navsteva">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div><p class="eyebrow">Přijďte na šálek</p><h2>Pražírna <em>s okénkem</em>.</h2></div>
+        <p>Přímo u pražicího stroje máme malý bar. Zastavte se na espresso a odneste si zrno domů.</p>
+      </div>
+      <div class="visit">
+        <div class="visit-card map reveal">
+          <svg viewBox="0 0 600 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g stroke="#231510" stroke-width="1.5" fill="none" opacity=".5"><path d="M-20 120 C120 90 260 180 620 110"/><path d="M-20 260 C160 230 300 320 620 250"/><path d="M180 -20 C200 120 150 280 210 440"/><path d="M420 -20 C400 140 460 260 430 440"/><path d="M-20 360 L620 330"/></g><circle cx="318" cy="196" r="16" fill="#c4502f"/><circle cx="318" cy="196" r="34" fill="none" stroke="#c4502f" stroke-width="2"/></svg>
+          <p class="eyebrow" style="color:var(--espresso)">Adresa</p>
+          <div><p class="big-address">Na Lampě 12<br/>Brno</p><a class="btn btn-dark" style="margin-top:24px" href="#">Navigovat →</a></div>
+        </div>
+        <div class="visit-card hours reveal" style="transition-delay:.08s">
+          <p class="eyebrow">Otevřeno</p>
+          <dl><dt>Pondělí – Pátek</dt><dd>7:30 – 17:00</dd><dt>Sobota</dt><dd>9:00 – 14:00</dd><dt>Neděle</dt><dd>Zavřeno</dd><dt>Pražíme</dt><dd>Út a Pá ráno</dd></dl>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="odber" class="sub">
+    <div class="wrap reveal">
+      <p class="eyebrow">Předplatné</p>
+      <h2>Nikdy <em>bez</em> kávy.</h2>
+      <p>Každé dva týdny vám pošleme čerstvě praženou kávu podle vašeho gusta. Zrušit můžete kdykoli.</p>
+      <form onsubmit="event.preventDefault(); this.querySelector('button').textContent='Díky!';"><label for="e" class="sr" style="position:absolute;left:-9999px">E-mail</label><input id="e" type="email" placeholder="váš@email.cz" required /><button class="btn btn-dark" type="submit">Chci ochutnat</button></form>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Pražírna Lampa (fiktivní)</span><span>Design a vývoj: <a href="/" style="text-decoration:underline">WebTix</a></span></div></footer>
+
+<script>
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: 0.12 })
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el))
+</script>
+</body>
+</html>

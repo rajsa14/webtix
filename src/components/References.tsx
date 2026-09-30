@@ -6,13 +6,20 @@ import { Reveal } from './Reveal'
 
 export function References() {
   if (references.length === 0) return null
+  const hasConcepts = references.some((r) => r.concept)
 
   return (
     <section id="reference" className="relative py-24 sm:py-32">
       <div className="container-x">
         <Reveal className="max-w-2xl">
           <h2 className="text-[clamp(2.3rem,5vw,4rem)] font-semibold leading-[0.98] tracking-[-0.035em]">Reference</h2>
-          <p className="mt-5 text-lg leading-relaxed text-muted">{nb('Weby, které jsme už vytvořili.')}</p>
+          <p className="mt-5 text-lg leading-relaxed text-muted">
+            {nb(
+              hasConcepts
+                ? 'Ukázky naší práce. Weby označené jako koncept jsme navrhli pro fiktivní značky, abychom ukázali, co umíme.'
+                : 'Weby, které jsme už vytvořili.',
+            )}
+          </p>
         </Reveal>
 
         <div className="mt-14 grid gap-4 md:grid-cols-2 lg:gap-5">
@@ -48,7 +55,7 @@ export function References() {
                       rel="noopener noreferrer"
                       className="mt-5 inline-flex items-center gap-1.5 text-[15px] text-accent-soft transition-colors hover:text-fg"
                     >
-                      Otevřít web <ArrowUpRightIcon size={15} weight="bold" />
+                      {ref.concept ? 'Prohlédnout koncept' : 'Otevřít web'} <ArrowUpRightIcon size={15} weight="bold" />
                     </a>
                   )}
                 </div>

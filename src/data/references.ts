@@ -16,4 +16,25 @@ export interface Reference {
   concept?: boolean
 }
 
-export const references: Reference[] = []
+export const references: Reference[] = [
+  {
+    title: 'Pražírna Lampa',
+    client: 'Pražírna kávy',
+    type: 'Web s e-shopem',
+    description:
+      'Výběrová pražírna kávy. Redakční styl s velkou serifovou typografií, teplými barvami a nabídkou káv, která se mění podle sklizně.',
+    image: '/references/lampa.jpg',
+    url: '/koncepty/lampa/',
+    concept: true,
+  },
+  {
+    title: 'Výška Boulder',
+    client: 'Lezecká hala',
+    type: 'Firemní web',
+    description:
+      'Boulderová hala. Výrazná kondenzovaná typografie, neonové barvy chytů, bento přehled haly a jasný ceník.',
+    image: '/references/vyska.jpg',
+    url: '/koncepty/vyska/',
+    concept: true,
+  },
+]
