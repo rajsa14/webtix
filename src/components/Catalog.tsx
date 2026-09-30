@@ -12,26 +12,26 @@ import { SectionLabel } from './Decor'
 import { EASE, Reveal } from './Reveal'
 
 export function Catalog() {
-  const open = useOpenCatalog()
+  // The whole catalog stays hidden behind one button until the visitor presses it.
+  const open = useUi((s) => s.catalogOpen)
   return (
     <section id="katalog" className="relative py-24 sm:py-32">
-      <div className="container-x relative">
-        <Reveal className="max-w-5xl">
-          <SectionLabel number="02">Katalog</SectionLabel>
-          <h2 className="display-xl">
-            {nb('Nevíte přesně, jak má váš web vypadat? Nevadí.')}
-          </h2>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
-            {nb(
-              'Projděte si jednotlivé možnosti a jednoduše si označte to, co se vám líbí. Zbytek už necháte na nás.',
-            )}
-          </p>
-        </Reveal>
-      </div>
-
       <AnimatePresence mode="wait" initial={false}>
         {open ? (
           <Unfold key="catalog">
+            <div className="container-x relative">
+              <Reveal className="max-w-5xl">
+                <SectionLabel number="02">Katalog</SectionLabel>
+                <h2 className="display-xl">
+                  {nb('Nevíte přesně, jak má váš web vypadat? Nevadí.')}
+                </h2>
+                <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
+                  {nb(
+                    'Projděte si jednotlivé možnosti a jednoduše si označte to, co se vám líbí. Zbytek už necháte na nás.',
+                  )}
+                </p>
+              </Reveal>
+            </div>
             <CategoryTabs />
             <CatalogSteps />
           </Unfold>
@@ -45,38 +45,11 @@ export function Catalog() {
   )
 }
 
-/**
- * Opens the catalog from links elsewhere (hero, navbar, contact) and for
- * visitors who come back with a saved selection.
- */
-function useOpenCatalog() {
-  const open = useUi((s) => s.catalogOpen)
-  const openCatalog = useUi((s) => s.openCatalog)
-  const hasSaved = useSelection((s) => countSelected(s.selected) > 0)
-
-  useEffect(() => {
-    if (hasSaved) openCatalog()
-  }, [hasSaved, openCatalog])
-
-  useEffect(() => {
-    const wanted = (hash: string) => hash === '#katalog' || hash.startsWith('#kategorie-')
-    if (wanted(window.location.hash)) openCatalog()
-    const onClick = (e: MouseEvent) => {
-      const link = (e.target as Element | null)?.closest?.('a[href^="#"]')
-      if (link && wanted(link.getAttribute('href') ?? '')) openCatalog()
-    }
-    document.addEventListener('click', onClick, true)
-    return () => document.removeEventListener('click', onClick, true)
-  }, [openCatalog])
-
-  return open
-}
-
 /** The big button the catalog waits behind. */
 function OpenButton() {
   const openCatalog = useUi((s) => s.openCatalog)
   return (
-    <div className="container-x mt-12">
+    <div className="container-x">
       <motion.button
         type="button"
         onClick={openCatalog}
