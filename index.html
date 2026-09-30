@@ -40,6 +40,24 @@
   </head>
   <body>
     <div id="root"></div>
+    <!--
+      Blueprint of the inquiry form for Netlify Forms. Netlify reads it at
+      deploy time; the real form is rendered by React and posts the same fields.
+    -->
+    <form name="poptavka" data-netlify="true" netlify-honeypot="website" hidden>
+      <input name="subject" />
+      <input name="name" />
+      <input name="company" />
+      <input name="email" />
+      <input name="phone" />
+      <input name="webType" />
+      <input name="budget" />
+      <input name="deadline" />
+      <textarea name="design"></textarea>
+      <textarea name="message"></textarea>
+      <textarea name="inspiration"></textarea>
+      <input name="website" />
+    </form>
     <noscript>
       <p style="font-family: system-ui; padding: 24px; color: #eef0f5; background: #07080b">
         WebTix potřebuje pro katalog zapnutý JavaScript. Napište nám na webtixx1@gmail.com.
