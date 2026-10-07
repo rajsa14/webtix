@@ -1,6 +1,7 @@
 import { ImageIcon } from '@phosphor-icons/react'
 import type { CSSProperties, ReactNode } from 'react'
 import type { ButtonItem, LayoutCell, LayoutItem, ThemeRoles, WebStyleEffect } from '../../data/types'
+import { useT } from '../../i18n'
 import { cx, nb } from '../../lib/text'
 import { ButtonSample, DEFAULT_BUTTON } from './ButtonSample'
 
@@ -36,13 +37,6 @@ export const DEFAULT_THEME: ThemeRoles = {
 }
 
 export const DEFAULT_FONT: FontSpec = { family: "'Manrope Variable', sans-serif", weight: 700 }
-
-export const DEFAULT_CONTENT: MiniContent = {
-  brand: 'Vaše značka',
-  heading: 'Váš nový web',
-  text: 'Krátký úvod, který návštěvníkům řekne, co děláte a proč právě vy.',
-  cta: 'Zjistit více',
-}
 
 const WIRE: ThemeRoles = {
   bg: '#e7e6de',
@@ -104,12 +98,13 @@ export function MiniSite({
   className,
   eager = false,
 }: MiniSiteProps) {
+  const defaultContent = useT().preview.content
   const live = mode === 'live'
   const ctx: Ctx = {
     live,
     t: live ? (theme ?? DEFAULT_THEME) : WIRE,
     f: font ?? DEFAULT_FONT,
-    c: content ?? DEFAULT_CONTENT,
+    c: content ?? defaultContent,
     button: button ?? DEFAULT_BUTTON,
     radius,
     effect: live ? effect : 'none',

@@ -107,6 +107,3 @@ export const fonts: FontItem[] = [
     description: 'Grotesk s osobitými detaily. Právě tímto písmem je napsaný web WebTix.',
   },
 ]
-
-/** Czech pangram shown on every font card, so clients see diacritics. */
-export const FONT_PANGRAM = 'Příliš žluťoučký kůň úpěl ďábelské ódy.'

@@ -1,5 +1,5 @@
 import { layouts } from '../../data/layouts'
-import { FONT_PANGRAM } from '../../data/fonts'
+import { useT } from '../../i18n'
 import type {
   ButtonItem,
   CatalogItem,
@@ -33,6 +33,7 @@ export function CatalogPreview({ category, item }: { category: CategoryId; item:
 }
 
 function FontPreview({ item }: { item: FontItem }) {
+  const pangram = useT().catalog.pangram
   return (
     <div className="relative flex aspect-[16/9] flex-col justify-between overflow-hidden bg-ink-850 p-5">
       <span
@@ -55,7 +56,7 @@ function FontPreview({ item }: { item: FontItem }) {
         {nb(item.sample)}
       </p>
       <p className="relative text-[13px] leading-snug text-muted" style={{ fontFamily: item.family }}>
-        {FONT_PANGRAM}
+        {pangram}
       </p>
     </div>
   )
@@ -106,6 +107,7 @@ function PhotoPreview({ item }: { item: PhotoItem }) {
 }
 
 function WebStylePreview({ item }: { item: WebStyleItem }) {
+  const more = useT().catalog.more
   const layout = layouts.find((l) => l.id === item.layout) ?? layouts[0]
   return (
     <div className="aspect-[16/11] overflow-hidden">
@@ -124,7 +126,7 @@ function WebStylePreview({ item }: { item: WebStyleItem }) {
           uppercase: item.uppercase,
         }}
         images={item.image ? [item.image] : []}
-        content={{ brand: item.name, heading: item.heading, text: item.description, cta: 'Více' }}
+        content={{ brand: item.name, heading: item.heading, text: item.description, cta: more }}
         radius={item.radius}
         effect={item.effect}
       />
@@ -135,7 +137,7 @@ function WebStylePreview({ item }: { item: WebStyleItem }) {
 function ButtonPreview({ item }: { item: ButtonItem }) {
   return (
     <div className="wbtn-host grid aspect-[5/4] place-items-center bg-ink-850 px-3">
-      <ButtonSample item={item} label="Začít projekt" className="text-[14px]" />
+      <ButtonSample item={item} className="text-[14px]" />
     </div>
   )
 }

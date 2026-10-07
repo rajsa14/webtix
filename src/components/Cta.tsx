@@ -1,12 +1,12 @@
 import { ArrowRightIcon } from '@phosphor-icons/react'
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react'
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, PointerEvent, ReactNode } from 'react'
 import { cx } from '../lib/text'
 
 type Variant = 'primary' | 'secondary' | 'ghost'
 type Size = 'md' | 'lg'
 
 const base =
-  'group/cta relative inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium transition-[transform,background-color,border-color,color,box-shadow] duration-300 ease-[var(--ease-out-expo)] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60'
+  'group/cta relative inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium transition-[transform,translate,scale,background-color,border-color,color,box-shadow] duration-300 ease-[var(--ease-out-expo)] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-60'
 
 const variants: Record<Variant, string> = {
   primary:
@@ -45,6 +45,23 @@ function Inner({ children, arrow, icon }: Pick<CommonProps, 'children' | 'arrow'
   )
 }
 
+/**
+ * Large buttons lean a little toward the mouse. Uses the CSS `translate`
+ * property, so it never fights the `scale` used for the pressed state.
+ */
+const magnet = {
+  onPointerMove(e: PointerEvent<HTMLElement>) {
+    if (e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const r = e.currentTarget.getBoundingClientRect()
+    const x = (e.clientX - r.left - r.width / 2) * 0.22
+    const y = (e.clientY - r.top - r.height / 2) * 0.35
+    e.currentTarget.style.translate = `${x}px ${y}px`
+  },
+  onPointerLeave(e: PointerEvent<HTMLElement>) {
+    e.currentTarget.style.translate = ''
+  },
+}
+
 export function CtaLink({
   variant = 'primary',
   size = 'md',
@@ -55,7 +72,7 @@ export function CtaLink({
   ...rest
 }: CommonProps & AnchorHTMLAttributes<HTMLAnchorElement>) {
   return (
-    <a className={cx(base, variants[variant], sizes[size], className)} {...rest}>
+    <a className={cx(base, variants[variant], sizes[size], className)} {...(size === 'lg' ? magnet : {})} {...rest}>
       <Inner arrow={arrow} icon={icon}>
         {children}
       </Inner>

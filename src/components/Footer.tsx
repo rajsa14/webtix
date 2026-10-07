@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import { NAV_LINKS, SITE } from '../data/site'
 import { team } from '../data/team'
+import { useT } from '../i18n'
 import { LegalDialog, type LegalDoc } from './LegalDialog'
 import { PlayfulWord } from './Decor'
+import { LangSwitch } from './LangSwitch'
 import { Logo } from './Logo'
 
 export function Footer() {
   const [doc, setDoc] = useState<LegalDoc | null>(null)
+  const t = useT()
   const heading = 'mb-4 font-mono text-[12px] uppercase tracking-[0.12em] text-muted'
 
   return (
@@ -14,19 +17,20 @@ export function Footer() {
       <div className="container-x">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
-            <a href="#domu" className="inline-block rounded-full" aria-label={`${SITE.name}, zpět nahoru`}>
+            <a href="#domu" className="inline-block rounded-full" aria-label={t.nav.home(SITE.name)}>
               <Logo />
             </a>
-            <p className="mt-4 max-w-xs text-lg leading-snug text-fg/90">{SITE.tagline}</p>
+            <p className="mt-4 max-w-xs text-lg leading-snug text-fg/90">{t.footer.tagline}</p>
+            <LangSwitch id="lang-footer" className="mt-6 w-fit" />
           </div>
 
-          <nav aria-label="Navigace v patičce">
-            <h2 className={heading}>Navigace</h2>
+          <nav aria-label={t.footer.navAria}>
+            <h2 className={heading}>{t.footer.nav}</h2>
             <ul className="grid gap-2.5">
-              {NAV_LINKS.map((link) => (
-                <li key={link.id}>
-                  <a href={`#${link.id}`} className="text-fg/85 transition-colors hover:text-accent">
-                    {link.label}
+              {NAV_LINKS.map((id) => (
+                <li key={id}>
+                  <a href={`#${id}`} className="text-fg/85 transition-colors hover:text-accent">
+                    {t.nav.links[id]}
                   </a>
                 </li>
               ))}
@@ -34,14 +38,14 @@ export function Footer() {
           </nav>
 
           <div>
-            <h2 className={heading}>Kontakt</h2>
+            <h2 className={heading}>{t.footer.contact}</h2>
             <a href={`mailto:${SITE.email}`} className="text-fg/85 transition-colors hover:text-accent">
               {SITE.email}
             </a>
           </div>
 
           <div>
-            <h2 className={heading}>Tým</h2>
+            <h2 className={heading}>{t.footer.team}</h2>
             <p className="leading-relaxed text-fg/85">{team.map((m) => m.name).join(' & ')}</p>
           </div>
         </div>
@@ -63,10 +67,10 @@ export function Footer() {
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             <button type="button" onClick={() => setDoc('privacy')} className="transition-colors hover:text-fg">
-              Ochrana osobních údajů
+              {t.footer.privacy}
             </button>
             <button type="button" onClick={() => setDoc('terms')} className="transition-colors hover:text-fg">
-              Obchodní podmínky
+              {t.footer.terms}
             </button>
           </div>
         </div>

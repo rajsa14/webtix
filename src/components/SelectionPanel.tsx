@@ -2,9 +2,10 @@ import { ArrowRightIcon, SquaresFourIcon, TrashIcon, XIcon } from '@phosphor-ico
 import { AnimatePresence, motion, useDragControls, useReducedMotion } from 'motion/react'
 import { useCallback, useEffect, useRef, useState, type Ref, type RefObject } from 'react'
 import { catalog } from '../data/catalog'
-import { plural, useEscape, useFocusTrap, useScrollLock } from '../lib/hooks'
+import { useCatalog, useT } from '../i18n'
+import { useEscape, useFocusTrap, useScrollLock } from '../lib/hooks'
 import { cx, scrollToId } from '../lib/text'
-import { countCategoriesDone, countSelected, isUnlocked, nextOpenCategory, resetNote, useSelection } from '../store/selection'
+import { countCategoriesDone, countSelected, isUnlocked, nextOpenCategory, useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
 import { LivePreview } from './LivePreview'
 import { ItemToken } from './previews/ItemToken'
@@ -40,6 +41,7 @@ function SelectionFab({
   ref: Ref<HTMLButtonElement>
 }) {
   const circumference = 2 * Math.PI * 15
+  const t = useT()
   return (
     <motion.div
       initial={{ y: 80, opacity: 0 }}
@@ -52,7 +54,7 @@ function SelectionFab({
         type="button"
         onClick={onOpen}
         aria-haspopup="dialog"
-        aria-label={`Můj výběr, ${total} ${plural(total, ['položka', 'položky', 'položek'])}`}
+        aria-label={t.panel.fabAria(total)}
         tabIndex={hidden ? -1 : 0}
         className="group flex h-14 w-full items-center gap-3 rounded-full bg-fg pl-2 pr-2 text-ink-950 shadow-[0_18px_40px_-18px_rgb(18_18_16/0.5)] transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.98] sm:w-auto"
       >
@@ -75,9 +77,9 @@ function SelectionFab({
           <SquaresFourIcon size={17} weight="duotone" className="text-ink-950" />
         </span>
         <span className="flex flex-1 flex-col items-start leading-tight">
-          <span className="text-[14.5px] font-medium">Můj výběr</span>
+          <span className="text-[14.5px] font-medium">{t.panel.title}</span>
           <span className="text-[12px] text-ink-950/60">
-            {done}/{catalog.length} kategorií
+            {t.panel.progress(done, catalog.length)}
           </span>
         </span>
         <motion.span
@@ -202,6 +204,8 @@ function DrawerBody({
   closeRef: RefObject<HTMLButtonElement | null>
   goTo: (id: string) => void
 }) {
+  const t = useT()
+  const catalog = useCatalog()
   const selected = useSelection((s) => s.selected)
   const remove = useSelection((s) => s.remove)
   const clear = useSelection((s) => s.clear)
@@ -220,17 +224,17 @@ function DrawerBody({
       <div className="flex items-start justify-between gap-4 px-5 pb-4 pt-3 sm:px-6 sm:pt-6">
         <div>
           <h2 id="selection-title" className="text-2xl font-semibold tracking-[-0.02em]">
-            Můj výběr
+            {t.panel.title}
           </h2>
           <p className="mt-0.5 text-sm text-muted" aria-live="polite">
-            {total === 0 ? 'Zatím nic vybráno' : `${total} ${plural(total, ['položka', 'položky', 'položek'])}`}
+            {total === 0 ? t.panel.empty : t.panel.count(total)}
           </p>
         </div>
         <button
           ref={closeRef}
           type="button"
           onClick={onClose}
-          aria-label="Zavřít výběr"
+          aria-label={t.panel.close}
           className="grid size-10 shrink-0 place-items-center rounded-full border border-line text-muted transition-colors hover:bg-fg/[0.06] hover:text-fg"
         >
           <XIcon size={18} />
@@ -253,7 +257,7 @@ function DrawerBody({
                     onClick={() => goTo(`kategorie-${isUnlocked(selected, cat.id) ? cat.id : nextOpenCategory(selected)?.id}`)}
                     className="rounded-full px-2 py-1 text-[12.5px] text-accent transition-colors hover:bg-accent/10 hover:text-fg"
                   >
-                    {ids.length ? 'Upravit' : 'Vybrat'}
+                    {ids.length ? t.panel.edit : t.panel.choose}
                     <span className="sr-only">: {cat.label}</span>
                   </button>
                 </div>
@@ -280,9 +284,9 @@ function DrawerBody({
                                 type="button"
                                 onClick={() => {
                                   const cleared = remove(cat.id, id)
-                                  toast(`${item.name} odebráno z výběru${resetNote(cleared)}`, 'info')
+                                  toast(t.card.removed(item.name) + (cleared > 0 ? t.card.reset : ''), 'info')
                                 }}
-                                aria-label={`Odebrat ${item.name}`}
+                                aria-label={t.panel.removeAria(item.name)}
                                 className="grid size-9 place-items-center rounded-full text-muted transition-colors hover:bg-danger/10 hover:text-danger"
                               >
                                 <XIcon size={15} weight="bold" />
@@ -308,7 +312,7 @@ function DrawerBody({
             if (!confirmClear) return setConfirmClear(true)
             clear()
             setConfirmClear(false)
-            toast('Výběr byl vymazán', 'info')
+            toast(t.panel.cleared, 'info')
           }}
           className={cx(
             'inline-flex h-11 items-center gap-2 rounded-full px-4 text-sm transition-colors disabled:pointer-events-none disabled:opacity-40',
@@ -316,14 +320,14 @@ function DrawerBody({
           )}
         >
           <TrashIcon size={16} />
-          {confirmClear ? 'Opravdu vymazat?' : 'Vymazat'}
+          {confirmClear ? t.panel.confirmClear : t.panel.clear}
         </button>
         <button
           type="button"
           onClick={() => goTo(total ? 'poptavka' : 'katalog')}
           className="group/cta ml-auto inline-flex h-11 items-center gap-2 rounded-full bg-accent-strong px-5 text-[14.5px] font-medium text-white  transition-[background-color,transform] hover:bg-accent active:scale-[0.98]"
         >
-          {total ? 'Pokračovat k odeslání' : 'Otevřít katalog'}
+          {total ? t.panel.continue : t.panel.openCatalog}
           <ArrowRightIcon size={16} weight="bold" className="transition-transform group-hover/cta:translate-x-0.5" />
         </button>
       </div>

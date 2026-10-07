@@ -1,17 +1,20 @@
 import { motion } from 'motion/react'
-import { reasons } from '../data/content'
+import { useT } from '../i18n'
 import { nb } from '../lib/text'
 import { SectionLabel } from './Decor'
 import { EASE, Reveal } from './Reveal'
 
 export function WhyWebTix() {
+  const t = useT()
+  const reasons = t.why.reasons
   return (
     <section id="proc-webtix" className="relative py-24 sm:py-32">
       <div className="container-x">
         <Reveal>
-          <SectionLabel number="06">Proč my</SectionLabel>
+          <SectionLabel number="08">{t.why.label}</SectionLabel>
           <h2 className="display-xl max-w-5xl">
-            Dva lidi. Žádná agentura<span className="text-accent">.</span>
+            {t.why.title}
+            <span className="text-accent">.</span>
           </h2>
         </Reveal>
 

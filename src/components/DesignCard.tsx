@@ -1,10 +1,11 @@
 import { CheckIcon, PlusIcon } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { MouseEvent } from 'react'
-import { catalog, categoryById } from '../data/catalog'
+import { catalog } from '../data/catalog'
 import type { CatalogItem, CategoryId } from '../data/types'
+import { getT, localizedCategory, useLang, useT } from '../i18n'
 import { cx, nb } from '../lib/text'
-import { resetNote, unlockedCount, useSelection } from '../store/selection'
+import { unlockedCount, useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
 import { CatalogPreview } from './previews/CatalogPreview'
 
@@ -21,26 +22,30 @@ export function DesignCard({
 }) {
   const toggle = useSelection((s) => s.toggle)
   const toast = useUi((s) => s.toast)
+  const t = useT()
 
   const handle = () => {
-    const cat = categoryById[category]
+    const lang = useLang.getState().lang
+    const { card } = getT()
+    const cat = localizedCategory(lang, category)
     const before = unlockedCount(useSelection.getState().selected)
     const result = toggle(category, item.id)
-    const unlocked = unlockedCount(useSelection.getState().selected) > before ? catalog[before] : undefined
+    const unlocked = unlockedCount(useSelection.getState().selected) > before ? localizedCategory(lang, catalog[before].id) : undefined
+    const reset = (n: number) => (n > 0 ? card.reset : '')
     switch (result.type) {
       case 'added':
-        toast(`${cat.label}: ${item.name} je ve výběru${unlocked ? `. Odemkli jsme další krok: ${unlocked.label}` : ''}`)
+        toast(card.added(cat.label, item.name, unlocked?.label))
         break
       case 'replaced': {
-        const prev = cat.items.find((i) => i.id === result.previousId)?.name
-        toast(`${cat.label}: ${prev} nahrazeno za ${item.name}${resetNote(result.reset)}`, 'info')
+        const prev = cat.items.find((i) => i.id === result.previousId)?.name ?? ''
+        toast(card.replaced(cat.label, prev, item.name) + reset(result.reset), 'info')
         break
       }
       case 'removed':
-        toast(`${item.name} odebráno z výběru${resetNote(result.reset)}`, 'info')
+        toast(card.removed(item.name) + reset(result.reset), 'info')
         break
       case 'limit':
-        toast(`${cat.label}: vybrat můžete nejvýše ${result.max} možnosti. Nejdřív některou odeberte.`, 'error')
+        toast(card.limit(cat.label, result.max), 'error')
         break
     }
   }
@@ -53,7 +58,7 @@ export function DesignCard({
   return (
     <article
       onClick={handle}
-      data-cursor={selected ? 'Odebrat' : 'Vybrat'}
+      data-cursor={selected ? t.card.remove : t.card.select}
       data-selected={selected || undefined}
       className={cx(
         'wbtn-host group relative flex cursor-pointer flex-col rounded-card border bg-ink-900 transition-[border-color,background-color,box-shadow,transform] duration-300 ease-[var(--ease-out-expo)]',
@@ -100,7 +105,7 @@ export function DesignCard({
           )}
         >
           {selected ? <CheckIcon size={14} weight="bold" /> : <PlusIcon size={14} weight="bold" />}
-          {selected ? 'Vybráno' : 'Vybrat'}
+          {selected ? t.card.selected : t.card.select}
           <span className="sr-only">: {item.name}</span>
         </button>
       </div>

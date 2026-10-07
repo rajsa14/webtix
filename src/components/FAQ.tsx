@@ -1,22 +1,24 @@
 import { PlusIcon } from '@phosphor-icons/react'
 import { useId, useState } from 'react'
-import { faq } from '../data/content'
 import { SITE } from '../data/site'
+import { useT } from '../i18n'
 import { cx, nb } from '../lib/text'
 import { SectionLabel } from './Decor'
 import { Reveal } from './Reveal'
 
 export function FAQ() {
   const [open, setOpen] = useState<number | null>(0)
+  const t = useT()
+  const faq = t.faq.items
 
   return (
     <section id="faq" className="relative py-24 sm:py-32">
       <div className="container-x grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
         <Reveal className="self-start lg:sticky lg:top-28">
-          <SectionLabel number="07">FAQ</SectionLabel>
-          <h2 className="display-xl">Časté otázky</h2>
+          <SectionLabel number="09">{t.faq.label}</SectionLabel>
+          <h2 className="display-xl">{t.faq.title}</h2>
           <p className="mt-5 max-w-sm text-lg leading-relaxed text-muted">
-            Nenašli jste odpověď? Napište nám na{' '}
+            {t.faq.notFound}{' '}
             <a href={`mailto:${SITE.email}`} className="text-fg underline decoration-line-strong underline-offset-4 transition-colors hover:text-accent hover:decoration-accent">
               {SITE.email}
             </a>

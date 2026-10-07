@@ -2,6 +2,7 @@ import { CopyIcon, EnvelopeSimpleIcon, SealCheckIcon, XIcon } from '@phosphor-ic
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, type ReactNode } from 'react'
 import { SITE } from '../data/site'
+import { useT } from '../i18n'
 import { useEscape, useFocusTrap, useScrollLock } from '../lib/hooks'
 import type { InquiryPayload } from '../lib/inquiry'
 import { mailtoHref } from '../lib/sendInquiry'
@@ -65,19 +66,20 @@ function Badge({ children }: { children: ReactNode }) {
 }
 
 function Sent({ onClose }: { onClose: () => void }) {
+  const t = useT()
   return (
     <div className="relative">
       <Badge>
         <SealCheckIcon size={32} weight="fill" />
       </Badge>
       <h2 id="result-title" className="mt-7 text-[2rem] font-semibold leading-tight tracking-[-0.03em]">
-        Děkujeme za vaši představu!
+        {t.result.sentTitle}
       </h2>
       <p className="mx-auto mt-3 max-w-sm leading-relaxed text-muted">
-        {nb('Vaši zprávu jsme přijali. Projdeme si váš výběr a ozveme se vám.')}
+        {nb(t.result.sentText)}
       </p>
       <CtaButton data-autofocus size="lg" className="mt-8" onClick={onClose} arrow>
-        Zpět na WebTix
+        {t.result.back}
       </CtaButton>
     </div>
   )
@@ -85,13 +87,14 @@ function Sent({ onClose }: { onClose: () => void }) {
 
 function NotConfigured({ payload, onClose }: { payload: InquiryPayload; onClose: () => void }) {
   const toast = useUi((s) => s.toast)
+  const t = useT()
 
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(`${payload.subject}\n\n${payload.text}`)
-      toast('Text poptávky je zkopírovaný')
+      toast(t.result.copied)
     } catch {
-      toast('Kopírování se nepovedlo. Označte text ručně.', 'error')
+      toast(t.result.copyFailed, 'error')
     }
   }
 
@@ -100,7 +103,7 @@ function NotConfigured({ payload, onClose }: { payload: InquiryPayload; onClose:
       <button
         type="button"
         onClick={onClose}
-        aria-label="Zavřít"
+        aria-label={t.result.close}
         className="absolute -right-2 -top-2 grid size-10 place-items-center rounded-full text-muted transition-colors hover:bg-fg/[0.06] hover:text-fg"
       >
         <XIcon size={18} />
@@ -109,12 +112,10 @@ function NotConfigured({ payload, onClose }: { payload: InquiryPayload; onClose:
         <EnvelopeSimpleIcon size={30} weight="fill" />
       </Badge>
       <h2 id="result-title" className="mt-7 text-center text-[1.8rem] font-semibold leading-tight tracking-[-0.03em]">
-        Poptávka je připravená
+        {t.result.readyTitle}
       </h2>
       <p className="mx-auto mt-3 max-w-md text-center leading-relaxed text-muted">
-        {nb(
-          `Odesílání přímo z webu zatím není zapojené, proto vaše zpráva ještě neodešla. Otevřete připravený e-mail ve své poště, nebo text zkopírujte a pošlete na ${SITE.email}.`,
-        )}
+        {nb(t.result.readyText(SITE.email))}
       </p>
       <pre className="mt-6 max-h-44 overflow-auto whitespace-pre-wrap rounded-[12px] border border-line bg-ink-950 p-4 font-mono text-[12px] leading-relaxed text-muted">
         {payload.text}
@@ -126,10 +127,10 @@ function NotConfigured({ payload, onClose }: { payload: InquiryPayload; onClose:
           className="inline-flex h-13 flex-1 items-center justify-center gap-2 rounded-full bg-accent-strong px-5 font-medium text-white transition-colors hover:bg-accent"
         >
           <EnvelopeSimpleIcon size={18} />
-          Otevřít v e-mailu
+          {t.result.openMail}
         </a>
         <CtaButton variant="secondary" size="lg" onClick={copy} icon={<CopyIcon size={18} />} className="flex-1">
-          Zkopírovat text
+          {t.result.copy}
         </CtaButton>
       </div>
     </div>

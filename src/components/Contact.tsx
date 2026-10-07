@@ -1,6 +1,7 @@
 import { CheckIcon, CopyIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
 import { SITE } from '../data/site'
+import { useT } from '../i18n'
 import { nb } from '../lib/text'
 import { useUi } from '../store/ui'
 import { CtaLink } from './Cta'
@@ -8,6 +9,7 @@ import { LogoMark } from './Logo'
 import { Reveal } from './Reveal'
 
 export function Contact() {
+  const t = useT()
   return (
     <section id="kontakt" className="relative py-16 sm:py-24">
       <div className="container-x">
@@ -16,14 +18,14 @@ export function Contact() {
             <LogoMark mono className="pointer-events-none absolute -bottom-16 -right-10 h-72 w-auto opacity-20 sm:h-96" />
             <div className="relative">
               <h2 className="mx-auto max-w-5xl text-[clamp(3rem,9vw,8.5rem)] font-extrabold leading-[0.93] tracking-[-0.06em]">
-                Máte projekt? Pojďme ho postavit.
+                {t.contact.title}
               </h2>
               <p className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-white/80">
-                {nb('Pošlete nám svou představu a společně zjistíme, co pro vás můžeme vytvořit.')}
+                {nb(t.contact.lead)}
               </p>
               <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <CtaLink href="#katalog" size="lg" arrow>
-                  Začít s výběrem
+                  {t.contact.start}
                 </CtaLink>
                 <EmailPill />
               </div>
@@ -37,16 +39,17 @@ export function Contact() {
 
 function EmailPill() {
   const toast = useUi((s) => s.toast)
+  const t = useT()
   const [copied, setCopied] = useState(false)
 
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(SITE.email)
       setCopied(true)
-      toast('E-mail je zkopírovaný')
+      toast(t.contact.copied)
       window.setTimeout(() => setCopied(false), 2000)
     } catch {
-      toast('Kopírování se nepovedlo', 'error')
+      toast(t.contact.copyFailed, 'error')
     }
   }
 
@@ -58,7 +61,7 @@ function EmailPill() {
       <button
         type="button"
         onClick={copy}
-        aria-label="Zkopírovat e-mail"
+        aria-label={t.contact.copyAria}
         className="ml-1 grid size-10 place-items-center rounded-full text-white/80 transition-colors hover:bg-white/15 hover:text-white"
       >
         {copied ? <CheckIcon size={17} weight="bold" className="text-white" /> : <CopyIcon size={17} />}

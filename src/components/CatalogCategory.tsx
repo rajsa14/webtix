@@ -1,18 +1,20 @@
 import { CaretDownIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
 import type { CatalogCategoryConfig } from '../data/catalog'
+import { useT } from '../i18n'
 import { cx, nb } from '../lib/text'
 import { useSelection } from '../store/selection'
 import { DesignCard } from './DesignCard'
 import { Reveal } from './Reveal'
 
 export function CatalogCategory({ category }: { category: CatalogCategoryConfig }) {
+  const t = useT()
   const selectedIds = useSelection((s) => s.selected[category.id])
   const [expanded, setExpanded] = useState(false)
   const compact = category.density === 'compact'
   const visible = expanded ? category.items : category.items.slice(0, category.initialVisible)
   const hiddenCount = category.items.length - category.initialVisible
-  const rule = category.max === 1 ? 'Vyberte jednu možnost' : `Vyberte až ${category.max} možnosti`
+  const rule = category.max === 1 ? t.catalog.ruleOne : t.catalog.ruleMax(category.max)
 
   return (
     <div id={`kategorie-${category.id}`} className="scroll-mt-[152px]">
@@ -61,7 +63,7 @@ export function CatalogCategory({ category }: { category: CatalogCategoryConfig 
             aria-expanded={expanded}
             className="inline-flex h-10 items-center gap-2 rounded-full border border-line-strong px-5 text-sm text-fg transition-colors hover:bg-fg/[0.06]"
           >
-            {expanded ? 'Zobrazit méně' : `Zobrazit všech ${category.items.length}`}
+            {expanded ? t.catalog.showLess : t.catalog.showAll(category.items.length)}
             <CaretDownIcon
               size={14}
               weight="bold"

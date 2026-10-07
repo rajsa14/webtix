@@ -73,10 +73,3 @@ export function useFocusTrap(active: boolean, container: RefObject<HTMLElement |
     return () => window.removeEventListener('keydown', onKey)
   }, [active, container])
 }
-
-/** Czech plural: plural(5, ['položka', 'položky', 'položek']) → "položek". */
-export function plural(n: number, forms: [string, string, string]) {
-  if (n === 1) return forms[0]
-  if (n >= 2 && n <= 4) return forms[1]
-  return forms[2]
-}

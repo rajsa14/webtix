@@ -3,7 +3,6 @@ import { references } from './references'
 /** Global WebTix facts. Change them here and they update everywhere. */
 export const SITE = {
   name: 'WebTix',
-  tagline: 'Weby podle vašich představ.',
   email: 'webtixx1@gmail.com',
   year: 2026,
   /**
@@ -13,11 +12,13 @@ export const SITE = {
   legal: [] as string[],
 } as const
 
+/** Section ids in the navigation. Labels are in i18n (nav.links). */
 export const NAV_LINKS = [
-  { id: 'domu', label: 'Domů' },
-  { id: 'katalog', label: 'Katalog' },
-  { id: 'jak-to-funguje', label: 'Jak to funguje' },
-  ...(references.length > 0 ? [{ id: 'reference', label: 'Reference' }] : []),
-  { id: 'o-nas', label: 'O nás' },
-  { id: 'kontakt', label: 'Kontakt' },
+  'domu',
+  'katalog',
+  'jak-to-funguje',
+  ...(references.length > 0 ? ['reference'] : []),
+  'sluzby',
+  'o-nas',
+  'kontakt',
 ]

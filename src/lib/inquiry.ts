@@ -1,5 +1,6 @@
 import { catalog } from '../data/catalog'
 import { SITE } from '../data/site'
+import type { Lang } from '../i18n'
 import type { Selection } from '../store/selection'
 
 export interface InquiryForm {
@@ -15,6 +16,8 @@ export interface InquiryForm {
 }
 
 export interface InquiryPayload {
+  /** Language the visitor used on the site, so the reply can match it. */
+  language: Lang
   to: string
   subject: string
   replyTo: string
@@ -36,9 +39,10 @@ export function describeSelection(selected: Selection) {
 
 const orDash = (value: string) => value.trim() || 'neuvedeno'
 
-export function buildInquiry(form: InquiryForm, selected: Selection): InquiryPayload {
+/** The e-mail is always in Czech (it goes to us); only the language line tells which version the visitor used. */
+export function buildInquiry(form: InquiryForm, selected: Selection, language: Lang): InquiryPayload {
   const design = describeSelection(selected)
-  const subject = `Nová poptávka – ${SITE.name}${form.company ? ` (${form.company.trim()})` : ''}`
+  const subject = `Nová poptávka${language === 'en' ? ' [EN]' : ''} – ${SITE.name}${form.company ? ` (${form.company.trim()})` : ''}`
 
   const text = [
     `Nová poptávka – ${SITE.name}`,
@@ -50,6 +54,7 @@ export function buildInquiry(form: InquiryForm, selected: Selection): InquiryPay
     `Typ webu: ${form.webType}`,
     `Rozpočet: ${orDash(form.budget)}`,
     `Termín: ${orDash(form.deadline)}`,
+    `Jazyk webu: ${language === 'en' ? 'angličtina (odpovězte anglicky)' : 'čeština'}`,
     '',
     'Design',
     ...design.map((d) => `${d.category}: ${d.items.length ? d.items.join(', ') : 'nevybráno'}`),
@@ -59,5 +64,5 @@ export function buildInquiry(form: InquiryForm, selected: Selection): InquiryPay
     ...(form.inspiration.trim() ? ['', 'Inspirace', form.inspiration.trim()] : []),
   ].join('\n')
 
-  return { to: SITE.email, subject, replyTo: form.email.trim(), text, form, design }
+  return { language, to: SITE.email, subject, replyTo: form.email.trim(), text, form, design }
 }

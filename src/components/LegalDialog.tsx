@@ -1,65 +1,18 @@
 import { XIcon } from '@phosphor-icons/react'
 import { useEffect, useRef } from 'react'
 import { SITE } from '../data/site'
+import { useT } from '../i18n'
 import { nb } from '../lib/text'
 
 export type LegalDoc = 'privacy' | 'terms'
 
 /*
- * Draft legal texts. Review them before the site goes live, ideally with
- * someone who knows GDPR and Czech consumer law.
+ * Draft legal texts live in i18n (legal). Review them before the site goes
+ * live, ideally with someone who knows GDPR and Czech consumer law.
  */
-const DOCS: Record<LegalDoc, { title: string; sections: { h: string; p: string }[] }> = {
-  privacy: {
-    title: 'Ochrana osobních údajů',
-    sections: [
-      {
-        h: 'Kdo údaje zpracovává',
-        p: `WebTix, tedy Richard Buchníček a Daniel Švéda. Kontaktovat nás můžete na ${SITE.email}.`,
-      },
-      {
-        h: 'Jaké údaje zpracováváme',
-        p: 'Údaje, které vyplníte ve formuláři: jméno, název firmy, e-mail, telefon (pokud ho uvedete), informace o projektu, rozpočet, termín a váš výběr z katalogu.',
-      },
-      {
-        h: 'Proč je zpracováváme',
-        p: 'Abychom mohli odpovědět na vaši poptávku, připravit ukázku a nabídku. Údaje nepoužíváme k marketingu a neprodáváme je. Pro doručení zprávy může být použita e-mailová služba, přes kterou formulář odesíláme.',
-      },
-      {
-        h: 'Váš výběr v prohlížeči',
-        p: 'Položky, které si v katalogu označíte, se ukládají jen ve vašem prohlížeči (localStorage), aby nezmizely po obnovení stránky. K nám se dostanou až ve chvíli, kdy odešlete formulář. Smazat je můžete tlačítkem Vymazat v panelu Můj výběr.',
-      },
-      {
-        h: 'Vaše práva',
-        p: `Můžete nás požádat o přístup k údajům, jejich opravu nebo výmaz. Stačí napsat na ${SITE.email}.`,
-      },
-    ],
-  },
-  terms: {
-    title: 'Obchodní podmínky',
-    sections: [
-      {
-        h: 'Poptávka je nezávazná',
-        p: 'Odesláním výběru a formuláře nevzniká žádná smlouva ani povinnost cokoliv platit.',
-      },
-      {
-        h: 'Cena a rozsah',
-        p: 'Cenu, rozsah prací a termín vždy domlouváme individuálně. Před zahájením práce vše potvrdíme písemně.',
-      },
-      {
-        h: 'Ukázka webu',
-        p: 'Ukázka připravená podle vašeho výběru slouží k odsouhlasení směru designu. Počet úprav a podmínky předání webu jsou součástí nabídky.',
-      },
-      {
-        h: 'Fotografie v katalogu',
-        p: 'Fotografie v katalogu jsou ilustrační a pocházejí z Unsplash. Pro váš web použijeme vlastní nebo řádně licencované snímky.',
-      },
-    ],
-  },
-}
-
 export function LegalDialog({ doc, onClose }: { doc: LegalDoc | null; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null)
+  const t = useT()
 
   useEffect(() => {
     const dialog = ref.current
@@ -68,7 +21,7 @@ export function LegalDialog({ doc, onClose }: { doc: LegalDoc | null; onClose: (
     if (!doc && dialog.open) dialog.close()
   }, [doc])
 
-  const content = doc ? DOCS[doc] : null
+  const content = doc ? { title: t.legal[doc].title, sections: t.legal[doc].sections(SITE.email) } : null
 
   return (
     <dialog
@@ -87,7 +40,7 @@ export function LegalDialog({ doc, onClose }: { doc: LegalDoc | null; onClose: (
             <button
               type="button"
               onClick={onClose}
-              aria-label="Zavřít"
+              aria-label={t.legal.close}
               autoFocus
               className="grid size-10 shrink-0 place-items-center rounded-full border border-line text-muted transition-colors hover:bg-fg/[0.06] hover:text-fg"
             >
@@ -102,7 +55,7 @@ export function LegalDialog({ doc, onClose }: { doc: LegalDoc | null; onClose: (
               </section>
             ))}
           </div>
-          <p className="mt-8 text-[13px] text-muted">Poslední aktualizace: {SITE.year}</p>
+          <p className="mt-8 text-[13px] text-muted">{t.legal.updated(SITE.year)}</p>
         </div>
       )}
     </dialog>

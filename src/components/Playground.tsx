@@ -1,12 +1,8 @@
 import { ArrowRightIcon, DiceFiveIcon, LockSimpleIcon, LockSimpleOpenIcon } from '@phosphor-icons/react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { buttonStyles } from '../data/buttonStyles'
-import { colorPalettes } from '../data/colorPalettes'
-import { fonts } from '../data/fonts'
-import { imageStyles } from '../data/imageStyles'
-import { layouts } from '../data/layouts'
-import { webStyles } from '../data/webStyles'
+import type { ButtonItem, FontItem, LayoutItem, PaletteItem, PhotoItem, WebStyleItem } from '../data/types'
+import { useCatalog, useT } from '../i18n'
 import { cx, nb } from '../lib/text'
 import { useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
@@ -15,23 +11,14 @@ import { SectionLabel } from './Decor'
 import { MiniSite } from './previews/MiniSite'
 import { EASE, Reveal } from './Reveal'
 
-/** Made-up businesses the random website is built for. */
-const BRANDS = [
-  { brand: 'Pekárna Kvásek', heading: 'Chleba, který voní', text: 'Kváskový chléb a rohlíky pečené každé ráno od čtyř.', cta: 'Objednat' },
-  { brand: 'Truhlářství Dub', heading: 'Nábytek na celý život', text: 'Stoly, kuchyně a police z masivu přesně na míru.', cta: 'Poptat' },
-  { brand: 'Jóga Klid', heading: 'Nadechněte se', text: 'Lekce pro začátečníky i pokročilé v centru města.', cta: 'Rezervovat' },
-  { brand: 'Autoservis Piston', heading: 'Auto do druhého dne', text: 'Servis, pneu a STK bez čekání a bez překvapení.', cta: 'Objednat servis' },
-  { brand: 'Studio Forma', heading: 'Prostor, co dýchá', text: 'Interiéry, které se dobře fotí a ještě líp žijí.', cta: 'Portfolio' },
-  { brand: 'Květinka', heading: 'Kytice do hodiny', text: 'Čerstvé květiny a rozvoz po celém městě.', cta: 'Vybrat kytici' },
-]
-
+/** Each reel spins through one catalog category. */
 const REELS = [
-  { key: 'font', label: 'Písmo', size: fonts.length },
-  { key: 'palette', label: 'Barvy', size: colorPalettes.length },
-  { key: 'layout', label: 'Layout', size: layouts.length },
-  { key: 'button', label: 'Tlačítka', size: buttonStyles.length },
-  { key: 'photo', label: 'Fotky', size: imageStyles.length },
-  { key: 'style', label: 'Styl', size: webStyles.length },
+  { key: 'font', category: 'fonts' },
+  { key: 'palette', category: 'palettes' },
+  { key: 'layout', category: 'layouts' },
+  { key: 'button', category: 'buttons' },
+  { key: 'photo', category: 'photos' },
+  { key: 'style', category: 'webStyles' },
 ] as const
 
 type ReelKey = (typeof REELS)[number]['key']
@@ -47,6 +34,11 @@ const rand = (n: number, not?: number) => {
 const START: Combo = { font: 2, palette: 1, layout: 2, button: 0, photo: 0, style: 0, brand: 0 }
 
 export function Playground() {
+  const t = useT()
+  const catalog = useCatalog()
+  const items = Object.fromEntries(catalog.map((c) => [c.id, c.items])) as Record<(typeof REELS)[number]['category'], unknown[]>
+  const size = (reel: (typeof REELS)[number]) => items[reel.category].length
+  const brands = t.playground.brands
   const reduce = useReducedMotion()
   const [combo, setCombo] = useState<Combo>(START)
   const [locked, setLocked] = useState<Record<ReelKey, boolean>>({ font: false, palette: false, layout: false, button: false, photo: false, style: false })
@@ -64,13 +56,13 @@ export function Playground() {
   const spin = () => {
     if (anySpinning || allLocked) return
     setSpins((n) => n + 1)
-    setCombo((c) => ({ ...c, brand: rand(BRANDS.length, c.brand) }))
+    setCombo((c) => ({ ...c, brand: rand(brands.length, c.brand) }))
     const open = REELS.filter((r) => !locked[r.key])
 
     if (reduce) {
       setCombo((c) => {
         const next = { ...c }
-        open.forEach((r) => (next[r.key] = rand(r.size, c[r.key])))
+        open.forEach((r) => (next[r.key] = rand(size(r), c[r.key])))
         return next
       })
       return
@@ -81,18 +73,18 @@ export function Playground() {
     open.forEach((reel, i) => {
       const stopAt = 520 + i * 170
       for (let t = 0; t < stopAt; t += 75) {
-        timers.current.push(window.setTimeout(() => setCombo((c) => ({ ...c, [reel.key]: rand(reel.size, c[reel.key]) })), t))
+        timers.current.push(window.setTimeout(() => setCombo((c) => ({ ...c, [reel.key]: rand(size(reel), c[reel.key]) })), t))
       }
       timers.current.push(window.setTimeout(() => setSpinning((s) => ({ ...s, [reel.key]: false })), stopAt))
     })
   }
 
-  const font = fonts[combo.font]
-  const palette = colorPalettes[combo.palette]
-  const layout = layouts[combo.layout]
-  const button = buttonStyles[combo.button]
-  const photo = imageStyles[combo.photo]
-  const style = webStyles[combo.style]
+  const font = items.fonts[combo.font] as FontItem
+  const palette = items.palettes[combo.palette] as PaletteItem
+  const layout = items.layouts[combo.layout] as LayoutItem
+  const button = items.buttons[combo.button] as ButtonItem
+  const photo = items.photos[combo.photo] as PhotoItem
+  const style = items.webStyles[combo.style] as WebStyleItem
 
   const keep = () => {
     // Fills every catalog step at once, so the whole catalog opens up.
@@ -104,7 +96,7 @@ export function Playground() {
       buttons: [button.id],
       layouts: [layout.id],
     })
-    toast('Kombinace je ve vašem výběru. Doplňte zbytek ve formuláři.')
+    toast(t.playground.kept)
     document.getElementById('poptavka')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' })
   }
 
@@ -131,22 +123,23 @@ export function Playground() {
       <div className="container-x">
         <Reveal className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-4xl">
-            <SectionLabel number="00">Na zkoušku</SectionLabel>
+            <SectionLabel number="00">{t.playground.label}</SectionLabel>
             <h2 className="display-xl">
-              Zamíchejte si web<span className="text-accent">.</span>
+              {t.playground.title}
+              <span className="text-accent">.</span>
             </h2>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-              {nb('Zatočte a uvidíte, jak by mohl vypadat. Co se vám líbí, zamkněte kliknutím, a točte dál.')}
+              {nb(t.playground.lead)}
             </p>
           </div>
           <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-muted" aria-live="polite">
-            Zamícháno {spins}×
+            {t.playground.spins(spins)}
           </p>
         </Reveal>
 
         <div className="mt-12 grid items-start gap-8 lg:grid-cols-[1.25fr_1fr] lg:gap-12">
-          <Reveal onClick={spin} data-cursor="Zamíchat" className="cursor-pointer">
-            <BrowserFrame address={`${slug(BRANDS[combo.brand].brand)}.cz`} className="aspect-[16/11]">
+          <Reveal onClick={spin} data-cursor={t.playground.cursor} className="cursor-pointer">
+            <BrowserFrame address={`${slug(brands[combo.brand].brand)}${t.playground.tld}`} className="aspect-[16/11]">
               <MiniSite
                 mode="live"
                 layout={layout}
@@ -156,7 +149,7 @@ export function Playground() {
                 images={[photo.image]}
                 radius={Math.max(style.radius, 0.4)}
                 effect={style.effect}
-                content={BRANDS[combo.brand]}
+                content={brands[combo.brand]}
               />
             </BrowserFrame>
           </Reveal>
@@ -182,7 +175,7 @@ export function Playground() {
                           isLocked ? 'text-white/70' : 'text-muted',
                         )}
                       >
-                        {reel.label}
+                        {t.playground.reels[reel.key]}
                       </span>
                       <span className="relative h-7 min-w-0 flex-1 overflow-hidden text-[1.15rem] font-semibold leading-7">
                         <AnimatePresence mode="popLayout" initial={false}>
@@ -200,7 +193,7 @@ export function Playground() {
                       </span>
                       <span className="flex shrink-0 items-center gap-1.5 text-[12px]">
                         {isLocked ? <LockSimpleIcon size={17} weight="bold" /> : <LockSimpleOpenIcon size={17} className="text-muted group-hover:text-fg" />}
-                        <span className="sr-only">{isLocked ? 'zamčeno' : 'odemčeno'}</span>
+                        <span className="sr-only">{isLocked ? t.playground.locked : t.playground.unlocked}</span>
                       </span>
                     </button>
                   </li>
@@ -219,7 +212,7 @@ export function Playground() {
                 <motion.span animate={anySpinning ? { rotate: 360 } : { rotate: 0 }} transition={anySpinning ? { duration: 0.5, repeat: Infinity, ease: 'linear' } : { duration: 0 }}>
                   <DiceFiveIcon size={22} weight="fill" />
                 </motion.span>
-                {allLocked ? 'Vše zamčeno' : 'Zamíchat'}
+                {allLocked ? t.playground.allLocked : t.playground.spin}
               </motion.button>
               <button
                 type="button"
@@ -227,12 +220,12 @@ export function Playground() {
                 disabled={anySpinning}
                 className="group/k inline-flex h-14 flex-1 items-center justify-center gap-2 rounded-full border border-fg px-6 font-semibold transition-colors hover:bg-fg hover:text-ink-950 disabled:opacity-40 sm:flex-none"
               >
-                Chci tenhle
+                {t.playground.keep}
                 <ArrowRightIcon weight="bold" className="size-4 transition-transform group-hover/k:translate-x-0.5" />
               </button>
             </div>
             <p className="mt-4 text-[13px] leading-relaxed text-muted">
-              {nb('„Chci tenhle“ přenese kombinaci do vašeho výběru. Zbytek doladíte v katalogu.')}
+              {nb(t.playground.keepNote)}
             </p>
           </Reveal>
         </div>

@@ -1,5 +1,5 @@
 import { PencilSimpleIcon } from '@phosphor-icons/react'
-import { catalog } from '../data/catalog'
+import { useCatalog, useT } from '../i18n'
 import { cx } from '../lib/text'
 import { useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
@@ -7,6 +7,8 @@ import { ItemToken } from './previews/ItemToken'
 
 /** "Váš výběr" list shown right before the form is sent. */
 export function SelectionSummary({ invalid }: { invalid?: boolean }) {
+  const t = useT()
+  const catalog = useCatalog()
   const selected = useSelection((s) => s.selected)
   const openPanel = useUi((s) => s.setPanelOpen)
 
@@ -20,7 +22,7 @@ export function SelectionSummary({ invalid }: { invalid?: boolean }) {
     >
       <div className="flex items-center justify-between gap-3">
         <h3 id="summary-title" className="text-lg font-semibold tracking-[-0.015em]">
-          Váš výběr
+          {t.summary.title}
         </h3>
         <button
           type="button"
@@ -28,7 +30,7 @@ export function SelectionSummary({ invalid }: { invalid?: boolean }) {
           className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13px] text-accent transition-colors hover:bg-accent/10 hover:text-fg"
         >
           <PencilSimpleIcon size={14} />
-          Upravit
+          {t.summary.edit}
         </button>
       </div>
       <dl className="mt-3 divide-y divide-line">
@@ -50,7 +52,7 @@ export function SelectionSummary({ invalid }: { invalid?: boolean }) {
                     <span className="truncate font-medium text-fg">{items.map((i) => i.name).join(', ')}</span>
                   </>
                 ) : (
-                  <span className="text-muted/70">nevybráno</span>
+                  <span className="text-muted/70">{t.summary.none}</span>
                 )}
               </dd>
             </div>

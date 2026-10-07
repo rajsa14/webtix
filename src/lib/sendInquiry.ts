@@ -44,6 +44,7 @@ async function sendToNetlifyForms(payload: InquiryPayload): Promise<SendResult> 
     webType: form.webType,
     budget: form.budget,
     deadline: form.deadline,
+    language: payload.language,
     design: payload.design.map((d) => `${d.category}: ${d.items.length ? d.items.join(', ') : 'nevybráno'}`).join('\n'),
     message: form.message.trim(),
     inspiration: form.inspiration.trim(),

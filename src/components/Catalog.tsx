@@ -2,7 +2,8 @@ import { ArrowDownIcon, CheckIcon, LockSimpleIcon } from '@phosphor-icons/react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { catalog } from '../data/catalog'
-import { plural, useActiveSection } from '../lib/hooks'
+import { useCatalog, useT } from '../i18n'
+import { useActiveSection } from '../lib/hooks'
 import { cx, nb } from '../lib/text'
 import { countCategoriesDone, countSelected, unlockedCount, useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
@@ -14,6 +15,7 @@ import { EASE, Reveal } from './Reveal'
 export function Catalog() {
   // The whole catalog stays hidden behind one button until the visitor presses it.
   const open = useUi((s) => s.catalogOpen)
+  const t = useT()
   return (
     <section id="katalog" className="relative py-24 sm:py-32">
       <AnimatePresence mode="wait" initial={false}>
@@ -21,14 +23,12 @@ export function Catalog() {
           <Unfold key="catalog">
             <div className="container-x relative">
               <Reveal className="max-w-5xl">
-                <SectionLabel number="02">Katalog</SectionLabel>
+                <SectionLabel number="02">{t.catalog.label}</SectionLabel>
                 <h2 className="display-xl">
-                  {nb('Nevíte přesně, jak má váš web vypadat? Nevadí.')}
+                  {nb(t.catalog.title)}
                 </h2>
                 <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
-                  {nb(
-                    'Projděte si jednotlivé možnosti a jednoduše si označte to, co se vám líbí. Zbytek už necháte na nás.',
-                  )}
+                  {nb(t.catalog.lead)}
                 </p>
               </Reveal>
             </div>
@@ -48,21 +48,22 @@ export function Catalog() {
 /** The big button the catalog waits behind. */
 function OpenButton() {
   const openCatalog = useUi((s) => s.openCatalog)
+  const t = useT()
   return (
     <div className="container-x">
       <motion.button
         type="button"
         onClick={openCatalog}
         whileTap={{ scale: 0.98 }}
-        data-cursor="Otevřít"
+        data-cursor={t.catalog.gateCursor}
         className="group flex w-full items-center justify-between gap-6 rounded-card bg-accent px-7 py-8 text-left text-white shadow-[10px_10px_0_0_var(--color-fg)] transition-[background-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:bg-fg hover:shadow-[14px_14px_0_0_var(--color-accent)] sm:px-12 sm:py-12"
       >
         <span>
           <span className="block font-display text-[clamp(3.4rem,10vw,8.5rem)] font-extrabold leading-[0.85] tracking-[-0.06em]">
-            Katalog
+            {t.catalog.gate}
           </span>
           <span className="mt-4 block font-mono text-[12px] uppercase tracking-[0.14em] text-white/75">
-            {catalog.length} kroků · písmo, barvy, fotky, styl, tlačítka, layout
+            {t.catalog.gateMeta(catalog.length)}
           </span>
         </span>
         <span className="grid size-16 shrink-0 place-items-center rounded-full bg-white text-fg transition-transform duration-500 group-hover:translate-y-1.5 sm:size-24">
@@ -78,6 +79,7 @@ function OpenButton() {
  * and every next one slides in once the one before it has a choice.
  */
 function CatalogSteps() {
+  const catalog = useCatalog()
   const selected = useSelection((s) => s.selected)
   const open = unlockedCount(selected)
   const next = catalog[open]
@@ -123,6 +125,8 @@ function Unfold({ children, className }: { children: ReactNode; className?: stri
 
 /** Placeholder for the next locked step, so the visitor knows more is coming. */
 function NextStep({ index }: { index: number }) {
+  const t = useT()
+  const catalog = useCatalog()
   const cat = catalog[index]
   const previous = catalog[index - 1]
   const later = catalog.slice(index + 1)
@@ -134,17 +138,17 @@ function NextStep({ index }: { index: number }) {
         </span>
         <div>
           <p className="font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
-            Krok {index + 1} z {catalog.length}
+            {t.catalog.stepOf(index + 1, catalog.length)}
           </p>
           <h3 className="mt-1 text-[clamp(1.6rem,3vw,2.2rem)] font-extrabold leading-tight tracking-[-0.04em]">
             {cat.title}
           </h3>
-          <p className="mt-1 text-muted">{nb(`Odemkne se, jakmile vyberete ${previous.label.toLowerCase()}.`)}</p>
+          <p className="mt-1 text-muted">{nb(t.catalog.unlocksAfter(previous.label))}</p>
         </div>
       </div>
       {later.length > 0 && (
         <p className="text-[13px] text-faint sm:max-w-[16rem] sm:text-right">
-          {nb(`Potom: ${later.map((c) => c.label.toLowerCase()).join(', ')}`)}
+          {nb(t.catalog.later(later.map((c) => c.label)))}
         </p>
       )}
     </div>
@@ -154,6 +158,8 @@ function NextStep({ index }: { index: number }) {
 const TAB_IDS = catalog.map((c) => `kategorie-${c.id}`)
 
 function CategoryTabs() {
+  const t = useT()
+  const catalog = useCatalog()
   const selected = useSelection((s) => s.selected)
   const open = unlockedCount(selected)
   // Re-observe whenever a new category appears on the page.
@@ -174,7 +180,7 @@ function CategoryTabs() {
     <div className="sticky top-[76px] z-30 mt-12">
       <div className="container-x">
         <nav
-          aria-label="Kategorie katalogu"
+          aria-label={t.catalog.tabsAria}
           className="flex items-center gap-2 rounded-full border border-fg bg-ink-900 p-1.5"
         >
           <div ref={scroller} className="no-scrollbar relative flex min-w-0 flex-1 gap-1 overflow-x-auto">
@@ -187,12 +193,12 @@ function CategoryTabs() {
                   <span
                     key={cat.id}
                     aria-disabled="true"
-                    title="Odemkne se po výběru v předchozí kategorii"
+                    title={t.catalog.lockedTitle}
                     className="flex h-9 shrink-0 cursor-not-allowed items-center gap-1.5 rounded-full px-3.5 text-[13.5px] text-faint"
                   >
                     <LockSimpleIcon size={12} weight="bold" aria-hidden="true" />
                     {cat.label}
-                    <span className="sr-only">(zamčeno)</span>
+                    <span className="sr-only">{t.catalog.lockedSr}</span>
                   </span>
                 )
               return (
@@ -217,7 +223,7 @@ function CategoryTabs() {
                   {n > 0 && (
                     <span className="relative grid size-[18px] place-items-center rounded-full bg-accent-strong text-white">
                       <CheckIcon size={10} weight="bold" />
-                      <span className="sr-only">vybráno</span>
+                      <span className="sr-only">{t.catalog.chosenSr}</span>
                     </span>
                   )}
                 </a>
@@ -247,6 +253,7 @@ function CategoryTabs() {
 }
 
 function CatalogDone() {
+  const t = useT()
   const selected = useSelection((s) => s.selected)
   const total = useMemo(() => countSelected(selected), [selected])
   const done = countCategoriesDone(selected)
@@ -257,12 +264,10 @@ function CatalogDone() {
         <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h3 className="text-[clamp(1.6rem,3vw,2.2rem)] font-semibold leading-tight tracking-[-0.025em]">
-              {total > 0 ? 'Máte vybráno. Pošlete nám svou představu.' : 'Zatím nemáte nic vybráno.'}
+              {total > 0 ? t.catalog.doneTitle : t.catalog.emptyTitle}
             </h3>
             <p className="mt-2 text-muted">
-              {total > 0
-                ? `${total} ${plural(total, ['položka', 'položky', 'položek'])} ve výběru, ${done} ze ${catalog.length} kategorií. Výběr se ukládá automaticky.`
-                : 'Klikněte na karty, které se vám líbí. Stačí i jedna.'}
+              {total > 0 ? t.catalog.doneText(total, done, catalog.length) : t.catalog.emptyText}
             </p>
           </div>
           <CtaLink
@@ -271,7 +276,7 @@ function CatalogDone() {
             arrow
             className="shrink-0"
           >
-            {total > 0 ? 'Pokračovat k odeslání' : 'Začít písmem'}
+            {total > 0 ? t.catalog.continue : t.catalog.startFonts}
           </CtaLink>
         </div>
       </div>

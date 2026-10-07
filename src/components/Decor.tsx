@@ -138,11 +138,28 @@ export function PlayfulWord({ text, className }: { text: string; className?: str
 }
 
 /** Small uppercase label that opens a section, with its running number. */
-export function SectionLabel({ number, children, className }: { number: string; children: string; className?: string }) {
+export function SectionLabel({
+  number,
+  children,
+  className,
+  inverted,
+}: {
+  number: string
+  children: string
+  className?: string
+  /** For labels on the ink background, where the blue would be too dark to read. */
+  inverted?: boolean
+}) {
   return (
-    <p className={cx('mb-6 flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted', className)}>
-      <span className="text-accent">{number}</span>
-      <span className="h-px w-8 bg-line-strong" aria-hidden="true" />
+    <p
+      className={cx(
+        'mb-6 flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em]',
+        inverted ? 'text-ink-950/60' : 'text-muted',
+        className,
+      )}
+    >
+      <span className={inverted ? 'text-ink-950' : 'text-accent'}>{number}</span>
+      <span className={cx('h-px w-8', inverted ? 'bg-ink-950/30' : 'bg-line-strong')} aria-hidden="true" />
       {children}
     </p>
   )

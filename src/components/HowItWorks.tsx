@@ -1,11 +1,13 @@
 import { motion, useScroll, useSpring, useTransform, type MotionValue } from 'motion/react'
 import { useRef } from 'react'
-import { steps } from '../data/content'
+import { useT } from '../i18n'
 import { nb } from '../lib/text'
 import { SectionLabel } from './Decor'
 import { Reveal } from './Reveal'
 
 export function HowItWorks() {
+  const t = useT()
+  const steps = t.how.steps
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 60%'] })
   const progress = useSpring(scrollYProgress, { stiffness: 110, damping: 28 })
@@ -14,12 +16,13 @@ export function HowItWorks() {
     <section id="jak-to-funguje" className="relative py-24 sm:py-32">
       <div className="container-x">
         <Reveal className="max-w-3xl">
-          <SectionLabel number="01">Postup</SectionLabel>
+          <SectionLabel number="01">{t.how.label}</SectionLabel>
           <h2 className="display-xl">
-            Jak to funguje<span className="text-accent">.</span>
+            {t.how.title}
+            <span className="text-accent">.</span>
           </h2>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">
-            {nb('Od první inspirace po hotový web. Bez složitých briefů a technického žargonu.')}
+            {nb(t.how.lead)}
           </p>
         </Reveal>
 
@@ -36,7 +39,7 @@ export function HowItWorks() {
                       {step.number}
                     </span>
                     <h3 className="mt-6 text-[1.6rem] font-extrabold leading-[1.02] tracking-[-0.04em] lg:mt-2">
-                      <span className="sr-only">Krok {step.number}: </span>
+                      <span className="sr-only">{t.how.step(step.number)}</span>
                       {step.title}
                     </h3>
                     <p className="mt-3 leading-relaxed text-muted">{nb(step.text)}</p>

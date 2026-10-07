@@ -1,6 +1,7 @@
 import { ArrowRightIcon } from '@phosphor-icons/react'
 import type { CSSProperties } from 'react'
 import type { ButtonItem, ThemeRoles } from '../../data/types'
+import { useT } from '../../i18n'
 import { cx } from '../../lib/text'
 
 /** WebTix colors used when a button sample is shown in the catalog. */
@@ -27,7 +28,7 @@ export const DEFAULT_BUTTON: ButtonItem = {
 export function ButtonSample({
   item = DEFAULT_BUTTON,
   colors = CATALOG_BUTTON_COLORS,
-  label = 'Začít projekt',
+  label,
   className,
   style,
 }: {
@@ -37,6 +38,7 @@ export function ButtonSample({
   className?: string
   style?: CSSProperties
 }) {
+  const fallback = useT().preview.button
   const vars = {
     '--b-accent': colors.accent,
     '--b-on': colors.onAccent,
@@ -55,7 +57,7 @@ export function ButtonSample({
       data-shadow={item.shadow ? '' : undefined}
       style={vars}
     >
-      {label}
+      {label ?? fallback}
       {item.variant === 'link' && <ArrowRightIcon weight="bold" className="wbtn-arrow size-[1em]" />}
     </span>
   )

@@ -14,6 +14,9 @@ interface UiState {
   catalogOpen: boolean
   openCatalog: () => void
   setPanelOpen: (open: boolean) => void
+  /** Web type the inquiry form should pre-fill, set from the services section. */
+  presetWebType: string | null
+  setPresetWebType: (value: string | null) => void
   toasts: Toast[]
   toast: (message: string, tone?: ToastTone) => void
   dismissToast: (id: number) => void
@@ -26,6 +29,8 @@ export const useUi = create<UiState>((set, get) => ({
   catalogOpen: false,
   openCatalog: () => set({ catalogOpen: true }),
   setPanelOpen: (panelOpen) => set({ panelOpen }),
+  presetWebType: null,
+  setPresetWebType: (presetWebType) => set({ presetWebType }),
   toasts: [],
   toast: (message, tone = 'success') => {
     const id = ++toastId
