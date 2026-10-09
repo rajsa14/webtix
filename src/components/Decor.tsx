@@ -138,10 +138,10 @@ export function PlayfulWord({ text, className }: { text: string; className?: str
 }
 
 /** Small uppercase label that opens a section, with its running number. */
-export function SectionLabel({ number, children, className }: { number: string; children: string; className?: string }) {
+export function SectionLabel({ number, children, className }: { number?: string; children: string; className?: string }) {
   return (
     <p className={cx('mb-6 flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.14em] text-muted', className)}>
-      <span className="text-accent">{number}</span>
+      {number && <span className="text-accent">{number}</span>}
       <span className="h-px w-8 bg-line-strong" aria-hidden="true" />
       {children}
     </p>

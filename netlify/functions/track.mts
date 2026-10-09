@@ -13,7 +13,16 @@ export const config: Config = {
 }
 
 // Only real pages are counted, so nobody can fill the dashboard with junk paths.
-const PAGES = new Set(['/', '/ochrana-osobnich-udaju', '/obchodni-podminky'])
+const PAGES = new Set([
+  '/',
+  '/katalog',
+  '/jak-to-funguje',
+  '/reference',
+  '/o-nas',
+  '/kontakt',
+  '/ochrana-osobnich-udaju',
+  '/obchodni-podminky',
+])
 const BOT = /bot|crawl|spider|slurp|preview|headless|lighthouse|pingdom|uptime|monitor/i
 const VISITOR_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 

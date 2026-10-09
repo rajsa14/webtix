@@ -6,7 +6,8 @@ import { PAGES, SITE } from '../data/site'
 import { buildInquiry, type InquiryForm } from '../lib/inquiry'
 import { trackInquiry } from '../lib/analytics'
 import { sendInquiry } from '../lib/sendInquiry'
-import { cx, nb, scrollToId } from '../lib/text'
+import { navigate } from '../lib/router'
+import { cx, nb } from '../lib/text'
 import { countSelected, useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
 import { LivePreview } from './LivePreview'
@@ -110,18 +111,18 @@ export function ContactForm() {
       setForm(EMPTY)
       setSubmitted(false)
       setErrors({})
-      window.setTimeout(() => scrollToId('domu'), 80)
+      navigate(PAGES.home)
     }
   }
 
   return (
-    <section id="poptavka" className="relative py-24 sm:py-32">
+    <section id="poptavka" className="relative pb-24 pt-32 sm:pb-32 sm:pt-40">
       <div className="container-x">
         <Reveal className="max-w-4xl">
-          <SectionLabel number="03">Poptávka</SectionLabel>
-          <h2 className="display-xl">
+          <SectionLabel>Poptávka</SectionLabel>
+          <h1 className="display-xl">
             Líbí se vám váš výběr?
-          </h2>
+          </h1>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
             {nb(
               'Pošlete nám svou představu. Podle vašeho výběru připravíme ukázku a následně se společně domluvíme na realizaci a ceně.',
@@ -199,10 +200,7 @@ export function ContactForm() {
                   {liveErrors.selection && (
                     <>
                       {liveErrors.selection}{' '}
-                      <button type="button" className="underline underline-offset-2" onClick={() => {
-                          useUi.getState().openCatalog()
-                          scrollToId('katalog')
-                        }}>
+                      <button type="button" className="underline underline-offset-2" onClick={() => navigate(PAGES.catalog)}>
                         Otevřít katalog
                       </button>
                     </>

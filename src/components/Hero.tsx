@@ -3,7 +3,7 @@ import { useEffect, useState, type PointerEvent, type ReactNode } from 'react'
 import { findItem } from '../data/catalog'
 import { fonts } from '../data/fonts'
 import { heroShowcase } from '../data/content'
-import { SITE } from '../data/site'
+import { PAGES, SITE } from '../data/site'
 import type { ButtonItem, FontItem, LayoutItem, PaletteItem } from '../data/types'
 import { nb } from '../lib/text'
 import { BrowserFrame } from './BrowserFrame'
@@ -56,10 +56,10 @@ export function Hero() {
               transition={{ duration: 0.9, ease: EASE, delay: 0.8 }}
               className="mt-8 flex flex-wrap items-center gap-3"
             >
-              <CtaLink href="#katalog" size="lg" arrow>
+              <CtaLink href={PAGES.catalog} size="lg" arrow>
                 Vytvořit výběr
               </CtaLink>
-              <CtaLink href="#jak-to-funguje" size="lg" variant="secondary">
+              <CtaLink href={PAGES.process} size="lg" variant="secondary">
                 Jak to funguje
               </CtaLink>
             </motion.div>

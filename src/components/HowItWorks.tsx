@@ -11,13 +11,13 @@ export function HowItWorks() {
   const progress = useSpring(scrollYProgress, { stiffness: 110, damping: 28 })
 
   return (
-    <section id="jak-to-funguje" className="relative py-24 sm:py-32">
+    <section id="jak-to-funguje" className="relative pb-24 pt-32 sm:pb-32 sm:pt-40">
       <div className="container-x">
         <Reveal className="max-w-3xl">
-          <SectionLabel number="01">Postup</SectionLabel>
-          <h2 className="display-xl">
+          <SectionLabel>Postup</SectionLabel>
+          <h1 className="display-xl">
             Jak to funguje<span className="text-accent">.</span>
-          </h2>
+          </h1>
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">
             {nb('Od první inspirace po hotový web. Bez složitých briefů a technického žargonu.')}
           </p>

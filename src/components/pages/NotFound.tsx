@@ -1,14 +1,13 @@
 import { usePageMeta } from '../../lib/meta'
 import { nb } from '../../lib/text'
 import { CtaLink } from '../Cta'
-import { PageShell } from './PageShell'
 
 export function NotFound() {
   usePageMeta({ title: 'Stránka nenalezena', noindex: true })
 
   return (
-    <PageShell>
-      <section className="container-x relative overflow-hidden py-24 text-center sm:py-36">
+    <>
+      <section className="container-x relative overflow-hidden pb-24 pt-36 text-center sm:pb-36 sm:pt-48">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_55%_at_50%_30%,rgb(36_51_255/0.1),transparent_70%)]"
@@ -30,6 +29,6 @@ export function NotFound() {
           </div>
         </div>
       </section>
-    </PageShell>
+    </>
   )
 }

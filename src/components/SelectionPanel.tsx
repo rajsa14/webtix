@@ -3,7 +3,9 @@ import { AnimatePresence, motion, useDragControls, useReducedMotion } from 'moti
 import { useCallback, useEffect, useRef, useState, type Ref, type RefObject } from 'react'
 import { catalog } from '../data/catalog'
 import { plural, useEscape, useFocusTrap, useScrollLock } from '../lib/hooks'
-import { cx, scrollToId } from '../lib/text'
+import { PAGES } from '../data/site'
+import { navigate } from '../lib/router'
+import { cx } from '../lib/text'
 import { countCategoriesDone, countSelected, isUnlocked, nextOpenCategory, resetNote, useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
 import { LivePreview } from './LivePreview'
@@ -136,10 +138,9 @@ function SelectionDrawer({
     }
   }, [open, returnFocus])
 
-  const goTo = (id: string) => {
+  const goTo = (to: string) => {
     onClose()
-    useUi.getState().openCatalog()
-    window.setTimeout(() => scrollToId(id), 60)
+    navigate(to)
   }
 
   const hidden = isMobile ? { y: '100%' } : { x: '105%' }
@@ -250,7 +251,7 @@ function DrawerBody({
                   <button
                     type="button"
                     // A locked category is not on the page yet, so go to the step that opens it.
-                    onClick={() => goTo(`kategorie-${isUnlocked(selected, cat.id) ? cat.id : nextOpenCategory(selected)?.id}`)}
+                    onClick={() => goTo(`${PAGES.catalog}#kategorie-${isUnlocked(selected, cat.id) ? cat.id : nextOpenCategory(selected)?.id}`)}
                     className="rounded-full px-2 py-1 text-[12.5px] text-accent transition-colors hover:bg-accent/10 hover:text-fg"
                   >
                     {ids.length ? 'Upravit' : 'Vybrat'}
@@ -320,7 +321,7 @@ function DrawerBody({
         </button>
         <button
           type="button"
-          onClick={() => goTo(total ? 'poptavka' : 'katalog')}
+          onClick={() => goTo(total ? PAGES.contact : PAGES.catalog)}
           className="group/cta ml-auto inline-flex h-11 items-center gap-2 rounded-full bg-accent-strong px-5 text-[14.5px] font-medium text-white  transition-[background-color,transform] hover:bg-accent active:scale-[0.98]"
         >
           {total ? 'Pokračovat k odeslání' : 'Otevřít katalog'}

@@ -15,14 +15,22 @@ function setMeta(name: string, content: string | null) {
   tag.content = content
 }
 
-/** Title, description, canonical address and indexing for pages other than the homepage. */
-export function usePageMeta({ title, description, noindex }: { title: string; description?: string; noindex?: boolean }) {
+/** Title, description, canonical address and indexing of the current page. Without a title it is the homepage. */
+export function usePageMeta({ title, description, noindex }: { title?: string; description?: string; noindex?: boolean } = {}) {
   useEffect(() => {
-    document.title = `${title} | ${SITE.name}`
-    if (description) setMeta('description', description)
+    document.title = title ? `${title} | ${SITE.name}` : SITE.title
+    setMeta('description', description ?? SITE.description)
     setMeta('robots', noindex ? 'noindex, nofollow' : null)
-    const canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')
-    if (noindex) canonical?.remove()
-    else if (canonical) canonical.href = SITE.url + window.location.pathname
+    let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+    if (noindex) {
+      canonical?.remove()
+      return
+    }
+    if (!canonical) {
+      canonical = document.createElement('link')
+      canonical.rel = 'canonical'
+      document.head.append(canonical)
+    }
+    canonical.href = SITE.url + window.location.pathname
   }, [title, description, noindex])
 }

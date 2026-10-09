@@ -1,6 +1,6 @@
 import { CheckIcon, CopyIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
-import { SITE } from '../data/site'
+import { PAGES, SITE } from '../data/site'
 import { nb } from '../lib/text'
 import { useUi } from '../store/ui'
 import { CtaLink } from './Cta'
@@ -9,7 +9,7 @@ import { Reveal } from './Reveal'
 
 export function Contact() {
   return (
-    <section id="kontakt" className="relative py-16 sm:py-24">
+    <section className="relative py-16 sm:py-24">
       <div className="container-x">
         <Reveal>
           <div className="relative overflow-hidden rounded-card bg-accent px-5 py-20 text-center text-white sm:px-12 sm:py-28">
@@ -22,7 +22,7 @@ export function Contact() {
                 {nb('Pošlete nám svou představu a společně zjistíme, co pro vás můžeme vytvořit.')}
               </p>
               <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <CtaLink href="#katalog" size="lg" arrow>
+                <CtaLink href={PAGES.catalog} size="lg" arrow>
                   Vytvořit výběr
                 </CtaLink>
                 <EmailPill />

@@ -10,9 +10,6 @@ export interface Toast {
 
 interface UiState {
   panelOpen: boolean
-  /** The catalog stays behind its big button until the visitor opens it. */
-  catalogOpen: boolean
-  openCatalog: () => void
   setPanelOpen: (open: boolean) => void
   toasts: Toast[]
   toast: (message: string, tone?: ToastTone) => void
@@ -23,8 +20,6 @@ let toastId = 0
 
 export const useUi = create<UiState>((set, get) => ({
   panelOpen: false,
-  catalogOpen: false,
-  openCatalog: () => set({ catalogOpen: true }),
   setPanelOpen: (panelOpen) => set({ panelOpen }),
   toasts: [],
   toast: (message, tone = 'success') => {

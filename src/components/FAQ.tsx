@@ -13,7 +13,7 @@ export function FAQ() {
     <section id="faq" className="relative py-24 sm:py-32">
       <div className="container-x grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
         <Reveal className="self-start lg:sticky lg:top-28">
-          <SectionLabel number="07">FAQ</SectionLabel>
+          <SectionLabel>FAQ</SectionLabel>
           <h2 className="display-xl">Časté otázky</h2>
           <p className="mt-5 max-w-sm text-lg leading-relaxed text-muted">
             Nenašli jste odpověď? Napište nám na{' '}

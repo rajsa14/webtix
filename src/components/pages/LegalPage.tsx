@@ -1,15 +1,14 @@
 import { LEGAL, LEGAL_UPDATED, type LegalDoc } from '../../data/legal'
 import { usePageMeta } from '../../lib/meta'
 import { nb } from '../../lib/text'
-import { PageShell } from './PageShell'
 
 export function LegalPage({ doc }: { doc: LegalDoc }) {
   const { title, intro, sections } = LEGAL[doc]
   usePageMeta({ title, description: intro })
 
   return (
-    <PageShell>
-      <article className="container-x py-16 sm:py-24">
+    <>
+      <article className="container-x pb-16 pt-32 sm:pb-24 sm:pt-40">
         <div className="mx-auto max-w-2xl">
           <h1 className="text-[clamp(2.3rem,6vw,4rem)] font-semibold leading-[0.98] tracking-[-0.035em]">{title}</h1>
           <p className="mt-6 text-lg leading-relaxed text-muted">{nb(intro)}</p>
@@ -37,6 +36,6 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
           <p className="mt-12 border-t border-line pt-6 text-[14px] text-muted">Poslední aktualizace: {LEGAL_UPDATED}</p>
         </div>
       </article>
-    </PageShell>
+    </>
   )
 }

@@ -8,13 +8,13 @@ import { Team } from './Team'
 
 export function About() {
   return (
-    <section id="o-nas" className="relative py-24 sm:py-32">
+    <section id="o-nas" className="relative pb-24 pt-32 sm:pb-32 sm:pt-40">
       <div className="container-x">
         <Reveal>
-          <SectionLabel number="05">O nás</SectionLabel>
-          <h2 className="display-xl">
+          <SectionLabel>O nás</SectionLabel>
+          <h1 className="display-xl">
             Kdo stojí za WebTix?
-          </h2>
+          </h1>
         </Reveal>
 
         <WordReveal

@@ -1,75 +1,33 @@
-import { ArrowDownIcon, CheckIcon, LockSimpleIcon } from '@phosphor-icons/react'
+import { CheckIcon, LockSimpleIcon } from '@phosphor-icons/react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { catalog } from '../data/catalog'
+import { PAGES } from '../data/site'
 import { plural, useActiveSection } from '../lib/hooks'
 import { cx, nb } from '../lib/text'
 import { countCategoriesDone, countSelected, unlockedCount, useSelection } from '../store/selection'
-import { useUi } from '../store/ui'
 import { CatalogCategory } from './CatalogCategory'
 import { CtaLink } from './Cta'
 import { SectionLabel } from './Decor'
 import { EASE, Reveal } from './Reveal'
 
 export function Catalog() {
-  // The whole catalog stays hidden behind one button until the visitor presses it.
-  const open = useUi((s) => s.catalogOpen)
   return (
-    <section id="katalog" className="relative py-24 sm:py-32">
-      <AnimatePresence mode="wait" initial={false}>
-        {open ? (
-          <Unfold key="catalog">
-            <div className="container-x relative">
-              <Reveal className="max-w-5xl">
-                <SectionLabel number="02">Katalog</SectionLabel>
-                <h2 className="display-xl">
-                  {nb('Nevíte přesně, jak má váš web vypadat? Nevadí.')}
-                </h2>
-                <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
-                  {nb(
-                    'Projděte si jednotlivé možnosti a jednoduše si označte to, co se vám líbí. Zbytek už necháte na nás.',
-                  )}
-                </p>
-              </Reveal>
-            </div>
-            <CategoryTabs />
-            <CatalogSteps />
-          </Unfold>
-        ) : (
-          <Unfold key="gate">
-            <OpenButton />
-          </Unfold>
-        )}
-      </AnimatePresence>
+    <section className="relative pb-24 pt-32 sm:pb-32 sm:pt-40">
+      <div className="container-x relative">
+        <Reveal className="max-w-5xl">
+          <SectionLabel>Katalog</SectionLabel>
+          <h1 className="display-xl">{nb('Nevíte přesně, jak má váš web vypadat? Nevadí.')}</h1>
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted">
+            {nb(
+              'Projděte si jednotlivé možnosti a jednoduše si označte to, co se vám líbí. Zbytek už necháte na nás.',
+            )}
+          </p>
+        </Reveal>
+      </div>
+      <CategoryTabs />
+      <CatalogSteps />
     </section>
-  )
-}
-
-/** The big button the catalog waits behind. */
-function OpenButton() {
-  const openCatalog = useUi((s) => s.openCatalog)
-  return (
-    <div className="container-x">
-      <motion.button
-        type="button"
-        onClick={openCatalog}
-        whileTap={{ scale: 0.98 }}
-        data-cursor="Otevřít"
-        className="group flex w-full items-center justify-between gap-6 rounded-card bg-accent px-7 py-8 text-left text-white shadow-[10px_10px_0_0_var(--color-fg)] transition-[background-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:bg-fg hover:shadow-[14px_14px_0_0_var(--color-accent)] sm:px-12 sm:py-12"
-      >
-        <span>
-          <span className="block font-display text-[clamp(3.4rem,10vw,8.5rem)] font-extrabold leading-[0.85] tracking-[-0.06em]">
-            Katalog
-          </span>
-          <span className="mt-4 block font-mono text-[12px] uppercase tracking-[0.14em] text-white/75">
-            {catalog.length} kroků · písmo, barvy, fotky, styl, tlačítka, layout
-          </span>
-        </span>
-        <span className="grid size-16 shrink-0 place-items-center rounded-full bg-white text-fg transition-transform duration-500 group-hover:translate-y-1.5 sm:size-24">
-          <ArrowDownIcon weight="bold" className="size-7 sm:size-10" />
-        </span>
-      </motion.button>
-    </div>
   )
 }
 
@@ -266,7 +224,7 @@ function CatalogDone() {
             </p>
           </div>
           <CtaLink
-            href={total > 0 ? '#poptavka' : '#kategorie-fonts'}
+            href={total > 0 ? PAGES.contact : '#kategorie-fonts'}
             size="lg"
             arrow
             className="shrink-0"

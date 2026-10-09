@@ -9,7 +9,7 @@ export function WhyWebTix() {
     <section id="proc-webtix" className="relative py-24 sm:py-32">
       <div className="container-x">
         <Reveal>
-          <SectionLabel number="06">Proč my</SectionLabel>
+          <SectionLabel>Proč my</SectionLabel>
           <h2 className="display-xl max-w-5xl">
             Dva lidi. Žádná agentura<span className="text-accent">.</span>
           </h2>

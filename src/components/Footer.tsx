@@ -13,7 +13,7 @@ export function Footer() {
       <div className="container-x">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
-            <a href="/#domu" className="inline-block rounded-full" aria-label={`${SITE.name}, zpět nahoru`}>
+            <a href={PAGES.home} className="inline-block rounded-full" aria-label={`${SITE.name}, úvodní stránka`}>
               <Logo />
             </a>
             <p className="mt-4 max-w-xs text-lg leading-snug text-fg/90">{SITE.tagline}</p>
@@ -23,8 +23,8 @@ export function Footer() {
             <h2 className={heading}>Navigace</h2>
             <ul className="grid gap-2.5">
               {NAV_LINKS.map((link) => (
-                <li key={link.id}>
-                  <a href={`/#${link.id}`} className="text-fg/85 transition-colors hover:text-accent">
+                <li key={link.href}>
+                  <a href={link.href} className="text-fg/85 transition-colors hover:text-accent">
                     {link.label}
                   </a>
                 </li>

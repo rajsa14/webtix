@@ -7,6 +7,8 @@ import { fonts } from '../data/fonts'
 import { imageStyles } from '../data/imageStyles'
 import { layouts } from '../data/layouts'
 import { webStyles } from '../data/webStyles'
+import { PAGES } from '../data/site'
+import { navigate } from '../lib/router'
 import { cx, nb } from '../lib/text'
 import { useSelection } from '../store/selection'
 import { useUi } from '../store/ui'
@@ -105,7 +107,7 @@ export function Playground() {
       layouts: [layout.id],
     })
     toast('Kombinace je ve vašem výběru. Doplňte zbytek ve formuláři.')
-    document.getElementById('poptavka')?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' })
+    navigate(PAGES.contact)
   }
 
   const values: Record<ReelKey, ReactNode> = {
@@ -131,7 +133,7 @@ export function Playground() {
       <div className="container-x">
         <Reveal className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-4xl">
-            <SectionLabel number="00">Na zkoušku</SectionLabel>
+            <SectionLabel>Na zkoušku</SectionLabel>
             <h2 className="display-xl">
               Zamíchejte si web<span className="text-accent">.</span>
             </h2>

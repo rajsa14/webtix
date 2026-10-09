@@ -9,13 +9,13 @@ export function References() {
   const hasConcepts = references.some((r) => r.concept)
 
   return (
-    <section id="reference" className="relative py-24 sm:py-32">
+    <section id="reference" className="relative pb-24 pt-32 sm:pb-32 sm:pt-40">
       <div className="container-x">
         <Reveal className="max-w-3xl">
-          <SectionLabel number="04">Práce</SectionLabel>
-          <h2 className="display-xl">
+          <SectionLabel>Práce</SectionLabel>
+          <h1 className="display-xl">
             Reference<span className="text-accent">.</span>
-          </h2>
+          </h1>
           <p className="mt-5 text-lg leading-relaxed text-muted">
             {nb(
               hasConcepts
@@ -34,7 +34,7 @@ export function References() {
               >
                 <div className="relative aspect-[16/10] overflow-hidden border-b border-fg bg-ink-800">
                   <img
-                    src={ref.image}
+                    src={import.meta.env.BASE_URL + ref.image}
                     alt={`Ukázka webu ${ref.title}`}
                     loading="lazy"
                     className="h-full w-full object-cover object-top transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] group-hover:scale-[1.03]"
@@ -53,7 +53,7 @@ export function References() {
                   <p className="mt-3 max-w-md leading-relaxed text-muted">{nb(ref.description)}</p>
                   {ref.url && (
                     <a
-                      href={ref.url}
+                      href={/^https?:/.test(ref.url) ? ref.url : import.meta.env.BASE_URL + ref.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-5 inline-flex items-center gap-1.5 text-[15px] text-accent transition-colors hover:text-fg"

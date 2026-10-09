@@ -2,7 +2,6 @@ import { SignOutIcon, WarningCircleIcon } from '@phosphor-icons/react'
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { usePageMeta } from '../../lib/meta'
 import { cx, nb } from '../../lib/text'
-import { PageShell } from './PageShell'
 
 interface Day {
   date: string
@@ -24,6 +23,11 @@ type View = { state: 'loading' } | { state: 'login' } | { state: 'off' } | { sta
 const RANGES = [7, 30, 90] as const
 const PAGE_NAMES: Record<string, string> = {
   '/': 'Úvodní stránka',
+  '/katalog': 'Katalog',
+  '/jak-to-funguje': 'Jak to funguje',
+  '/reference': 'Reference',
+  '/o-nas': 'O nás',
+  '/kontakt': 'Kontakt',
   '/ochrana-osobnich-udaju': 'Ochrana osobních údajů',
   '/obchodni-podminky': 'Obchodní podmínky',
 }
@@ -57,8 +61,8 @@ export default function Admin() {
   }
 
   return (
-    <PageShell>
-      <div className="container-x py-12 sm:py-16">
+    <>
+      <div className="container-x pb-12 pt-28 sm:pb-16 sm:pt-32">
         {view.state === 'loading' && <p className="py-24 text-center text-muted">Načítám…</p>}
         {view.state === 'off' && (
           <p className="mx-auto max-w-md py-24 text-center leading-relaxed text-muted">
@@ -70,7 +74,7 @@ export default function Admin() {
           <Dashboard stats={view.stats} range={range} onRange={setRange} onLogout={logout} />
         )}
       </div>
-    </PageShell>
+    </>
   )
 }
 
