@@ -1,9 +1,8 @@
 import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react'
 import { useEffect, useState, type PointerEvent, type ReactNode } from 'react'
 import { findItem } from '../data/catalog'
-import { fonts } from '../data/fonts'
 import { heroShowcase } from '../data/content'
-import { PAGES, SITE } from '../data/site'
+import { PAGES } from '../data/site'
 import type { ButtonItem, FontItem, LayoutItem, PaletteItem } from '../data/types'
 import { nb } from '../lib/text'
 import { BrowserFrame } from './BrowserFrame'
@@ -16,23 +15,15 @@ export function Hero() {
   return (
     <section id="domu" className="relative overflow-hidden pb-14 pt-24 sm:pt-28 lg:pb-20">
       <div className="container-x">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
-          className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-line pb-4 font-mono text-[12px] uppercase tracking-[0.14em] text-muted"
-        >
-          <span>Webové studio</span>
-          <span className="hidden sm:inline">Richard &amp; Daniel</span>
-          <span>Weby na míru · {SITE.year}</span>
-        </motion.div>
-
-        <div className="mt-10 grid items-end gap-12 sm:mt-14 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
+        <div className="mt-6 grid items-end gap-12 sm:mt-10 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
           <div>
             <h1 className="font-display text-[clamp(3.6rem,9.4vw,9.6rem)] font-extrabold leading-[0.86] tracking-[-0.065em]">
               <Line delay={0.2}>Web podle</Line>
               <Line delay={0.3}>
-                <FontSwapWord />
+                <span className="relative inline-block">
+                  vašich
+                  <Scribble className="-inset-x-[6%] -inset-y-[14%] h-[128%] w-[112%]" delay={1.1} />
+                </span>
               </Line>
               <Line delay={0.4}>
                 představ<span className="text-accent">.</span>
@@ -69,49 +60,6 @@ export function Hero() {
         </div>
       </div>
     </section>
-  )
-}
-
-/**
- * "vašich" in the headline trades its font for the next one from the catalog
- * on every hover or click. A small taste of what the catalog does.
- */
-function FontSwapWord() {
-  const [index, setIndex] = useState(-1)
-  const [touched, setTouched] = useState(false)
-  const font = index >= 0 ? fonts[index] : undefined
-  const next = () => {
-    setTouched(true)
-    setIndex((i) => (i + 1) % fonts.length)
-  }
-
-  return (
-    <span className="relative inline-flex items-baseline gap-4">
-      <button
-        type="button"
-        onPointerEnter={(e) => e.pointerType === 'mouse' && next()}
-        onClick={next}
-        title="Vyzkoušet jiné písmo"
-        className="relative inline-block cursor-pointer rounded-[0.1em] text-left outline-offset-8"
-        style={font ? { fontFamily: font.family, fontWeight: font.weight, fontSize: `${(font.scale ?? 1) * 100}%` } : undefined}
-      >
-        vašich
-        <Scribble className="-inset-x-[6%] -inset-y-[14%] h-[128%] w-[112%]" delay={1.1} />
-      </button>
-      <span className="hidden self-center font-mono text-[12px] font-normal uppercase leading-snug tracking-[0.12em] text-accent sm:inline-block" aria-live="polite">
-        {font ? (
-          <>
-            {font.name}
-            <br />
-            <span className="text-muted">{index + 1}/{fonts.length}</span>
-          </>
-        ) : (
-          !touched && (
-            <span className="inline-block -rotate-6 rounded-full border border-accent px-3 py-1">← zkuste najet</span>
-          )
-        )}
-      </span>
-    </span>
   )
 }
 
