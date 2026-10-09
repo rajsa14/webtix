@@ -8,41 +8,43 @@
  *  - VITE_INQUIRY_ENDPOINT = /api/inquiry   (tells the frontend to use this)
  * Then trigger a new deploy.
  */
+import type { Config } from '@netlify/functions'
+import { isSameOrigin, json, readJson } from '../lib/http.mts'
 
-const TO = 'webtixx1@gmail.com'
+const TO = 'info@webtix.cz'
 
-interface Body {
-  _subject?: string
-  _replyto?: string
-  message?: string
-  website?: string
+/** A person needs longer than this to fill the form in. Scripts do not. */
+const MIN_FILL_MS = 4000
+
+export const config: Config = {
+  path: '/api/inquiry',
+  rateLimit: { action: 'rate_limit', aggregateBy: ['ip', 'domain'], windowSize: 60, windowLimit: 5 },
 }
-
-export const config = { path: '/api/inquiry' }
 
 export default async function handler(request: Request): Promise<Response> {
   if (request.method !== 'POST') return new Response(null, { status: 405 })
+  if (!isSameOrigin(request)) return new Response(null, { status: 403 })
 
-  let body: Body
-  try {
-    body = await request.json()
-  } catch {
-    return Response.json({ ok: false, error: 'Neplatná data' }, { status: 400 })
-  }
+  const body = await readJson(request, 60_000)
+  if (!body) return json({ ok: false, error: 'Neplatná data' }, { status: 400 })
 
-  const subject = String(body._subject ?? '').slice(0, 200)
-  const replyTo = String(body._replyto ?? '')
-  const text = String(body.message ?? '').slice(0, 20_000)
+  // Spam traps: a filled honeypot or an instant submit. Answer as if it worked,
+  // so the bot has no reason to try another way.
+  if (body.website || Number(body._elapsed) < MIN_FILL_MS) return json({ ok: true })
 
-  // Basic server-side validation. Never trust the browser.
-  if (!subject || !text || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(replyTo)) {
-    return Response.json({ ok: false, error: 'Chybí povinné údaje' }, { status: 422 })
+  // Never trust the browser. Line breaks are stripped so nothing can add e-mail headers.
+  const subject = String(body._subject ?? '').replace(/[\r\n]+/g, ' ').trim().slice(0, 200)
+  const replyTo = String(body._replyto ?? '').trim()
+  const text = String(body.message ?? '').trim().slice(0, 20_000)
+
+  if (!subject || text.length < 10 || replyTo.length > 254 || !/^[^\s@<>,;]+@[^\s@<>,;]+\.[^\s@<>,;]{2,}$/.test(replyTo)) {
+    return json({ ok: false, error: 'Chybí povinné údaje' }, { status: 422 })
   }
 
   const apiKey = process.env.RESEND_API_KEY
   const from = process.env.INQUIRY_FROM
   if (!apiKey || !from) {
-    return Response.json({ ok: false, error: 'E-mailová služba není nastavená' }, { status: 500 })
+    return json({ ok: false, error: 'E-mailová služba není nastavená' }, { status: 500 })
   }
 
   const res = await fetch('https://api.resend.com/emails', {
@@ -52,7 +54,7 @@ export default async function handler(request: Request): Promise<Response> {
   })
 
   if (!res.ok) {
-    return Response.json({ ok: false, error: 'Odeslání selhalo' }, { status: 502 })
+    return json({ ok: false, error: 'Odeslání selhalo' }, { status: 502 })
   }
-  return Response.json({ ok: true })
+  return json({ ok: true })
 }

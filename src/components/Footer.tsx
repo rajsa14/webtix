@@ -1,12 +1,11 @@
-import { useState } from 'react'
-import { NAV_LINKS, SITE } from '../data/site'
+import { NAV_LINKS, PAGES, SITE } from '../data/site'
 import { team } from '../data/team'
-import { LegalDialog, type LegalDoc } from './LegalDialog'
+import { useConsent } from '../store/consent'
 import { PlayfulWord } from './Decor'
 import { Logo } from './Logo'
 
 export function Footer() {
-  const [doc, setDoc] = useState<LegalDoc | null>(null)
+  const openCookies = useConsent((s) => s.openBanner)
   const heading = 'mb-4 font-mono text-[12px] uppercase tracking-[0.12em] text-muted'
 
   return (
@@ -14,7 +13,7 @@ export function Footer() {
       <div className="container-x">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
           <div>
-            <a href="#domu" className="inline-block rounded-full" aria-label={`${SITE.name}, zpět nahoru`}>
+            <a href="/#domu" className="inline-block rounded-full" aria-label={`${SITE.name}, zpět nahoru`}>
               <Logo />
             </a>
             <p className="mt-4 max-w-xs text-lg leading-snug text-fg/90">{SITE.tagline}</p>
@@ -25,7 +24,7 @@ export function Footer() {
             <ul className="grid gap-2.5">
               {NAV_LINKS.map((link) => (
                 <li key={link.id}>
-                  <a href={`#${link.id}`} className="text-fg/85 transition-colors hover:text-accent">
+                  <a href={`/#${link.id}`} className="text-fg/85 transition-colors hover:text-accent">
                     {link.label}
                   </a>
                 </li>
@@ -62,16 +61,18 @@ export function Footer() {
             {SITE.legal.length > 0 && <p className="mt-1 text-[13px] text-faint">{SITE.legal.join(' · ')}</p>}
           </div>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
-            <button type="button" onClick={() => setDoc('privacy')} className="transition-colors hover:text-fg">
+            <a href={PAGES.privacy} className="transition-colors hover:text-fg">
               Ochrana osobních údajů
-            </button>
-            <button type="button" onClick={() => setDoc('terms')} className="transition-colors hover:text-fg">
+            </a>
+            <a href={PAGES.terms} className="transition-colors hover:text-fg">
               Obchodní podmínky
+            </a>
+            <button type="button" onClick={openCookies} className="transition-colors hover:text-fg">
+              Nastavení cookies
             </button>
           </div>
         </div>
       </div>
-      <LegalDialog doc={doc} onClose={() => setDoc(null)} />
     </footer>
   )
 }

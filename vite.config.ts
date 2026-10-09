@@ -1,8 +1,8 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import { readFileSync, readdirSync, writeFileSync } from 'node:fs'
+import { copyFileSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 
 /**
  * Dev-only mock of the inquiry endpoint. It never sends e-mail: it only prints
@@ -29,6 +29,47 @@ function devInquiryMock(): Plugin {
             res.end(JSON.stringify({ ok: true }))
           }, 900)
         })
+      })
+    },
+  }
+}
+
+/**
+ * Dev-only stand-in for Netlify: runs the functions behind /api/track and
+ * /api/admin/* inside the dev server. Events stay in memory and vanish on
+ * restart. The admin password comes from ADMIN_PASSWORD in .env.local.
+ */
+function devNetlifyFunctions(): Plugin {
+  const routes = [
+    { prefix: '/api/track', file: '/netlify/functions/track.mts' },
+    { prefix: '/api/admin/', file: '/netlify/functions/admin.mts' },
+  ]
+  return {
+    name: 'webtix-dev-netlify-functions',
+    apply: 'serve',
+    configureServer(server) {
+      process.env.WEBTIX_DEV_STORE = '1'
+      Object.assign(process.env, loadEnv(server.config.mode, process.cwd(), 'ADMIN_'))
+
+      server.middlewares.use(async (req, res, next) => {
+        const route = routes.find((r) => req.url?.startsWith(r.prefix))
+        if (!route) return next()
+        try {
+          const chunks: Buffer[] = []
+          for await (const chunk of req) chunks.push(chunk)
+          const request = new Request(`http://${req.headers.host}${req.url}`, {
+            method: req.method,
+            headers: req.headers as Record<string, string>,
+            body: chunks.length ? Buffer.concat(chunks) : undefined,
+          })
+          const mod = await server.ssrLoadModule(route.file)
+          const response: Response = await mod.default(request, { deploy: { context: 'dev' } })
+          res.statusCode = response.status
+          response.headers.forEach((value, key) => res.setHeader(key, value))
+          res.end(Buffer.from(await response.arrayBuffer()))
+        } catch (error) {
+          next(error)
+        }
       })
     },
   }
@@ -99,10 +140,30 @@ function offlineSingleFile(): Plugin {
 
 const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
+/**
+ * Netlify serves /404.html with a real 404 status for unknown addresses.
+ * It is a copy of the app shell, which then renders the "not found" page.
+ */
+function notFoundPage(): Plugin {
+  return {
+    name: 'webtix-404',
+    apply: 'build',
+    closeBundle() {
+      copyFileSync('dist/index.html', 'dist/404.html')
+    },
+  }
+}
+
 export default defineConfig(({ mode }) => {
   const offline = mode === 'offline'
   return {
-    plugins: [react(), tailwindcss(), devInquiryMock(), offline && offlineSingleFile()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      devInquiryMock(),
+      devNetlifyFunctions(),
+      offline ? offlineSingleFile() : notFoundPage(),
+    ],
     server: { port: Number(process.env.PORT) || 5178 },
     // Relative paths, so the offline copy works from any folder.
     base: offline ? './' : '/',

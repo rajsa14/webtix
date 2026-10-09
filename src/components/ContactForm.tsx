@@ -2,8 +2,9 @@ import { CaretDownIcon, PaperPlaneTiltIcon, WarningCircleIcon } from '@phosphor-
 import { AnimatePresence, motion } from 'motion/react'
 import { useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { BUDGETS, DEADLINES, WEB_TYPES } from '../data/content'
-import { SITE } from '../data/site'
+import { PAGES, SITE } from '../data/site'
 import { buildInquiry, type InquiryForm } from '../lib/inquiry'
+import { trackInquiry } from '../lib/analytics'
 import { sendInquiry } from '../lib/sendInquiry'
 import { cx, nb, scrollToId } from '../lib/text'
 import { countSelected, useSelection } from '../store/selection'
@@ -43,6 +44,9 @@ function validate(form: InquiryForm, selectionCount: number): Errors {
   if (selectionCount === 0) e.selection = 'Vyberte v katalogu alespoň jednu položku, ať víme, co se vám líbí.'
   return e
 }
+
+/** Bots submit within moments of loading the page; the server drops those. */
+const msSincePageOpened = () => Math.round(performance.now())
 
 const FIELD_ORDER: (keyof Errors)[] = ['name', 'company', 'email', 'phone', 'webType', 'message', 'selection']
 
@@ -89,7 +93,8 @@ export function ContactForm() {
     const payload = buildInquiry(form, selected)
     setStatus('sending')
     try {
-      const res = await sendInquiry(payload)
+      const res = await sendInquiry(payload, { website: '', elapsed: msSincePageOpened() })
+      if (res.status === 'sent') trackInquiry()
       setStatus('idle')
       setResult(res.status === 'sent' ? { type: 'sent' } : { type: 'not-configured', payload })
     } catch {
@@ -207,7 +212,10 @@ export function ContactForm() {
 
               <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <p id="form-note" className="text-[13px] leading-relaxed text-muted sm:max-w-[48%]">
-                  {nb(`Odesláním souhlasíte se zpracováním údajů za účelem odpovědi na poptávku. Napsat můžete i na ${SITE.email}.`)}
+                  {nb('Údaje použijeme jen k odpovědi na vaši poptávku.')}{' '}
+                  <a href={PAGES.privacy} className="text-fg underline underline-offset-2 hover:text-accent-soft">
+                    Ochrana osobních údajů
+                  </a>
                 </p>
                 <button
                   type="submit"
@@ -320,6 +328,7 @@ function TextField({ label, name, value, onChange, error, hint, optional, type =
         aria-invalid={error ? true : undefined}
         aria-required={optional ? undefined : true}
         aria-describedby={describedBy}
+        maxLength={200}
         className={cx(inputBase, 'h-12', error ? 'border-danger/70' : 'border-line-strong')}
         {...rest}
       />
@@ -348,6 +357,7 @@ function TextArea({ label, name, value, onChange, error, placeholder }: TextFiel
         aria-invalid={error ? true : undefined}
         aria-required
         aria-describedby={error ? `${id}-error` : undefined}
+        maxLength={5000}
         className={cx(inputBase, 'min-h-36 resize-y py-3 leading-relaxed', error ? 'border-danger/70' : 'border-line-strong')}
       />
       <ErrorText id={`${id}-error`}>{error}</ErrorText>
@@ -419,6 +429,7 @@ function ChipGroup({
   const id = useId()
   return (
     <fieldset
+      role="radiogroup"
       className={className}
       aria-invalid={error ? true : undefined}
       aria-describedby={error ? `${id}-error` : undefined}

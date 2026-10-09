@@ -57,7 +57,7 @@ export function Hero() {
               className="mt-8 flex flex-wrap items-center gap-3"
             >
               <CtaLink href="#katalog" size="lg" arrow>
-                Otevřít katalog
+                Vytvořit výběr
               </CtaLink>
               <CtaLink href="#jak-to-funguje" size="lg" variant="secondary">
                 Jak to funguje
@@ -232,7 +232,7 @@ function HeroShowcase() {
             transition={{ duration: 0.45, ease: EASE }}
             className="rounded-[18px] bg-accent p-4 text-white shadow-[0_24px_50px_-24px_rgb(18_18_16/0.5)]"
           >
-            <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-white/70">Sestaveno z katalogu</p>
+            <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.12em] text-white/85">Sestaveno z katalogu</p>
             <Recipe demo={front} />
           </motion.div>
         </AnimatePresence>
@@ -268,7 +268,7 @@ function Recipe({ demo }: { demo: (typeof heroShowcase)[number] }) {
     <dl className="grid gap-2 text-[13px]">
       {rows.map((row) => (
         <div key={row.label} className="flex items-center justify-between gap-3">
-          <dt className="text-white/70">{row.label}</dt>
+          <dt className="text-white/85">{row.label}</dt>
           <dd className="text-white">{row.value}</dd>
         </div>
       ))}

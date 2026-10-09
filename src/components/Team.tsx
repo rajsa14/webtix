@@ -42,7 +42,7 @@ export function Team() {
               <div className="px-6 pb-7 pt-5 sm:px-8 sm:pb-8">
                 <h4 className="text-[2.2rem] font-extrabold leading-[0.95] tracking-[-0.05em]">{member.name}</h4>
                 <p className="mt-1 text-[15px] text-muted">
-                  WebTix <span aria-hidden="true" className="px-1 text-faint">/</span> {member.role}
+                  WebTix <span aria-hidden="true" className="px-1 text-muted">/</span> {member.role}
                 </p>
                 <p className="mt-5 max-w-md leading-relaxed text-muted">{nb(member.description)}</p>
                 <ul className="mt-6 flex flex-wrap gap-2" aria-label="Zaměření">

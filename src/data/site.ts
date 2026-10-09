@@ -4,7 +4,8 @@ import { references } from './references'
 export const SITE = {
   name: 'WebTix',
   tagline: 'Weby podle vašich představ.',
-  email: 'webtixx1@gmail.com',
+  email: 'info@webtix.cz',
+  url: 'https://webtix.cz',
   year: 2026,
   /**
    * Legal identity shown in the footer, e.g. 'IČO: 12345678'. One line per
@@ -21,3 +22,10 @@ export const NAV_LINKS = [
   { id: 'o-nas', label: 'O nás' },
   { id: 'kontakt', label: 'Kontakt' },
 ]
+
+/** Addresses of standalone pages. Keep in sync with netlify.toml and public/sitemap.xml. */
+export const PAGES = {
+  privacy: '/ochrana-osobnich-udaju',
+  terms: '/obchodni-podminky',
+  admin: '/admin',
+} as const

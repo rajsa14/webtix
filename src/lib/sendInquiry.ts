@@ -29,7 +29,7 @@ export type SendResult = { status: 'sent' } | { status: 'not-configured' }
 
 export const NETLIFY_FORM_NAME = 'poptavka'
 
-async function sendToNetlifyForms(payload: InquiryPayload): Promise<SendResult> {
+async function sendToNetlifyForms(payload: InquiryPayload, honeypot: string): Promise<SendResult> {
   // Netlify Forms only exist on the deployed site, not on file:// copies.
   if (!/^https?:$/.test(window.location.protocol)) return { status: 'not-configured' }
 
@@ -47,6 +47,8 @@ async function sendToNetlifyForms(payload: InquiryPayload): Promise<SendResult> 
     design: payload.design.map((d) => `${d.category}: ${d.items.length ? d.items.join(', ') : 'nevybráno'}`).join('\n'),
     message: form.message.trim(),
     inspiration: form.inspiration.trim(),
+    // Honeypot named in the form blueprint; Netlify discards submissions that fill it.
+    website: honeypot,
   })
 
   const response = await fetch('/', {
@@ -60,8 +62,12 @@ async function sendToNetlifyForms(payload: InquiryPayload): Promise<SendResult> 
   return { status: 'sent' }
 }
 
-export async function sendInquiry(payload: InquiryPayload): Promise<SendResult> {
-  if (!ENDPOINT) return sendToNetlifyForms(payload)
+/** `spam` carries the honeypot value and the time since the page opened; the server uses them to drop bots. */
+export async function sendInquiry(
+  payload: InquiryPayload,
+  spam: { website: string; elapsed: number },
+): Promise<SendResult> {
+  if (!ENDPOINT) return sendToNetlifyForms(payload, spam.website)
 
   const response = await fetch(ENDPOINT, {
     method: 'POST',
@@ -73,6 +79,8 @@ export async function sendInquiry(payload: InquiryPayload): Promise<SendResult> 
       email: payload.replyTo,
       name: payload.form.name,
       message: payload.text,
+      website: spam.website,
+      _elapsed: spam.elapsed,
       // Structured copy for a custom backend.
       inquiry: payload,
     }),

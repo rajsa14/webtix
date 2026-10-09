@@ -57,7 +57,8 @@ function WordReveal({ text, className }: { text: string; className?: string }) {
 }
 
 function Word({ children, progress, range }: { children: ReactNode; progress: MotionValue<number>; range: [number, number] }) {
-  const opacity = useTransform(progress, range, [0.2, 1])
+  // 0.55 keeps the dimmed words above 4.5:1 contrast on the page background.
+  const opacity = useTransform(progress, range, [0.55, 1])
   return (
     <>
       <motion.span style={{ opacity }}>{children}</motion.span>{' '}

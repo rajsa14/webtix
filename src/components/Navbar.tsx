@@ -144,7 +144,7 @@ export function Navbar() {
                     )}
                   >
                     {link.label}
-                    <span className="font-mono text-xs text-faint">0{i + 1}</span>
+                    <span className="font-mono text-xs text-muted">0{i + 1}</span>
                   </a>
                 </motion.li>
               ))}
