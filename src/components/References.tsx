@@ -5,6 +5,8 @@ import { nb } from '../lib/text'
 import { SectionLabel } from './Decor'
 import { Reveal } from './Reveal'
 
+const LINK_TEXT = { client: 'Otevřít web', own: 'Otevřít web', proposal: 'Prohlédnout návrh', concept: 'Prohlédnout koncept' }
+
 const number = (i: number) => String(i + 1).padStart(2, '0')
 const anchor = (i: number) => `projekt-${number(i)}`
 
@@ -109,7 +111,7 @@ function Project({ reference: ref, index }: { reference: Reference; index: numbe
           rel="noopener noreferrer"
           className="mt-4 inline-flex items-center gap-1.5 text-[15px] text-accent transition-colors hover:text-fg"
         >
-          {ref.kind === 'concept' ? 'Prohlédnout koncept' : 'Otevřít web'} <ArrowUpRightIcon size={15} weight="bold" />
+          {LINK_TEXT[ref.kind]} <ArrowUpRightIcon size={15} weight="bold" />
         </a>
       ) : (
         <p className="mt-4 text-[14px] text-muted">Návrh. Ostrý web zatím neběží.</p>

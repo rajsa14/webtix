@@ -7,7 +7,7 @@
  *  - 'client'    a site built for a paying client
  *  - 'own'       a site we built for ourselves
  *  - 'proposal'  a design made for a real business that is not live yet;
- *                keep its contact details out of the screenshot and leave `url` empty
+ *                keep its contact details out of the screenshot
  *  - 'concept'   a design for a made-up brand
  */
 export type ReferenceKind = 'client' | 'own' | 'proposal' | 'concept'
@@ -62,6 +62,7 @@ export const references: Reference[] = [
     description:
       'Návrh webu pro kavárnu s večerním programem. Fotka interiéru přes celou obrazovku, dnešní menu a program hned na očích.',
     image: 'references/kavarna.jpg',
+    url: 'https://adastra-kavarna.webtix.workers.dev/',
     kind: 'proposal',
   },
   {
@@ -72,6 +73,7 @@ export const references: Reference[] = [
     description:
       'Návrh webu pro restauraci s tradicí. Kondenzované písmo jako z vývěsního štítu, polední menu na jedno kliknutí a rezervace vždy po ruce.',
     image: 'references/restaurace.jpg',
+    url: 'https://restauracemerkur.webtix.workers.dev/',
     kind: 'proposal',
   },
   {
