@@ -1,5 +1,5 @@
 /**
- * Projects shown on the "Reference" page, in this order.
+ * Projects shown on the "Reference" page, in this order. The first one is featured large.
  * The page and its nav link stay hidden while this list is empty.
  *
  * Put screenshots in public/references/ and set e.g. `image: 'references/kavarna.jpg'`
@@ -18,7 +18,8 @@ export interface Reference {
   type: string
   year: number
   description: string
-  image: string
+  /** Screenshot in public/references/. Without one the card shows a typographic cover instead. */
+  image?: string
   url?: string
   kind: ReferenceKind
 }
@@ -33,26 +34,15 @@ export const KIND_LABELS: Record<ReferenceKind, string> = {
 
 export const references: Reference[] = [
   {
-    title: 'Daniel Švéda',
-    client: 'Osobní web',
-    type: 'Portfolio',
+    title: 'Restaurace Merkur',
+    client: 'Restaurace',
+    type: 'Web podniku',
     year: 2026,
     description:
-      'Osobní web jednoho z nás. Obří typografie, tmavé plátno, dvě jazykové verze a detaily, které reagují na pohyb i zvuk.',
-    image: 'references/daniel-sveda.jpg',
-    url: 'https://danielsveda.cz/',
-    kind: 'own',
-  },
-  {
-    title: 'Richard Buchníček',
-    client: 'Osobní web',
-    type: 'Portfolio',
-    year: 2026,
-    description:
-      'Portfolio postavené od nuly, bez šablony. Jméno složené z částic, které reagují na myš, galerie webů a rychlé menu z klávesnice.',
-    image: 'references/richard-buchnicek.jpg',
-    url: 'https://richard-buchnicek.netlify.app/',
-    kind: 'own',
+      'Návrh webu pro restauraci s tradicí. Kondenzované písmo jako z vývěsního štítu, polední menu na jedno kliknutí a rezervace vždy po ruce.',
+    image: 'references/restaurace.jpg',
+    url: 'https://restauracemerkur.webtix.workers.dev/',
+    kind: 'proposal',
   },
   {
     title: 'Café AdAstra',
@@ -66,14 +56,13 @@ export const references: Reference[] = [
     kind: 'proposal',
   },
   {
-    title: 'Restaurace Merkur',
-    client: 'Restaurace',
-    type: 'Web podniku',
+    title: 'Pension Milada',
+    client: 'Rodinný pension',
+    type: 'Web ubytování',
     year: 2026,
     description:
-      'Návrh webu pro restauraci s tradicí. Kondenzované písmo jako z vývěsního štítu, polední menu na jedno kliknutí a rezervace vždy po ruce.',
-    image: 'references/restaurace.jpg',
-    url: 'https://restauracemerkur.webtix.workers.dev/',
+      'Návrh webu pro malý pension kousek za Prahou. Česky i anglicky, pokoje a ceník přehledně, poptávka pobytu přímo z webu.',
+    url: 'https://pension-milada.webtix.workers.dev/',
     kind: 'proposal',
   },
   {
@@ -152,5 +141,27 @@ export const references: Reference[] = [
     image: 'references/vyska.jpg',
     url: 'koncepty/vyska/index.html',
     kind: 'concept',
+  },
+  {
+    title: 'Richard Buchníček',
+    client: 'Osobní web',
+    type: 'Portfolio',
+    year: 2026,
+    description:
+      'Portfolio postavené od nuly, bez šablony. Jméno složené z částic, které reagují na myš, galerie webů a rychlé menu z klávesnice.',
+    image: 'references/richard-buchnicek.jpg',
+    url: 'https://richard-buchnicek.netlify.app/',
+    kind: 'own',
+  },
+  {
+    title: 'Daniel Švéda',
+    client: 'Osobní web',
+    type: 'Portfolio',
+    year: 2026,
+    description:
+      'Osobní web jednoho z nás. Obří typografie, tmavé plátno, dvě jazykové verze a detaily, které reagují na pohyb i zvuk.',
+    image: 'references/daniel-sveda.jpg',
+    url: 'https://danielsveda.cz/',
+    kind: 'own',
   },
 ]
