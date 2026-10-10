@@ -1,4 +1,4 @@
-import { CopyIcon, EnvelopeSimpleIcon, SealCheckIcon, XIcon } from '@phosphor-icons/react'
+import { CopyIcon, EnvelopeSimpleIcon, XIcon } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, type ReactNode } from 'react'
 import { SITE } from '../data/site'
@@ -10,7 +10,8 @@ import { useUi } from '../store/ui'
 import { CtaButton } from './Cta'
 import { EASE } from './Reveal'
 
-export type InquiryResult = { type: 'sent' } | { type: 'not-configured'; payload: InquiryPayload }
+/** Sent inquiries go to their own page; this dialog only covers sending that is not set up. */
+export type InquiryResult = { type: 'not-configured'; payload: InquiryPayload }
 
 export function ResultDialog({ result, onClose }: { result: InquiryResult | null; onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -43,7 +44,7 @@ export function ResultDialog({ result, onClose }: { result: InquiryResult | null
             transition={{ duration: 0.6, ease: EASE }}
             className="relative w-full max-w-lg overflow-hidden rounded-card border border-line-strong bg-ink-900 p-7 text-center shadow-[0_40px_100px_-30px_rgb(17_17_16/0.22)] sm:p-10"
           >
-            {result.type === 'sent' ? <Sent onClose={onClose} /> : <NotConfigured payload={result.payload} onClose={onClose} />}
+            <NotConfigured payload={result.payload} onClose={onClose} />
           </motion.div>
         </motion.div>
       )}
@@ -61,25 +62,6 @@ function Badge({ children }: { children: ReactNode }) {
     >
       {children}
     </motion.span>
-  )
-}
-
-function Sent({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="relative">
-      <Badge>
-        <SealCheckIcon size={32} weight="fill" />
-      </Badge>
-      <h2 id="result-title" className="mt-7 text-[2rem] font-semibold leading-tight tracking-[-0.03em]">
-        Děkujeme za vaši představu!
-      </h2>
-      <p className="mx-auto mt-3 max-w-sm leading-relaxed text-muted">
-        {nb('Vaši zprávu jsme přijali. Projdeme si váš výběr a ozveme se vám.')}
-      </p>
-      <CtaButton data-autofocus size="lg" className="mt-8" onClick={onClose} arrow>
-        Zpět na WebTix
-      </CtaButton>
-    </div>
   )
 }
 

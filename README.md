@@ -54,6 +54,7 @@ Integrace je v `src/lib/sendInquiry.ts`, text e-mailu se skládá v `src/lib/inq
 | --- | --- |
 | `/` | Úvodní stránka s rozcestníkem |
 | `/katalog`, `/jak-to-funguje`, `/reference`, `/o-nas`, `/kontakt` | Hlavní stránky. Co na které je, určuje `ROUTES` v `src/App.tsx`; přepínání bez načítání řeší `src/lib/router.ts` |
+| `/poptavka-odeslana` | Poděkování po odeslání poptávky (`src/components/pages/InquirySent.tsx`), neindexuje se |
 | `/ochrana-osobnich-udaju`, `/obchodni-podminky` | Právní texty (`src/data/legal.ts`, zatím koncept k revizi) |
 | `/admin` | Přehled návštěvnosti po přihlášení |
 | cokoliv jiného | Vlastní stránka 404 |

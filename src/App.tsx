@@ -13,6 +13,7 @@ import { Hero } from './components/Hero'
 import { HomeLinks } from './components/HomeLinks'
 import { HowItWorks } from './components/HowItWorks'
 import { Navbar } from './components/Navbar'
+import { InquirySent } from './components/pages/InquirySent'
 import { LegalPage } from './components/pages/LegalPage'
 import { NotFound } from './components/pages/NotFound'
 import { Playground } from './components/Playground'
@@ -89,6 +90,7 @@ const ROUTES: Record<string, () => ReactNode> = {
       <ContactForm />
     </Titled>
   ),
+  [PAGES.inquirySent]: () => <InquirySent />,
   [PAGES.privacy]: () => <LegalPage doc="privacy" />,
   [PAGES.terms]: () => <LegalPage doc="terms" />,
   [PAGES.admin]: () => (

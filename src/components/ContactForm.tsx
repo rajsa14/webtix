@@ -62,6 +62,7 @@ export function ContactForm() {
   const selected = useSelection((s) => s.selected)
   const selectionCount = countSelected(selected)
   const toast = useUi((s) => s.toast)
+  const setLastInquiry = useUi((s) => s.setLastInquiry)
 
   const set = (key: keyof InquiryForm) => (value: string) => {
     const next = { ...form, [key]: value }
@@ -95,25 +96,24 @@ export function ContactForm() {
     setStatus('sending')
     try {
       const res = await sendInquiry(payload, { website: '', elapsed: msSincePageOpened() })
-      if (res.status === 'sent') trackInquiry()
       setStatus('idle')
-      setResult(res.status === 'sent' ? { type: 'sent' } : { type: 'not-configured', payload })
+      if (res.status === 'sent') {
+        trackInquiry()
+        setLastInquiry({ name: form.name, email: form.email.trim() })
+        setForm(EMPTY)
+        setSubmitted(false)
+        setErrors({})
+        navigate(PAGES.inquirySent)
+        return
+      }
+      setResult({ type: 'not-configured', payload })
     } catch {
       setStatus('error')
       toast('Odeslání se nepovedlo. Zkuste to prosím znovu.', 'error')
     }
   }
 
-  const closeResult = () => {
-    const wasSent = result?.type === 'sent'
-    setResult(null)
-    if (wasSent) {
-      setForm(EMPTY)
-      setSubmitted(false)
-      setErrors({})
-      navigate(PAGES.home)
-    }
-  }
+  const closeResult = () => setResult(null)
 
   return (
     <section id="poptavka" className="relative pb-24 pt-32 sm:pb-32 sm:pt-40">
