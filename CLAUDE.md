@@ -30,5 +30,5 @@ React 19, TypeScript, Vite, Tailwind CSS v4. Hosted on Cloudflare Workers (`wran
 - Our own tracking and `/admin` are removed. Cloudflare Web Analytics only.
 - Keep the cookie banner small, hidden until something needs consent, never over the hero.
 
-## Moving off Netlify
+## Moving off Netlify (done in step 7)
 Move security headers and redirects from `netlify.toml` into `public/_headers` and `public/_redirects` (keep the Content-Security-Policy, allow `static.cloudflareinsights.com` and `cloudflareinsights.com`, add Google Fonts only if fonts are not self-hosted). Then remove `netlify.toml`.

@@ -29,7 +29,7 @@ export function Footer() {
           </>
         )}
       </p>
-      <p className="m-0 flex flex-col items-start text-[14px] leading-[22px] text-ink-soft lg:col-span-4 lg:col-start-9 lg:block lg:text-right lg:text-[15px]">
+      <p className="m-0 flex flex-col items-start text-[14px] leading-6 text-ink-soft lg:col-span-4 lg:leading-[22px] lg:col-start-9 lg:block lg:text-right lg:text-[15px]">
         <a href={PAGES.privacy} className={link}>
           Ochrana osobních údajů
         </a>

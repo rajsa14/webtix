@@ -1,0 +1,9 @@
+# Addresses of the old site (configurator era), sent to the matching part of
+# the one-page site. Every other address loads the app (single-page
+# application in wrangler.jsonc), which shows its own 404 page.
+/katalog          /                   301
+/jak-to-funguje   /#jak-to-delame     301
+/reference        /#navrhy            301
+/o-nas            /#kdo-jsme          301
+/kontakt          /#kontakt           301
+/admin            /                   301
