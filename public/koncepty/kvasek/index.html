@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pekárna Kvásek · koncept WebTix</title>
+<meta name="description" content="Koncept webu pro řemeslnou pekárnu. Ukázková práce studia WebTix, fiktivní značka." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#ece2d0" />
+<link rel="stylesheet" href="../fonts/fonts.css" />
+<style>
+  :root {
+    --flour: #f6f0e4;
+    --wheat: #ece2d0;
+    --crust: #8a4b22;
+    --rye: #3a2416;
+    --oven: #e2541d;
+    --muted: #7a6450;
+    --line: rgb(58 36 22 / 0.18);
+    --sans: 'Space Grotesk', system-ui, sans-serif;
+    --serif: 'Playfair', Georgia, serif;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+  body { background: var(--wheat); color: var(--rye); font-family: var(--sans); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: min(1320px, 100% - 32px); margin-inline: auto; }
+
+  .concept-bar { background: var(--rye); color: var(--wheat); font-size: 13px; font-weight: 500; text-align: center; padding: 8px 16px; }
+  .concept-bar a { text-decoration: underline; text-underline-offset: 3px; }
+
+  header { border-bottom: 1.5px solid var(--rye); }
+  header .wrap { display: grid; grid-template-columns: auto 1fr auto; gap: 30px; align-items: stretch; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 22px; letter-spacing: -0.04em; padding-right: 30px; border-right: 1.5px solid var(--rye); }
+  .brand svg { width: 34px; height: 34px; }
+  nav ul { list-style: none; display: flex; height: 100%; }
+  nav li { display: flex; }
+  nav a { display: flex; align-items: center; padding: 0 20px; font-size: 15px; font-weight: 500; transition: background 0.3s; }
+  nav a:hover { background: var(--flour); }
+  .oven-status { display: flex; align-items: center; gap: 10px; padding-left: 30px; border-left: 1.5px solid var(--rye); font-size: 14px; font-weight: 600; }
+  .oven-status i { width: 10px; height: 10px; border-radius: 50%; background: var(--oven); box-shadow: 0 0 0 4px rgb(226 84 29 / 0.25); animation: glow 1.6s ease-in-out infinite; }
+  @keyframes glow { 50% { box-shadow: 0 0 0 9px rgb(226 84 29 / 0); } }
+
+  /* Hero: big type over a bread loaf drawn in CSS */
+  .hero { border-bottom: 1.5px solid var(--rye); }
+  .hero .wrap { display: grid; grid-template-columns: 1fr 1fr; min-height: 76vh; }
+  .hero-text { padding: 64px 48px 56px 0; border-right: 1.5px solid var(--rye); display: flex; flex-direction: column; justify-content: space-between; gap: 40px; }
+  .hero h1 { font-size: clamp(3.6rem, 9vw, 9rem); font-weight: 700; line-height: 0.86; letter-spacing: -0.07em; }
+  .hero h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.03em; color: var(--crust); }
+  .hero .lead { font-size: 19px; max-width: 440px; color: var(--muted); }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 24px; border-radius: 999px; font-weight: 600; border: 1.5px solid var(--rye); transition: all 0.4s var(--ease); }
+  .btn-dark { background: var(--rye); color: var(--flour); }
+  .btn-dark:hover { background: var(--oven); border-color: var(--oven); }
+  .btn:not(.btn-dark):hover { background: var(--rye); color: var(--flour); }
+
+  .hero-art { position: relative; display: grid; place-items: center; overflow: hidden; background: radial-gradient(circle at 50% 60%, #f3c58a 0%, transparent 55%), var(--flour); }
+  .loaf { position: relative; width: 74%; aspect-ratio: 1.45; border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%; background: radial-gradient(ellipse at 40% 30%, #c98443, #8a4b22 62%, #5e2f14); box-shadow: 0 40px 40px -20px rgb(58 36 22 / 0.45), inset 0 -18px 30px rgb(0 0 0 / 0.2); transform: rotate(-6deg); }
+  .score { position: absolute; height: 10%; width: 36%; border-radius: 50%; background: linear-gradient(#f4dcb2, #e2b97c); top: 30%; left: 32%; transform: rotate(28deg); box-shadow: inset 0 3px 4px rgb(94 47 20 / 0.5); }
+  .flour { position: absolute; border-radius: 50%; background: rgb(255 255 255 / 0.55); filter: blur(1px); }
+  .stamp { position: absolute; right: 7%; bottom: 8%; width: 132px; height: 132px; }
+  .stamp text { font-family: var(--sans); font-size: 11px; letter-spacing: 2.5px; font-weight: 600; fill: var(--rye); text-transform: uppercase; }
+  .stamp .rot { animation: spin 22s linear infinite; transform-origin: 66px 66px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Oven timeline */
+  section { padding: 110px 0; }
+  .label { font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--crust); }
+  h2 { font-size: clamp(2.5rem, 5.6vw, 5rem); font-weight: 700; line-height: 0.9; letter-spacing: -0.065em; margin-top: 14px; }
+  h2 em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.02em; color: var(--crust); }
+  .timeline { margin-top: 60px; display: grid; grid-template-columns: repeat(6, 1fr); border: 1.5px solid var(--rye); border-radius: 24px; overflow: hidden; background: var(--flour); }
+  .slot { padding: 26px 22px 30px; border-right: 1.5px solid var(--rye); position: relative; min-height: 230px; display: flex; flex-direction: column; gap: 10px; }
+  .slot:last-child { border-right: 0; }
+  .slot .t { font-size: 34px; font-weight: 700; letter-spacing: -0.05em; }
+  .slot p { font-size: 15px; color: var(--muted); }
+  .slot ul { list-style: none; font-weight: 600; font-size: 15px; display: grid; gap: 4px; margin-top: auto; }
+  .slot.done { background: var(--wheat); }
+  .slot.done .t { text-decoration: line-through; text-decoration-thickness: 2px; color: var(--muted); }
+  .slot.now { background: var(--oven); color: var(--flour); }
+  .slot.now p { color: rgb(246 240 228 / 0.85); }
+  .slot.now::after { content: 'Teď v peci'; position: absolute; top: 26px; right: 18px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; background: var(--rye); color: var(--flour); padding: 4px 9px; border-radius: 999px; }
+
+  /* Products */
+  .products { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 56px; border-top: 1.5px solid var(--rye); border-left: 1.5px solid var(--rye); }
+  .product { border-right: 1.5px solid var(--rye); border-bottom: 1.5px solid var(--rye); padding: 26px; display: flex; flex-direction: column; gap: 12px; transition: background 0.4s; }
+  .product:hover { background: var(--flour); }
+  .product .shape { height: 140px; display: grid; place-items: center; }
+  .product h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.04em; }
+  .product p { color: var(--muted); font-size: 15px; flex: 1; }
+  .product .row { display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+  .add { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--rye); display: grid; place-items: center; font-size: 20px; background: none; cursor: pointer; transition: all 0.3s; }
+  .add:hover, .add[aria-pressed='true'] { background: var(--rye); color: var(--flour); }
+
+  /* Pre-order band */
+  .order { background: var(--rye); color: var(--flour); }
+  .order .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .order .label { color: #f3c58a; }
+  .order h2 em { color: #f3c58a; }
+  .steps { list-style: none; counter-reset: s; display: grid; gap: 2px; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 60px 1fr; padding: 20px 0; border-bottom: 1px solid rgb(246 240 228 / 0.18); }
+  .steps li::before { content: '0' counter(s); font-weight: 700; color: var(--oven); }
+  .order .btn { border-color: var(--flour); color: var(--flour); margin-top: 30px; }
+  .order .btn:hover { background: var(--flour); color: var(--rye); }
+
+  footer { padding: 30px 0; font-size: 14px; color: var(--muted); }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; } .reveal { opacity: 1; transform: none; } }
+
+  @media (max-width: 960px) {
+    nav { display: none; }
+    header .wrap { grid-template-columns: 1fr auto; }
+    .brand { border: 0; }
+    .hero .wrap { grid-template-columns: 1fr; }
+    .hero-text { border-right: 0; padding: 48px 0; }
+    .hero-art { min-height: 340px; border-top: 1.5px solid var(--rye); margin-inline: -16px; }
+    .timeline { grid-template-columns: 1fr 1fr; }
+    .slot { border-bottom: 1.5px solid var(--rye); min-height: 190px; }
+    .products { grid-template-columns: 1fr 1fr; }
+    .order .wrap { grid-template-columns: 1fr; }
+    section { padding: 80px 0; }
+  }
+  @media (max-width: 560px) {
+    .products { grid-template-columns: 1fr; }
+    .oven-status span { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="concept-bar">Koncept studia <a href="../../index.html">WebTix</a>. Pekárna Kvásek je fiktivní značka.</div>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#"><svg viewBox="0 0 40 40" aria-hidden="true"><ellipse cx="20" cy="22" rx="17" ry="12" fill="#8a4b22" /><path d="M10 20 Q20 12 30 20" stroke="#f3c58a" stroke-width="3" fill="none" stroke-linecap="round" /></svg>Kvásek</a>
+    <nav><ul><li><a href="#pec">Co je v peci</a></li><li><a href="#pecivo">Pečivo</a></li><li><a href="#objednavka">Předobjednávka</a></li></ul></nav>
+    <span class="oven-status"><i></i><span id="oven-text">Pec jede od 4:00</span></span>
+  </div>
+</header>
+
+<section class="hero" style="padding:0">
+  <div class="wrap">
+    <div class="hero-text reveal">
+      <h1>Chleba,<br />který <em>čeká</em><br />48 hodin.</h1>
+      <div>
+        <p class="lead">Kvas, mouka z mlýna u Pelhřimova, voda, sůl. Nic víc. Chleba z dlouhého kynutí vydrží čerstvý celý týden.</p>
+        <div class="btns"><a class="btn btn-dark" href="#objednavka">Objednat na zítra →</a><a class="btn" href="#pec">Co je teď v peci</a></div>
+      </div>
+    </div>
+    <div class="hero-art reveal" aria-hidden="true">
+      <div class="loaf"><span class="score"></span><span class="flour" style="width:18%;height:10%;left:20%;top:18%"></span><span class="flour" style="width:12%;height:7%;left:62%;top:22%"></span><span class="flour" style="width:8%;height:5%;left:44%;top:12%"></span></div>
+      <svg class="stamp" viewBox="0 0 132 132"><defs><path id="c" d="M66 66 m-48 0 a48 48 0 1 1 96 0 a48 48 0 1 1 -96 0" /></defs><circle cx="66" cy="66" r="62" fill="#f3c58a" stroke="#3a2416" stroke-width="1.5" /><g class="rot"><text><textPath href="#c">Pečeno ráno · bez droždí · kvas od 2019 · </textPath></text></g><text x="66" y="74" text-anchor="middle" style="font-size:24px;letter-spacing:0;font-weight:700">48h</text></svg>
+    </div>
+  </div>
+</section>
+
+<section id="pec">
+  <div class="wrap">
+    <div class="reveal"><p class="label">Dnešní pec</p><h2>Co se peče <em>právě teď</em></h2></div>
+    <div class="timeline reveal" id="timeline"></div>
+  </div>
+</section>
+
+<section id="pecivo" style="padding-top:0">
+  <div class="wrap">
+    <div class="reveal"><p class="label">Pečivo</p><h2>Každý den <em>stejně dobré</em></h2></div>
+    <div class="products reveal">
+      <article class="product"><div class="shape"><svg width="150" height="100" viewBox="0 0 150 100"><ellipse cx="75" cy="56" rx="68" ry="38" fill="#8a4b22" /><path d="M30 50 Q75 22 120 50" stroke="#f3c58a" stroke-width="7" fill="none" stroke-linecap="round" /></svg></div><h3>Pšenično-žitný kvasový</h3><p>Náš denní chleba. Křupavá kůrka, vláčná střída.</p><div class="row"><span>89 Kč · 1 kg</span><button class="add" aria-pressed="false" aria-label="Přidat do předobjednávky">+</button></div></article>
+      <article class="product"><div class="shape"><svg width="150" height="100" viewBox="0 0 150 100"><rect x="14" y="26" width="122" height="56" rx="18" fill="#5e2f14" /><g fill="#d79a5a"><circle cx="40" cy="44" r="3" /><circle cx="70" cy="58" r="3" /><circle cx="100" cy="42" r="3" /><circle cx="116" cy="64" r="3" /></g></svg></div><h3>Celožitný se semínky</h3><p>Slunečnice, len a dýně. Sytý, vydrží dlouho.</p><div class="row"><span>109 Kč · 900 g</span><button class="add" aria-pressed="false" aria-label="Přidat do předobjednávky">+</button></div></article>
+      <article class="product"><div class="shape"><svg width="150" height="100" viewBox="0 0 150 100"><path d="M18 74 Q75 6 132 74 Z" fill="#c98443" /><path d="M40 70 L58 40 M70 72 L80 30 M100 70 L92 40" stroke="#f3dcb4" stroke-width="5" stroke-linecap="round" /></svg></div><h3>Máslový croissant</h3><p>Francouzské máslo, laminováno tři dny.</p><div class="row"><span>49 Kč</span><button class="add" aria-pressed="false" aria-label="Přidat do předobjednávky">+</button></div></article>
+      <article class="product"><div class="shape"><svg width="150" height="100" viewBox="0 0 150 100"><circle cx="75" cy="52" r="40" fill="#b56a2e" /><circle cx="75" cy="52" r="24" fill="#f3c58a" /><circle cx="75" cy="52" r="10" fill="#6b2b5a" /></svg></div><h3>Švestkový koláč</h3><p>Kynuté těsto, povidla od babičky, drobenka.</p><div class="row"><span>45 Kč</span><button class="add" aria-pressed="false" aria-label="Přidat do předobjednávky">+</button></div></article>
+    </div>
+  </div>
+</section>
+
+<section class="order" id="objednavka">
+  <div class="wrap">
+    <div class="reveal"><p class="label">Předobjednávka</p><h2>Váš chleba<br />vás <em>počká</em></h2><p style="margin-top:20px;max-width:420px;color:rgb(246 240 228 / 0.7)">Objednejte do 18:00 a ráno máte odložený bochník s vaším jménem. Platíte až při vyzvednutí.</p><a class="btn" href="#">Objednat <span id="count"></span> →</a></div>
+    <ol class="steps reveal"><li>Vyberte pečivo a čas vyzvednutí.</li><li>Do půl hodiny vám přijde potvrzení e-mailem.</li><li>Ráno si ho vezmete bez fronty u okénka.</li></ol>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>© 2026 Pekárna Kvásek (fiktivní)</span><span>Design a vývoj: <a href="../../index.html" style="text-decoration:underline">WebTix</a></span></div></footer>
+
+<script>
+  const slots = [[4, 'Žitný kvas', 'První bochníky do pece.', ['Kvasový chleba', 'Celožitný']], [6, 'Rohlíky', 'Ranní pečivo pro okénko.', ['Rohlíky', 'Bagety']], [7, 'Croissanty', 'Máslové a mandlové.', ['Croissant', 'Pain au chocolat']], [9, 'Koláče', 'Sladké z kynutého těsta.', ['Švestkový', 'Tvarohový']], [11, 'Focaccia', 'K obědu, s rozmarýnem.', ['Focaccia', 'Pizza bianca']], [14, 'Druhá várka', 'Chleba na odpoledne.', ['Kvasový chleba']]]
+  const h = new Date().getHours()
+  let current = -1
+  slots.forEach((s, i) => { if (h >= s[0]) current = i })
+  document.getElementById('timeline').innerHTML = slots.map((s, i) => `<div class="slot ${i < current ? 'done' : ''} ${i === current ? 'now' : ''}"><span class="t">${s[0]}:00</span><b>${s[1]}</b><p>${s[2]}</p><ul>${s[3].map((x) => `<li>${x}</li>`).join('')}</ul></div>`).join('')
+  document.getElementById('oven-text').textContent = h >= 4 && h < 16 ? 'Pec jede od 4:00' : 'Pec zapálíme ve 4:00'
+
+  let n = 0
+  const count = document.getElementById('count')
+  document.querySelectorAll('.add').forEach((b) => b.addEventListener('click', () => {
+    const on = b.getAttribute('aria-pressed') !== 'true'
+    b.setAttribute('aria-pressed', String(on)); b.textContent = on ? '✓' : '+'
+    n += on ? 1 : -1; count.textContent = n ? `(${n})` : ''
+  }))
+
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: 0.12 })
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el))
+</script>
+</body>
+</html>

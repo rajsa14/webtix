@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hostinec U Kamenné kašny · koncept WebTix</title>
+<meta name="description" content="Koncept webu pro tradiční českou hospodu. Ukázková práce studia WebTix, fiktivní značka." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#3b1418" />
+<link rel="stylesheet" href="../fonts/fonts.css" />
+<style>
+  :root {
+    --oxblood: #3b1418;
+    --oxblood-2: #50201f;
+    --cream: #f3ead8;
+    --paper: #faf5ea;
+    --brass: #c9973f;
+    --ink: #22100f;
+    --muted: #7d6a5e;
+    --line: rgb(34 16 15 / 0.16);
+    --serif: 'Playfair', Georgia, serif;
+    --sans: 'Manrope', system-ui, sans-serif;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: min(1240px, 100% - 32px); margin-inline: auto; }
+
+  .concept-bar { background: var(--brass); color: var(--ink); font-size: 13px; font-weight: 700; text-align: center; padding: 8px 16px; }
+  .concept-bar a { text-decoration: underline; text-underline-offset: 3px; }
+
+  header { background: var(--oxblood); color: var(--cream); border-bottom: 1px solid rgb(201 151 63 / 0.4); position: sticky; top: 0; z-index: 20; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .brand { font-family: var(--serif); font-size: 22px; font-weight: 700; letter-spacing: 0.02em; display: flex; align-items: center; gap: 12px; }
+  .brand small { font-family: var(--sans); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--brass); display: block; font-weight: 700; }
+  nav ul { list-style: none; display: flex; gap: 28px; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; }
+  nav a { opacity: 0.85; transition: opacity 0.3s, color 0.3s; }
+  nav a:hover { opacity: 1; color: var(--brass); }
+  .btn { display: inline-flex; align-items: center; gap: 10px; border-radius: 999px; padding: 13px 24px; font-weight: 700; font-size: 15px; transition: transform 0.4s var(--ease), background 0.3s, color 0.3s; }
+  .btn-brass { background: var(--brass); color: var(--ink); }
+  .btn-brass:hover { transform: translateY(-2px); background: var(--cream); }
+  .btn-line { border: 1px solid rgb(243 234 216 / 0.4); color: var(--cream); }
+  .btn-line:hover { background: var(--cream); color: var(--oxblood); }
+
+  .hero { background: var(--oxblood); color: var(--cream); padding: 72px 0 0; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 79px, rgb(201 151 63 / 0.06) 79px 80px); pointer-events: none; }
+  .hero-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 56px; align-items: end; position: relative; z-index: 1; }
+  .since { font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--brass); font-weight: 800; display: flex; align-items: center; gap: 14px; }
+  .since::before, .since::after { content: ''; height: 1px; width: 40px; background: var(--brass); }
+  .hero h1 { font-family: var(--serif); font-weight: 900; font-size: clamp(3.4rem, 9vw, 8.2rem); line-height: 0.92; letter-spacing: -0.02em; margin-top: 24px; }
+  .hero h1 em { font-style: italic; font-weight: 400; color: var(--brass); }
+  .hero p.lead { margin-top: 28px; max-width: 520px; font-size: 19px; color: rgb(243 234 216 / 0.8); }
+  .hero .cta { display: flex; gap: 12px; margin-top: 36px; flex-wrap: wrap; padding-bottom: 72px; }
+
+  /* Tap list board */
+  .board { background: var(--ink); border: 1px solid rgb(201 151 63 / 0.5); border-radius: 18px 18px 0 0; padding: 28px 28px 36px; box-shadow: 0 -20px 60px rgb(0 0 0 / 0.35); }
+  .board h3 { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 26px; color: var(--brass); display: flex; justify-content: space-between; align-items: baseline; }
+  .board h3 span { font-family: var(--sans); font-style: normal; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: rgb(243 234 216 / 0.5); }
+  .tap { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; padding: 16px 0; border-bottom: 1px dashed rgb(243 234 216 / 0.16); }
+  .tap:last-child { border: 0; }
+  .glass { width: 26px; height: 38px; border: 2px solid var(--brass); border-top: 0; border-radius: 0 0 6px 6px; position: relative; overflow: hidden; }
+  .glass::before { content: ''; position: absolute; inset: auto 0 0 0; height: var(--fill, 70%); background: var(--beer, #e0a82e); transition: height 1.4s var(--ease); }
+  .glass::after { content: ''; position: absolute; left: 0; right: 0; bottom: var(--fill, 70%); height: 6px; background: #fffaf0; }
+  .tap b { display: block; font-size: 17px; }
+  .tap small { color: rgb(243 234 216 / 0.55); font-size: 13px; }
+  .tap .price { font-family: var(--serif); font-size: 22px; font-weight: 700; color: var(--cream); }
+
+  section { padding: 110px 0; }
+  .label { font-size: 12px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--oxblood-2); font-weight: 800; }
+  h2 { font-family: var(--serif); font-weight: 900; font-size: clamp(2.4rem, 5vw, 4.2rem); line-height: 1; letter-spacing: -0.02em; margin-top: 14px; }
+  h2 em { font-weight: 400; font-style: italic; color: var(--oxblood-2); }
+
+  /* Daily menu */
+  .daily { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 64px; align-items: start; }
+  .days { display: flex; gap: 8px; margin-top: 30px; flex-wrap: wrap; }
+  .days button { font: inherit; font-size: 14px; font-weight: 700; padding: 10px 18px; border-radius: 999px; border: 1px solid var(--line); background: transparent; cursor: pointer; transition: all 0.3s; }
+  .days button[aria-pressed='true'] { background: var(--oxblood); color: var(--cream); border-color: var(--oxblood); }
+  .menu { background: var(--cream); border: 1px solid var(--line); border-radius: 22px; padding: 40px; position: relative; }
+  .menu::before { content: ''; position: absolute; inset: 10px; border: 1px solid rgb(201 151 63 / 0.45); border-radius: 14px; pointer-events: none; }
+  .menu h3 { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 30px; text-align: center; }
+  .menu .date { text-align: center; font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+  .dish { display: flex; align-items: baseline; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .dish:last-child { border: 0; }
+  .dish .n { font-family: var(--serif); font-weight: 700; color: var(--brass); width: 28px; flex: none; }
+  .dish .t { flex: 1; }
+  .dish .t b { font-weight: 700; display: block; }
+  .dish .t small { color: var(--muted); font-size: 14px; }
+  .dish .dots { flex: 1; border-bottom: 2px dotted var(--line); transform: translateY(-5px); min-width: 20px; }
+  .dish .p { font-family: var(--serif); font-weight: 700; font-size: 20px; white-space: nowrap; }
+
+  /* Story */
+  .story { background: var(--oxblood); color: var(--cream); }
+  .story .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 56px; background: rgb(201 151 63 / 0.35); border: 2px solid rgb(201 151 63 / 0.35); border-radius: 20px; overflow: hidden; }
+  .story .cell { background: var(--oxblood); padding: 36px; }
+  .story .num { font-family: var(--serif); font-size: 64px; font-weight: 900; color: var(--brass); line-height: 1; }
+  .story .cell p { margin-top: 12px; color: rgb(243 234 216 / 0.75); }
+  .story .label { color: var(--brass); }
+  .story h2 em { color: var(--brass); }
+
+  /* Salonek */
+  .salonek { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .room { aspect-ratio: 4/3; border-radius: 22px; background:
+      radial-gradient(circle at 50% 0%, rgb(255 214 140 / 0.65), transparent 45%),
+      linear-gradient(180deg, #6d2c26, #2a0f0e); position: relative; overflow: hidden; border: 1px solid var(--line); }
+  .room .lamp { position: absolute; top: 0; left: 50%; width: 2px; height: 22%; background: #1a0b0a; }
+  .room .lamp::after { content: ''; position: absolute; bottom: -18px; left: -26px; width: 54px; height: 22px; border-radius: 54px 54px 0 0; background: var(--brass); box-shadow: 0 30px 80px 30px rgb(255 205 120 / 0.35); }
+  .room .table { position: absolute; left: 12%; right: 12%; bottom: 18%; height: 14%; background: #8a4a2c; border-radius: 10px; box-shadow: 0 16px 0 -6px #4a2116; }
+  .room .chair { position: absolute; bottom: 10%; width: 9%; height: 26%; background: #3a1712; border-radius: 6px 6px 2px 2px; }
+  .room .mug { position: absolute; bottom: 31%; width: 4%; height: 7%; background: #f0c45a; border-radius: 2px 2px 4px 4px; box-shadow: inset 0 4px 0 #fff8e8; }
+  .facts { list-style: none; margin-top: 28px; }
+  .facts li { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .facts li span:first-child { color: var(--muted); }
+  .facts li span:last-child { font-weight: 700; }
+
+  /* Visit */
+  .visit { background: var(--cream); }
+  .visit .wrap { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; }
+  .hours div { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .hours div.today { color: var(--oxblood-2); font-weight: 800; }
+  .visit h3 { font-family: var(--serif); font-size: 26px; margin-bottom: 18px; }
+
+  footer { background: var(--ink); color: rgb(243 234 216 / 0.6); padding: 36px 0; font-size: 14px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+  @media (max-width: 900px) {
+    nav { display: none; }
+    .hero-grid, .daily, .salonek, .visit .wrap { grid-template-columns: 1fr; }
+    .story .grid { grid-template-columns: 1fr; }
+    .board { border-radius: 18px 18px 0 0; }
+    section { padding: 80px 0; }
+    .menu { padding: 28px 22px; }
+    .brand small { display: none; }
+    header .btn { padding: 10px 16px; font-size: 14px; }
+    .hero h1 { line-height: 1; }
+    .dish { flex-wrap: wrap; }
+    .dish .t { flex: 1 1 calc(100% - 40px); }
+    .dish .dots { display: none; }
+    .dish .p { margin-left: 40px; font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="concept-bar">Koncept studia <a href="../../index.html">WebTix</a>. Hostinec U Kamenné kašny je fiktivní značka.</div>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#">U Kamenné kašny<small>Hostinec · od 1897</small></a>
+    <nav><ul>
+      <li><a href="#menu">Polední menu</a></li>
+      <li><a href="#pribeh">Příběh</a></li>
+      <li><a href="#salonek">Salonek</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+    </ul></nav>
+    <a class="btn btn-brass" href="#kontakt">Rezervovat stůl</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="reveal">
+      <p class="since">Čepujeme od roku 1897</p>
+      <h1>Poctivé pivo,<br /><em>poctivá</em> kuchyně.</h1>
+      <p class="lead">Hospoda, kde se svíčková dělá tři dny a pivo se točí na hladinku i na mlíko. Polední menu každý všední den od 11 do 14.</p>
+      <div class="cta">
+        <a class="btn btn-brass" href="#menu">Dnešní menu →</a>
+        <a class="btn btn-line" href="#salonek">Salonek pro 30 hostů</a>
+      </div>
+    </div>
+    <aside class="board reveal" aria-label="Na čepu">
+      <h3>Na čepu <span>dnes</span></h3>
+      <div class="tap"><i class="glass" style="--fill:78%;--beer:#e3a52b"></i><div><b>Plzeňský ležák 12°</b><small>Tankové, nepasterizované</small></div><span class="price">59 Kč</span></div>
+      <div class="tap"><i class="glass" style="--fill:62%;--beer:#7a3a14"></i><div><b>Tmavá 13°</b><small>Malý pivovar z Vysočiny</small></div><span class="price">62 Kč</span></div>
+      <div class="tap"><i class="glass" style="--fill:70%;--beer:#d78a1e"></i><div><b>Polotmavý speciál 14°</b><small>Host týdne</small></div><span class="price">68 Kč</span></div>
+      <div class="tap"><i class="glass" style="--fill:84%;--beer:#f0c45a"></i><div><b>Kofola točená</b><small>Pro řidiče a děti</small></div><span class="price">39 Kč</span></div>
+    </aside>
+  </div>
+</section>
+
+<section id="menu">
+  <div class="wrap daily">
+    <div class="reveal">
+      <p class="label">Polední menu</p>
+      <h2>Co se dnes <em>vaří</em></h2>
+      <p style="margin-top:20px;color:var(--muted);max-width:380px">Menu píšeme každé ráno podle toho, co přivezl řezník a zelinář. Polévka je ke každému jídlu v ceně.</p>
+      <div class="days" role="group" aria-label="Den v týdnu">
+        <button aria-pressed="true" data-day="0">Po</button><button aria-pressed="false" data-day="1">Út</button><button aria-pressed="false" data-day="2">St</button><button aria-pressed="false" data-day="3">Čt</button><button aria-pressed="false" data-day="4">Pá</button>
+      </div>
+    </div>
+    <div class="menu reveal">
+      <h3>Denní lístek</h3>
+      <p class="date" id="menu-date">Pondělí</p>
+      <div id="menu-list" style="margin-top:22px"></div>
+    </div>
+  </div>
+</section>
+
+<section class="story" id="pribeh">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="label">Příběh</p>
+      <h2>Tři generace <em>u jednoho výčepu</em></h2>
+    </div>
+    <div class="grid reveal">
+      <div class="cell"><div class="num">1897</div><p>Hostinec otevřel sládek Josef u kamenné kašny na rohu náměstí. Kašna i výčep stojí dodnes.</p></div>
+      <div class="cell"><div class="num">3 dny</div><p>Tak dlouho se u nás dělá svíčková. Omáčku nezahušťujeme moukou, jen zeleninou.</p></div>
+      <div class="cell"><div class="num">4&nbsp;°C</div><p>Teplota, na které držíme tankové pivo. Trubky čistíme každý týden, ne každý měsíc.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="salonek">
+  <div class="wrap salonek">
+    <div class="room reveal" role="img" aria-label="Ilustrace salonku">
+      <span class="lamp"></span><span class="table"></span>
+      <span class="chair" style="left:16%"></span><span class="chair" style="left:34%"></span><span class="chair" style="left:56%"></span><span class="chair" style="left:74%"></span>
+      <span class="mug" style="left:24%"></span><span class="mug" style="left:46%"></span><span class="mug" style="left:66%"></span>
+    </div>
+    <div class="reveal">
+      <p class="label">Salonek</p>
+      <h2>Oslava, <em>schůze</em>, kar.</h2>
+      <p style="margin-top:18px;color:var(--muted)">Oddělená místnost s vlastním výčepem. Domluvíme raut na míru a vy se staráte jen o hosty.</p>
+      <ul class="facts">
+        <li><span>Kapacita</span><span>až 30 osob</span></li>
+        <li><span>Pronájem</span><span>zdarma při útratě nad 6 000 Kč</span></li>
+        <li><span>Raut</span><span>od 290 Kč na osobu</span></li>
+        <li><span>Projektor a ozvučení</span><span>v ceně</span></li>
+      </ul>
+      <a class="btn btn-brass" style="margin-top:28px" href="#kontakt">Poptat salonek</a>
+    </div>
+  </div>
+</section>
+
+<section class="visit" id="kontakt">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="label">Kde nás najdete</p>
+      <h3 style="margin-top:14px">Náměstí 12<br />Malé Město</h3>
+      <p style="color:var(--muted)">Tramvají na zastávku Kašna, pak 50 metrů rovně.</p>
+    </div>
+    <div class="hours reveal" id="hours">
+      <h3>Otevřeno</h3>
+    </div>
+    <div class="reveal">
+      <h3>Rezervace</h3>
+      <p style="color:var(--muted)">Stůl na večer si zamluvte telefonem nebo přes formulář. Ozveme se do hodiny.</p>
+      <p style="font-family:var(--serif);font-size:28px;font-weight:700;margin-top:16px">+420 000 000 000</p>
+      <a class="btn btn-brass" style="margin-top:20px;background:var(--oxblood);color:var(--cream)" href="#">Rezervovat online</a>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>© 2026 Hostinec U Kamenné kašny (fiktivní)</span><span>Design a vývoj: <a href="../../index.html" style="text-decoration:underline">WebTix</a></span></div></footer>
+
+<script>
+  const menus = [
+    [['Česnečka se sýrem a krutony', 'v ceně menu', ''], ['Svíčková na smetaně', 'houskový knedlík, brusinky', '189 Kč'], ['Smažený sýr', 'vařené brambory, tatarská omáčka', '169 Kč'], ['Kuřecí řízek', 'bramborový salát', '179 Kč']],
+    [['Hovězí vývar s nudlemi', 'v ceně menu', ''], ['Vepřo knedlo zelo', 'bílé zelí, dva druhy knedlíku', '179 Kč'], ['Rizoto s kuřecím masem', 'parmazán, okurka', '159 Kč'], ['Utopenec', 'cibule, chléb', '99 Kč']],
+    [['Gulášová polévka', 'v ceně menu', ''], ['Pečená kachna', 'červené zelí, karlovarský knedlík', '229 Kč'], ['Bramboráky s uzeným', 'kysané zelí', '159 Kč'], ['Zeleninový salát', 'kozí sýr, ořechy', '169 Kč']],
+    [['Kulajda', 'v ceně menu', ''], ['Španělský ptáček', 'rýže', '179 Kč'], ['Plněné papriky', 'rajská omáčka, knedlík', '169 Kč'], ['Nakládaný hermelín', 'chléb', '99 Kč']],
+    [['Rybí polévka', 'v ceně menu', ''], ['Smažený kapr', 'bramborový salát', '199 Kč'], ['Hovězí guláš', 'chléb nebo knedlík', '179 Kč'], ['Ovocné knedlíky', 'tvaroh, máslo', '149 Kč']],
+  ]
+  const names = ['Pondělí', 'Úterý', 'Středa', 'Čtvrtek', 'Pátek']
+  const list = document.getElementById('menu-list'), date = document.getElementById('menu-date')
+  function show(d) {
+    date.textContent = names[d]
+    list.innerHTML = menus[d].map((m, i) => `<div class="dish"><span class="n">${i === 0 ? 'P' : i}</span><span class="t"><b>${m[0]}</b><small>${m[1]}</small></span>${m[2] ? `<span class="dots"></span><span class="p">${m[2]}</span>` : ''}</div>`).join('')
+    document.querySelectorAll('.days button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.day === d)))
+  }
+  document.querySelectorAll('.days button').forEach((b) => b.addEventListener('click', () => show(+b.dataset.day)))
+  const today = (new Date().getDay() + 6) % 7
+  show(today < 5 ? today : 0)
+
+  const hours = [['Pondělí', '11–23'], ['Úterý', '11–23'], ['Středa', '11–23'], ['Čtvrtek', '11–24'], ['Pátek', '11–01'], ['Sobota', '12–01'], ['Neděle', '12–22']]
+  document.getElementById('hours').insertAdjacentHTML('beforeend', hours.map((h, i) => `<div class="${i === today ? 'today' : ''}"><span>${h[0]}</span><span>${h[1]}</span></div>`).join(''))
+
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: 0.12 })
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el))
+</script>
+</body>
+</html>

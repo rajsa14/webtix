@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vinárna Sklípek 14 · koncept WebTix</title>
+<meta name="description" content="Koncept webu pro vinárnu a vinotéku. Ukázková práce studia WebTix, fiktivní značka." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#120a0c" />
+<link rel="stylesheet" href="../fonts/fonts.css" />
+<style>
+  :root {
+    --bg: #120a0c;
+    --bg-2: #1c1013;
+    --wine: #7b1e2e;
+    --rose: #e8a1a8;
+    --gold: #d8c08a;
+    --fg: #f1e8df;
+    --muted: #a8968c;
+    --line: rgb(241 232 223 / 0.12);
+    --serif: 'Playfair', Georgia, serif;
+    --sans: 'Space Grotesk', system-ui, sans-serif;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: min(1280px, 100% - 32px); margin-inline: auto; }
+
+  .concept-bar { background: var(--gold); color: var(--bg); font-size: 13px; font-weight: 600; text-align: center; padding: 8px 16px; }
+  .concept-bar a { text-decoration: underline; text-underline-offset: 3px; }
+
+  header { position: absolute; left: 0; right: 0; z-index: 10; padding: 26px 0; }
+  header .wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+  nav ul { list-style: none; display: flex; gap: 28px; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; }
+  nav a { color: var(--muted); transition: color 0.3s; }
+  nav a:hover { color: var(--fg); }
+  .brand { font-family: var(--serif); font-style: italic; font-size: 30px; text-align: center; line-height: 1; }
+  .brand sup { font-family: var(--sans); font-style: normal; font-size: 12px; color: var(--gold); vertical-align: top; margin-left: 2px; }
+  .head-cta { justify-self: end; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; border-bottom: 1px solid var(--gold); padding-bottom: 4px; color: var(--gold); }
+
+  .hero { min-height: 100vh; display: grid; place-items: center; text-align: center; position: relative; overflow: hidden; padding: 140px 0 80px;
+    background: radial-gradient(ellipse 60% 50% at 50% 55%, rgb(123 30 46 / 0.55), transparent 70%), var(--bg); }
+  .hero .glass-wrap { position: absolute; left: 50%; top: 52%; width: min(360px, 60vw); transform: translate(-50%, -50%); opacity: 0.9; }
+  .hero h1 { position: relative; font-family: var(--serif); font-weight: 400; font-size: clamp(4rem, 13vw, 12rem); line-height: 0.85; letter-spacing: -0.03em; }
+  .hero h1 em { display: block; font-style: italic; color: var(--rose); }
+  .hero .meta { position: relative; margin-top: 40px; display: flex; gap: 36px; justify-content: center; flex-wrap: wrap; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  .hero .meta b { color: var(--fg); font-weight: 500; }
+  .scroll { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 1px; height: 60px; background: linear-gradient(var(--gold), transparent); animation: drip 2.4s var(--ease) infinite; }
+  @keyframes drip { 0% { transform: translateX(-50%) scaleY(0); transform-origin: top; } 50% { transform: translateX(-50%) scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: translateX(-50%) scaleY(0); transform-origin: bottom; } }
+
+  section { padding: 130px 0; }
+  .kicker { font-size: 12px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); }
+  h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(2.6rem, 6vw, 5.2rem); line-height: 0.95; letter-spacing: -0.02em; margin-top: 16px; }
+  h2 em { color: var(--rose); }
+
+  /* Intro */
+  .intro { display: grid; grid-template-columns: 5fr 7fr; gap: 80px; align-items: start; }
+  .intro p.big { font-family: var(--serif); font-size: clamp(1.5rem, 2.5vw, 2.1rem); line-height: 1.35; }
+  .intro p.big em { color: var(--gold); }
+  .numbers { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 48px; border-top: 1px solid var(--line); }
+  .numbers div { padding: 22px 0; }
+  .numbers b { font-family: var(--serif); font-size: 48px; font-weight: 400; display: block; line-height: 1; }
+  .numbers span { font-size: 13px; color: var(--muted); }
+
+  /* Wine list */
+  .list-head { display: flex; justify-content: space-between; align-items: end; gap: 30px; flex-wrap: wrap; }
+  .regions { display: flex; gap: 4px; border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+  .regions button { font: inherit; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); background: none; border: 0; border-radius: 999px; padding: 9px 16px; cursor: pointer; transition: all 0.3s; }
+  .regions button[aria-pressed='true'] { background: var(--fg); color: var(--bg); }
+  .wines { margin-top: 50px; border-top: 1px solid var(--fg); }
+  .wine { display: grid; grid-template-columns: 70px 1.6fr 1fr 110px 110px; gap: 20px; align-items: baseline; padding: 26px 0; border-bottom: 1px solid var(--line); transition: background 0.4s, padding 0.5s var(--ease); }
+  .wine:hover { background: var(--bg-2); padding-inline: 16px; }
+  .wine .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+  .wine h3 { font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1.1; }
+  .wine h3 small { display: block; font-family: var(--sans); font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .wine .notes { color: var(--muted); font-size: 15px; }
+  .wine .p { text-align: right; font-size: 15px; }
+  .wine .p b { font-family: var(--serif); font-size: 24px; font-weight: 400; display: block; }
+  .wine .p small { color: var(--muted); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  /* Tastings */
+  .tastings { background: var(--wine); }
+  .tastings .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }
+  .ticket { background: var(--bg); border-radius: 4px; padding: 30px; position: relative; display: flex; flex-direction: column; gap: 14px; min-height: 320px; transition: transform 0.6s var(--ease); }
+  .ticket:hover { transform: translateY(-8px) rotate(-0.8deg); }
+  .ticket::before, .ticket::after { content: ''; position: absolute; top: 62%; width: 22px; height: 22px; border-radius: 50%; background: var(--wine); }
+  .ticket::before { left: -11px; } .ticket::after { right: -11px; }
+  .ticket .when { font-family: var(--serif); font-style: italic; font-size: 40px; line-height: 1; color: var(--rose); }
+  .ticket h3 { font-family: var(--serif); font-weight: 400; font-size: 26px; line-height: 1.15; }
+  .ticket p { color: var(--muted); font-size: 15px; flex: 1; }
+  .ticket .foot { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--line); padding-top: 16px; font-size: 14px; }
+  .seats { color: var(--gold); }
+  .tastings .kicker { color: var(--gold); }
+  .tastings h2 em { color: var(--fg); }
+
+  /* Visit */
+  .visit { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; }
+  .visit dl div { display: grid; grid-template-columns: 140px 1fr; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .visit dt { color: var(--muted); font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .btn { display: inline-flex; gap: 10px; align-items: center; padding: 16px 28px; border-radius: 999px; background: var(--rose); color: var(--bg); font-weight: 600; margin-top: 30px; transition: transform 0.5s var(--ease), background 0.3s; }
+  .btn:hover { transform: translateY(-3px); background: var(--fg); }
+
+  footer { border-top: 1px solid var(--line); padding: 34px 0; font-size: 13px; color: var(--muted); }
+  footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 1.2s var(--ease), transform 1.2s var(--ease); }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } .scroll { animation: none; } }
+
+  @media (max-width: 900px) {
+    header .wrap { grid-template-columns: 1fr auto; }
+    nav { display: none; }
+    .brand { text-align: left; font-size: 26px; }
+    .intro, .visit { grid-template-columns: 1fr; gap: 40px; }
+    .tastings .grid { grid-template-columns: 1fr; }
+    .wine { grid-template-columns: 24px 1fr auto; }
+    .wine .notes, .wine .glass-p { display: none; }
+    section { padding: 90px 0; }
+    .numbers b { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+<div class="concept-bar">Koncept studia <a href="../../index.html">WebTix</a>. Vinárna Sklípek 14 je fiktivní značka.</div>
+
+<header>
+  <div class="wrap">
+    <nav><ul><li><a href="#listek">Vinný lístek</a></li><li><a href="#degustace">Degustace</a></li></ul></nav>
+    <a class="brand" href="#">Sklípek<sup>14</sup></a>
+    <a class="head-cta" href="#navsteva">Rezervace</a>
+  </div>
+</header>
+
+<section class="hero">
+  <svg class="glass-wrap" viewBox="0 0 200 320" aria-hidden="true">
+    <defs><linearGradient id="w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3283f" /><stop offset="1" stop-color="#4a0d18" /></linearGradient></defs>
+    <path d="M40 20 Q36 120 100 150 Q164 120 160 20 Z" fill="none" stroke="rgb(241 232 223 / 0.25)" stroke-width="2" />
+    <path id="wine" d="M45 80 Q48 125 100 145 Q152 125 155 80 Z" fill="url(#w)" opacity="0.85" />
+    <line x1="100" y1="150" x2="100" y2="285" stroke="rgb(241 232 223 / 0.25)" stroke-width="2" />
+    <ellipse cx="100" cy="292" rx="48" ry="8" fill="none" stroke="rgb(241 232 223 / 0.25)" stroke-width="2" />
+  </svg>
+  <div>
+    <h1 class="reveal">Víno,<em>pomalu.</em></h1>
+    <div class="meta reveal">
+      <span><b>140</b> etiket</span><span><b>30</b> vín na sklenky</span><span>Út – So <b>17 – 24</b></span>
+    </div>
+  </div>
+  <span class="scroll" aria-hidden="true"></span>
+</section>
+
+<section>
+  <div class="wrap intro">
+    <div class="reveal"><p class="kicker">O sklípku</p><h2>Sklep pod<br /><em>dlážděnou ulicí</em></h2></div>
+    <div class="reveal">
+      <p class="big">Gotický sklep pro třicet hostů, svíčky a víno od <em>malých vinařů z Moravy</em>, Rakouska a Burgundska. Ke sklence sýry, šunka a chleba z kvasu.</p>
+      <div class="numbers">
+        <div><b>12</b><span>vinařů osobně známe</span></div>
+        <div><b>14&nbsp;°C</b><span>teplota sklepa po celý rok</span></div>
+        <div><b>30</b><span>míst k sezení</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="listek" style="padding-top:0">
+  <div class="wrap">
+    <div class="list-head reveal">
+      <div><p class="kicker">Vinný lístek</p><h2>Na sklenky <em>tento týden</em></h2></div>
+      <div class="regions" role="group" aria-label="Oblast">
+        <button aria-pressed="true" data-r="vse">Vše</button><button aria-pressed="false" data-r="Morava">Morava</button><button aria-pressed="false" data-r="Rakousko">Rakousko</button><button aria-pressed="false" data-r="Francie">Francie</button>
+      </div>
+    </div>
+    <div class="wines reveal" id="wines"></div>
+  </div>
+</section>
+
+<section class="tastings" id="degustace">
+  <div class="wrap">
+    <div class="reveal"><p class="kicker">Degustace</p><h2>Večery, kdy <em>mluví vinař</em></h2></div>
+    <div class="grid">
+      <article class="ticket reveal"><span class="when">17. 10.</span><h3>Ryzlinky z Pálavy</h3><p>Šest ryzlinků od tří vinařů, vertikála 2019 – 2024. Provází vinař osobně.</p><div class="foot"><span>890 Kč</span><span class="seats">zbývá 6 míst</span></div></article>
+      <article class="ticket reveal"><span class="when">24. 10.</span><h3>Burgundsko pro začátečníky</h3><p>Pinot noir a chardonnay od vesnických vín po premier cru. Bez snobismu.</p><div class="foot"><span>1 290 Kč</span><span class="seats">zbývá 2 místa</span></div></article>
+      <article class="ticket reveal"><span class="when">07. 11.</span><h3>Svatomartinská u svíček</h3><p>Mladá vína, husí sádlo, škvarky a pečená husa. Celý sklep jen pro vás.</p><div class="foot"><span>1 090 Kč</span><span class="seats">registrace brzy</span></div></article>
+    </div>
+  </div>
+</section>
+
+<section id="navsteva">
+  <div class="wrap visit">
+    <div class="reveal"><p class="kicker">Návštěva</p><h2>Stůl pro dva,<br /><em>nebo celý sklep</em></h2>
+      <a class="btn" href="#">Rezervovat stůl →</a></div>
+    <dl class="reveal">
+      <div><dt>Adresa</dt><dd>Sklepní 14, Praha</dd></div>
+      <div><dt>Otevřeno</dt><dd>Úterý – sobota, 17:00 – 24:00</dd></div>
+      <div><dt>Vinotéka</dt><dd>Každý den 12:00 – 20:00, víno i s sebou</dd></div>
+      <div><dt>Soukromé akce</dt><dd>Až 30 hostů, sommelier na celý večer</dd></div>
+    </dl>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>© 2026 Vinárna Sklípek 14 (fiktivní)</span><span>Design a vývoj: <a href="../../index.html" style="text-decoration:underline">WebTix</a></span></div></footer>
+
+<script>
+  const wines = [
+    ['Morava', '#e9d58f', 'Ryzlink rýnský 2022', 'Vinařství Pod Kopcem · Pálava', 'Limetka, broskev, slaná minerálka', '95', '540'],
+    ['Morava', '#f0e2b0', 'Grüner Veltliner 2023', 'Rodinné vinařství · Znojmo', 'Zelený pepř, jablko, svěží kyselina', '85', '460'],
+    ['Morava', '#9e2235', 'Frankovka 2020', 'Sklep U Lípy · Mikulov', 'Višně, koření, jemné třísloviny', '110', '620'],
+    ['Rakousko', '#e7cf7f', 'Riesling Smaragd 2021', 'Wachau', 'Meruňka, med, dlouhý závěr', '165', '980'],
+    ['Rakousko', '#a3283b', 'Blaufränkisch 2019', 'Burgenland', 'Ostružina, grafit, sametový', '140', '820'],
+    ['Francie', '#efd99a', 'Chablis 2022', 'Burgundsko', 'Citrus, křída, ústřicová skořápka', '190', '1 150'],
+    ['Francie', '#7c1a2b', 'Bourgogne Pinot Noir 2021', 'Côte de Beaune', 'Maliny, houby, lehké tělo', '210', '1 290'],
+  ]
+  const box = document.getElementById('wines')
+  function render(r) {
+    box.innerHTML = wines.filter((w) => r === 'vse' || w[0] === r).map((w) => `
+      <div class="wine"><span><i class="dot" style="background:${w[1]}"></i></span>
+      <h3>${w[2]}<small>${w[3]}</small></h3><p class="notes">${w[4]}</p>
+      <p class="p glass-p"><b>${w[5]}</b><small>0,1 l</small></p><p class="p"><b>${w[6]}</b><small>láhev</small></p></div>`).join('')
+    document.querySelectorAll('.regions button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.r === r)))
+  }
+  document.querySelectorAll('.regions button').forEach((b) => b.addEventListener('click', () => render(b.dataset.r)))
+  render('vse')
+
+  // The wine in the glass swirls slightly with the pointer.
+  if (matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const wine = document.getElementById('wine')
+    addEventListener('pointermove', (e) => {
+      const t = (e.clientX / innerWidth - 0.5) * 10
+      wine.setAttribute('d', `M45 ${80 + t} Q48 125 100 145 Q152 125 155 ${80 - t} Z`)
+    })
+  }
+
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: 0.12 })
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el))
+</script>
+</body>
+</html>
