@@ -20,6 +20,7 @@ const PAGES = new Set([
   '/reference',
   '/o-nas',
   '/kontakt',
+  '/poptavka-odeslana',
   '/ochrana-osobnich-udaju',
   '/obchodni-podminky',
 ])

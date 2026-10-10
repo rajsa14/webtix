@@ -29,6 +29,7 @@ export const PAGES = {
   references: '/reference',
   about: '/o-nas',
   contact: '/kontakt',
+  inquirySent: '/poptavka-odeslana',
   privacy: '/ochrana-osobnich-udaju',
   terms: '/obchodni-podminky',
   admin: '/admin',

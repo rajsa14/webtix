@@ -10,6 +10,9 @@ export interface Toast {
 
 interface UiState {
   panelOpen: boolean
+  /** Who sent the last inquiry, so the thank-you page can greet them. Kept only in memory. */
+  lastInquiry: { name: string; email: string } | null
+  setLastInquiry: (inquiry: { name: string; email: string }) => void
   setPanelOpen: (open: boolean) => void
   toasts: Toast[]
   toast: (message: string, tone?: ToastTone) => void
@@ -20,6 +23,8 @@ let toastId = 0
 
 export const useUi = create<UiState>((set, get) => ({
   panelOpen: false,
+  lastInquiry: null,
+  setLastInquiry: (lastInquiry) => set({ lastInquiry }),
   setPanelOpen: (panelOpen) => set({ panelOpen }),
   toasts: [],
   toast: (message, tone = 'success') => {
