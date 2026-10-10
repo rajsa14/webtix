@@ -142,6 +142,19 @@
     margin: 0;
   }
 
+  /*
+   * The Šlapadlo screens (Shop.tsx) were drawn with browser defaults:
+   * content-box sizing and plain line breaking. Undo the global resets there.
+   */
+  .shop,
+  .shop * {
+    box-sizing: content-box;
+  }
+
+  .shop p {
+    text-wrap: wrap;
+  }
+
   /* Page container below the hero: 1440 grid with 64px margins, 16px on phones. */
   .container-x {
     width: 100%;

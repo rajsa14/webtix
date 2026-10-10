@@ -3,6 +3,7 @@ import { INQUIRY_ANCHOR, PREVIEW_DAYS, priceText } from '../../data/site'
 import { navigate } from '../../lib/router'
 import { useUi } from '../../store/ui'
 import { Navbar } from '../Navbar'
+import { ShopBefore, ShopScreen } from './Shop'
 
 /*
  * Hero, state 1 ("před"), static. Built from docs/design/source/S1Pred.dc.html
@@ -12,7 +13,6 @@ import { Navbar } from '../Navbar'
  * the pink panel sit on a real grid, headings use clamp(), body text stays at
  * 17px or more. Only the phone mockup with its notes and arrows scales, as
  * one group, and it shrinks on screens shorter than 900px instead of the text.
- * The phone screens stay empty until ShopBefore exists (step 3).
  */
 
 /** The phone group is drawn in the panel's own 720 × 900 coordinates from the design. */
@@ -104,14 +104,14 @@ function HeroForm({ variant }: { variant: 'desktop' | 'phone' }) {
   )
 }
 
-/** The old-site phone. Its screen gets ShopBefore in step 3. */
-function OldSitePhone({ className }: { className: string }) {
+/** The old-site phone: a frame with Šlapadlo's old site on its screen. */
+function OldSitePhone({ className, scale }: { className: string; scale?: number }) {
   return (
-    <div
-      role="img"
-      aria-label="Ukázka: starý web vymyšleného servisu kol Šlapadlo"
-      className={className}
-    />
+    <div role="img" aria-label="Ukázka: starý web vymyšleného servisu kol Šlapadlo" className={className}>
+      <ShopScreen scale={scale}>
+        <ShopBefore />
+      </ShopScreen>
+    </div>
   )
 }
 
@@ -204,7 +204,7 @@ function PhoneHero() {
       {/* Pink block. Its height is temporary until the scroll scene (step 4). */}
       <div ref={sceneRef} className="mt-7 overflow-hidden bg-pink">
         <div className="relative mx-auto" style={{ width: PHONE_SCENE_WIDTH, height: 520, zoom: scale }}>
-          <OldSitePhone className="absolute left-[150px] top-[28px] h-[460px] w-[220px] overflow-hidden rounded-[30px] border-[7px] border-solid border-ink bg-[#EFEFEF]" />
+          <OldSitePhone scale={0.606} className="absolute left-[150px] top-[28px] h-[460px] w-[220px] overflow-hidden rounded-[30px] border-[7px] border-solid border-ink bg-[#EFEFEF]" />
           <svg aria-hidden="true" width="390" height="424" viewBox="0 0 390 424" className="pointer-events-none absolute left-0 top-0">
             <g fill="none" stroke="#9B2C1F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <ellipse cx="260" cy="111" rx="96" ry="12" transform="rotate(-2 260 111)" />
