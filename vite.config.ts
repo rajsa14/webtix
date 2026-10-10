@@ -1,7 +1,7 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig, type Plugin } from 'vite'
-import { ICO } from './src/data/site.ts'
+import { ADASTRA_WRITTEN_OK, ICO } from './src/data/site.ts'
 
 /**
  * Dev-only mock of the inquiry endpoint. It never sends e-mail: it only prints
@@ -34,9 +34,10 @@ function devInquiryMock(): Plugin {
 }
 
 /**
- * The company ID (IČO) is not known yet. A real build refuses to run while it
- * is still null in src/data/site.ts, so the placeholder can never go live.
- * `npm run build:draft` builds anyway for local review.
+ * Values that must be decided before the site goes live: the company ID (IČO)
+ * and written permission to show Café AdAstra. A real build refuses to run
+ * while either is still open in src/data/site.ts, so neither can go live by
+ * mistake. `npm run build:draft` builds anyway for local review.
  */
 function decidedValues(): Plugin {
   return {
@@ -44,8 +45,15 @@ function decidedValues(): Plugin {
     apply: 'build',
     configResolved(config) {
       if (config.mode === 'draft') return
-      if (ICO === null) {
-        throw new Error('ICO in src/data/site.ts is still the placeholder (null). Set the real value, or run `npm run build:draft` for a local review build.')
+      const open: string[] = []
+      if (ICO === null) open.push('ICO is still the placeholder (null). Set the real value.')
+      if (!ADASTRA_WRITTEN_OK) {
+        open.push(
+          "ADASTRA_WRITTEN_OK is false: the Café AdAstra section must not go live without the owner's written permission. Set it to true once Dan has it in writing.",
+        )
+      }
+      if (open.length) {
+        throw new Error(`Production build blocked by src/data/site.ts:\n- ${open.join('\n- ')}\nRun \`npm run build:draft\` for a local review build.`)
       }
     },
   }

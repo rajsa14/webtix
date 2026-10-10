@@ -35,3 +35,6 @@ dist-offline
 
 # Third-party reference screenshots: internal only, never published
 docs/references/*.jpg
+
+# Design and brand handoff archives: never committed
+*.zip

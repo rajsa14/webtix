@@ -1,5 +1,6 @@
 import { useId, useState, type CSSProperties, type FormEvent } from 'react'
 import { INQUIRY_ANCHOR, PREVIEW_DAYS, priceText } from '../../data/site'
+import { NOTE_MIN_PX, noteSize } from '../../lib/notes'
 import { navigate } from '../../lib/router'
 import { useUi } from '../../store/ui'
 import { Navbar } from '../Navbar'
@@ -33,9 +34,6 @@ const PANEL = { width: 720, height: 900 }
 const PHONE_SCENE = { width: 390, height: 520 }
 const PHONE_CLAMP: [number, number] = [0.8, 1.25]
 
-/** Handwritten notes never render below 20px, however small their group is scaled. */
-const NOTE_MIN_PX = 20
-const noteSize = (designSize: number, scale: number) => Math.max(designSize, Math.ceil((NOTE_MIN_PX / scale) * 10) / 10)
 
 /** Notes draw in one by one when the page opens (index.css, .note-in). */
 const intro = (on: boolean, i: number) => (on ? { className: 'note-in', style: { animationDelay: `${300 + i * 220}ms` } } : {})

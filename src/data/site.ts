@@ -26,6 +26,26 @@ export const PREVIEW_DAYS = 5
  */
 export const ICO = null as string | null
 
+/**
+ * Café AdAstra ("Skutečný návrh") is a real client. We have the owner's verbal
+ * OK; written permission is pending. While this is false, `npm run build`
+ * fails on purpose (see vite.config.ts); `npm run build:draft` shows the section.
+ */
+export const ADASTRA_WRITTEN_OK = false as boolean
+
+/** The AdAstra proposal itself, linked from the "Skutečný návrh" section. */
+export const ADASTRA_URL = 'https://adastra.webtix.cz/'
+
+const NUMBER_WORDS = ['nula', 'jeden', 'dva', 'tři', 'čtyři', 'pět', 'šest', 'sedm', 'osm', 'devět', 'deset']
+
+/** PREVIEW_DAYS in words, as after "za": "pět pracovních dnů". */
+export function previewDaysWords(n: number = PREVIEW_DAYS) {
+  const word = NUMBER_WORDS[n] ?? String(n)
+  if (n === 1) return `${word} pracovní den`
+  if (n >= 2 && n <= 4) return `${word} pracovní dny`
+  return `${word} pracovních dnů`
+}
+
 /** "9 990 Kč" with Czech non-breaking spaces. */
 export const priceText = () => `${PRICE_FROM.toLocaleString('cs-CZ')} Kč`
 
