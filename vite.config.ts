@@ -1,5 +1,7 @@
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { defineConfig, type Plugin } from 'vite'
 import { ADASTRA_WRITTEN_OK, ICO } from './src/data/site.ts'
 
@@ -37,7 +39,8 @@ function devInquiryMock(): Plugin {
  * Values that must be decided before the site goes live: the company ID (IČO)
  * and written permission to show Café AdAstra. A real build refuses to run
  * while either is still open in src/data/site.ts, so neither can go live by
- * mistake. `npm run build:draft` builds anyway for local review.
+ * mistake. `npm run build:draft` builds anyway for local review, and
+ * `npm run build:staging` allows the IČO placeholder (the staging site is noindex).
  */
 function decidedValues(): Plugin {
   return {
@@ -46,7 +49,7 @@ function decidedValues(): Plugin {
     configResolved(config) {
       if (config.mode === 'draft') return
       const open: string[] = []
-      if (ICO === null) open.push('ICO is still the placeholder (null). Set the real value.')
+      if (ICO === null && config.mode !== 'staging') open.push('ICO is still the placeholder (null). Set the real value.')
       if (!ADASTRA_WRITTEN_OK) {
         open.push(
           "ADASTRA_WRITTEN_OK is false: the Café AdAstra section must not go live without the owner's written permission. Set it to true once Dan has it in writing.",
@@ -59,7 +62,29 @@ function decidedValues(): Plugin {
   }
 }
 
+/**
+ * `npm run build:staging`: a staging copy must never be indexed. Every page
+ * gets a robots meta tag (src/lib/meta.ts keeps it on every route), and every
+ * response gets an X-Robots-Tag header through dist/_headers.
+ */
+function stagingNoindex(): Plugin {
+  let outDir = 'dist'
+  return {
+    name: 'webtix-staging-noindex',
+    apply: (_config, env) => env.command === 'build' && env.mode === 'staging',
+    configResolved(config) {
+      outDir = resolve(config.root, config.build.outDir)
+    },
+    transformIndexHtml: () => [{ tag: 'meta', attrs: { name: 'robots', content: 'noindex, nofollow' }, injectTo: 'head' }],
+    closeBundle() {
+      const file = resolve(outDir, '_headers')
+      const existing = existsSync(file) ? readFileSync(file, 'utf8') : ''
+      writeFileSync(file, `/*\n  X-Robots-Tag: noindex, nofollow\n${existing ? `\n${existing}` : ''}`)
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [react(), tailwindcss(), devInquiryMock(), decidedValues()],
+  plugins: [react(), tailwindcss(), devInquiryMock(), decidedValues(), stagingNoindex()],
   server: { port: Number(process.env.PORT) || 5178 },
 })

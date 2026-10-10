@@ -1,34 +1,26 @@
 /**
- * Team members. Edit roles and descriptions here.
- * To add a real photo, put it in /public/team/ and set `photo: '/team/richard.jpg'`.
- * Until then the card shows a monogram.
+ * The two people in "Kdo jsme", in the design's order.
+ *
+ * Portraits are one image per person in public/team/, shown in a 4:5 frame on
+ * white. The current files are the placeholder line drawings from the design;
+ * to use a real portrait, replace the file (or point `portrait` at a new one).
  */
 export interface TeamMember {
   name: string
-  initials: string
-  role: string
-  focus: string[]
-  description: string
-  photo: string | null
+  bio: string
+  portrait: string
 }
 
 export const team: TeamMember[] = [
   {
-    name: 'Richard Buchníček',
-    initials: 'RB',
-    role: 'Co-Founder',
-    focus: ['Vývoj webů', 'Technika', 'Realizace'],
-    description:
-      'Zaměřuje se na tvorbu webů, technickou stránku projektů a realizaci nápadů do funkční podoby.',
-    photo: null,
+    name: 'Daniel Švéda',
+    bio: 'Daniel je spoluzakladatel Webtixu. Navrhuje weby a značky a vždycky je dotáhne do konce, od prvního nápadu po spuštění. Sestavoval týmy a řídil online komunity i školní redakci, takže ví, jak z rozpracované věci udělat hotovou. Za vaším projektem stojí od první schůzky do posledního detailu.',
+    portrait: 'team/daniel.svg',
   },
   {
-    name: 'Daniel Švéda',
-    initials: 'DŠ',
-    role: 'Co-Founder',
-    focus: ['Design', 'Kreativa', 'Vizuální identita'],
-    description:
-      'Zaměřuje se na design, kreativní část projektů a hledání způsobů, jak vytvořit moderní a zapamatovatelný web.',
-    photo: null,
+    name: 'Richard Buchníček',
+    // Not yet confirmed by Richard (text and the co-founder title).
+    bio: 'Richard je spoluzakladatel Webtixu. Stará se o všechno, co běží pod kapotou: kód, rychlost, bezpečnost a nasazení. Díky němu web nejen skvěle vypadá, ale také se rychle načte a funguje bez výpadků.',
+    portrait: 'team/richard.svg',
   },
 ]

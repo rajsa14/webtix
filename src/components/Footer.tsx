@@ -1,48 +1,52 @@
-import { CONSENT_NEEDED, PAGES, SITE } from '../data/site'
-import { team } from '../data/team'
+import { CONSENT_NEEDED, ICO, PAGES, SITE } from '../data/site'
 import { useConsent } from '../store/consent'
 import { Wordmark } from './Wordmark'
 
+/**
+ * Footer from the design (Rest.dc.html / RestMobile.dc.html): wordmark,
+ * e-mail and IČO, legal links. Desktop: one row on the 12-column grid.
+ * Phone: stacked. IČO shows "[IČO]" until it is filled in src/data/site.ts
+ * (a real build refuses to run before that).
+ */
 export function Footer() {
   const openCookies = useConsent((s) => s.openBanner)
+  const link = 'text-ink-soft underline underline-offset-2 hover:text-ink'
 
   return (
-    <footer className="border-t border-line pb-12 pt-16">
-      <div className="container-x">
-        <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <a href={PAGES.home} className="inline-block" aria-label={`${SITE.name}, úvodní stránka`}>
-              <Wordmark height={48} />
-            </a>
-            <p className="mt-4 text-muted">{team.map((m) => m.name).join(' a ')}</p>
-          </div>
-          <a href={`mailto:${SITE.email}`} className="text-h3 font-semibold text-brand-text underline underline-offset-4">
-            {SITE.email}
-          </a>
-        </div>
-
-        <div className="mt-12 flex flex-col-reverse gap-4 border-t border-line pt-6 text-small text-muted sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p>
-              © {SITE.year} {SITE.name}
-            </p>
-            {SITE.legal.length > 0 && <p className="mt-1">{SITE.legal.join(' · ')}</p>}
-          </div>
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
-            <a href={PAGES.privacy} className="underline-offset-4 hover:text-ink hover:underline">
-              Ochrana osobních údajů
-            </a>
-            <a href={PAGES.terms} className="underline-offset-4 hover:text-ink hover:underline">
-              Obchodní podmínky
-            </a>
-            {CONSENT_NEEDED && (
-              <button type="button" onClick={openCookies} className="underline-offset-4 hover:text-ink hover:underline">
-                Nastavení cookies
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+    <footer className="container-x flex flex-col gap-6 py-12 lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-6 lg:py-16">
+      <a href={PAGES.home} aria-label={`${SITE.name}, úvodní stránka`} className="self-start lg:col-span-3">
+        {/* 140px wide on phones, 200px on desktop (both use the master cut, 32px tall or more). */}
+        <Wordmark height={34} className="lg:hidden" />
+        <Wordmark height={48} className="hidden lg:block" />
+      </a>
+      <p className="m-0 text-[15px] leading-[22px] text-ink-soft lg:col-span-3 lg:col-start-5">
+        <a href={`mailto:${SITE.email}`} className="text-ink-soft no-underline hover:underline">
+          {SITE.email}
+        </a>
+        <br />
+        IČO {ICO ?? '[IČO]'}
+      </p>
+      <p className="m-0 flex flex-col items-start text-[14px] leading-[22px] text-ink-soft lg:col-span-4 lg:col-start-9 lg:block lg:text-right lg:text-[15px]">
+        <a href={PAGES.privacy} className={link}>
+          Ochrana osobních údajů
+        </a>
+        <span aria-hidden="true" className="hidden lg:inline">
+          {' · '}
+        </span>
+        <a href={PAGES.terms} className={link}>
+          Obchodní podmínky
+        </a>
+        {CONSENT_NEEDED && (
+          <>
+            <span aria-hidden="true" className="hidden lg:inline">
+              {' · '}
+            </span>
+            <button type="button" onClick={openCookies} className={`${link} cursor-pointer border-0 bg-transparent p-0 text-left font-sans text-[inherit]`}>
+              Nastavení cookies
+            </button>
+          </>
+        )}
+      </p>
     </footer>
   )
 }

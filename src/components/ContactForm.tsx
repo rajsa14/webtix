@@ -7,6 +7,15 @@ import { sendInquiry } from '../lib/sendInquiry'
 import { useUi } from '../store/ui'
 import { ResultDialog, type InquiryResult } from './ResultDialog'
 
+/*
+ * "Poptávka": the terracotta section with the enquiry form. Built from
+ * docs/design/source/Rest.dc.html (1440) and RestMobile.dc.html (390).
+ *
+ * Four fields: name, email, currentSite, message (optional). The address field
+ * is `currentSite`, never `website`: that name is the honeypot. The Worker
+ * also drops submits faster than a person can type, and rate-limits by IP.
+ */
+
 const EMPTY: InquiryForm = { name: '', email: '', currentSite: '', message: '' }
 
 type Errors = Partial<Record<keyof InquiryForm, string>>
@@ -18,7 +27,7 @@ function validate(form: InquiryForm): Errors {
   if (form.name.trim().length < 2) e.name = 'Chyba: vyplňte prosím své jméno.'
   if (!form.email.trim()) e.email = 'Chyba: vyplňte e-mail, ať se vám můžeme ozvat.'
   else if (!EMAIL_RE.test(form.email.trim())) e.email = 'Chyba: zadejte e-mail ve tvaru jmeno@domena.cz.'
-  if (form.message.trim().length < 10) e.message = 'Chyba: napište nám pár vět o projektu (alespoň 10 znaků).'
+  if (!form.currentSite.trim()) e.currentSite = 'Chyba: vyplňte web, Instagram, nebo aspoň název podniku.'
   return e
 }
 
@@ -27,10 +36,6 @@ const msSincePageOpened = () => Math.round(performance.now())
 
 const FIELD_ORDER: (keyof InquiryForm)[] = ['name', 'email', 'currentSite', 'message']
 
-/**
- * Step 1 version: the four approved fields, plainly styled with the brand
- * tokens. The designed form comes in its own step.
- */
 export function ContactForm() {
   const [form, setForm] = useState<InquiryForm>(() => ({ ...EMPTY, currentSite: useUi.getState().heroSite }))
   const [errors, setErrors] = useState<Errors>({})
@@ -90,49 +95,94 @@ export function ContactForm() {
   }
 
   return (
-    <section id={INQUIRY_ANCHOR} className="container-x py-16 sm:py-24">
-      <h2 className="text-h2">Poptávka</h2>
-
-      <form ref={formRef} noValidate onSubmit={onSubmit} className="relative mt-8 grid max-w-2xl gap-6" aria-describedby="form-note">
-        <Field label="Jméno" name="name" autoComplete="name" value={form.name} onChange={set('name')} error={errors.name} />
-        <Field label="E-mail" name="email" type="email" inputMode="email" autoComplete="email" value={form.email} onChange={set('email')} error={errors.email} />
-        <Field label="Váš web nebo Instagram" optional name="currentSite" inputMode="url" autoComplete="url" value={form.currentSite} onChange={set('currentSite')} />
-        <Field label="Něco o vašem projektu" name="message" multiline value={form.message} onChange={set('message')} error={errors.message} />
-
-        {/* Honeypot: hidden from people, bots tend to fill it in. */}
-        <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
-          <label>
-            Web
-            <input ref={honeypot} type="text" name="website" tabIndex={-1} autoComplete="off" />
-          </label>
-        </div>
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p id="form-note" className="text-small text-muted sm:max-w-[50%]">
-            {nb('Údaje použijeme jen k odpovědi na vaši poptávku.')}{' '}
-            <a href={PAGES.privacy} className="text-brand-text underline underline-offset-2">
-              Ochrana osobních údajů
-            </a>
-          </p>
-          <button
-            type="submit"
-            disabled={status === 'sending'}
-            className="h-12 shrink-0 rounded-card bg-brand px-6 font-semibold text-on-brand hover:bg-ink hover:text-surface disabled:cursor-wait"
+    <section
+      id={INQUIRY_ANCHOR}
+      aria-labelledby="poptavka-title"
+      className="bg-terracotta text-cream"
+      style={{ ['--focus' as string]: 'var(--color-cream)' }}
+    >
+      <div className="container-x flex flex-col gap-8 py-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6 lg:py-40">
+        <div className="flex flex-col lg:col-span-6">
+          <h2
+            id="poptavka-title"
+            className="m-0 mb-4 text-[48px] leading-[0.92] tracking-[-0.045em] lg:mb-8 lg:text-[clamp(56px,calc((100vw-128px)*0.06707),88px)] lg:leading-[0.9]"
           >
-            {status === 'sending' ? 'Odesílám…' : 'Poslat poptávku'}
-          </button>
-        </div>
-
-        {status === 'error' && (
-          <p role="alert" className="rounded-input border-2 border-error p-3 text-small text-error">
-            Chyba: zprávu se nepodařilo odeslat. Zkuste to prosím znovu, nebo nám napište přímo na{' '}
-            <a className="underline underline-offset-2" href={`mailto:${SITE.email}`}>
+            Pošlete odkaz. Zbytek je na <em className="italic">nás.</em>
+          </h2>
+          <p className="m-0 max-w-[420px] text-[16px] leading-6 lg:text-[18px] lg:leading-7">
+            Ozveme se do dvou pracovních dnů. Nebo napište <span className="hidden lg:inline">rovnou </span>na{' '}
+            <a href={`mailto:${SITE.email}`} className="text-cream underline underline-offset-4">
               {SITE.email}
             </a>
             .
           </p>
-        )}
-      </form>
+        </div>
+
+        <form
+          ref={formRef}
+          noValidate
+          onSubmit={onSubmit}
+          aria-describedby="form-note"
+          className="relative flex flex-col gap-4 rounded-form bg-paper p-5 text-ink lg:col-span-5 lg:col-start-8 lg:gap-5 lg:p-10"
+          style={{ ['--focus' as string]: 'var(--color-ink)' }}
+        >
+          <Field label="Jméno" name="name" autoComplete="name" value={form.name} onChange={set('name')} error={errors.name} />
+          <Field
+            label="E-mail"
+            name="email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            value={form.email}
+            onChange={set('email')}
+            error={errors.email}
+          />
+          <Field
+            label="Váš web nebo Instagram"
+            name="currentSite"
+            inputMode="url"
+            autoComplete="url"
+            value={form.currentSite}
+            onChange={set('currentSite')}
+            error={errors.currentSite}
+          />
+          <Field label="Zpráva" optional name="message" multiline value={form.message} onChange={set('message')} />
+
+          {/* Honeypot: hidden from people, bots tend to fill it in. */}
+          <div className="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+            <label>
+              Web
+              <input ref={honeypot} type="text" name="website" tabIndex={-1} autoComplete="off" />
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            disabled={status === 'sending'}
+            className="cursor-pointer rounded-input border-0 bg-ink p-4 font-sans text-[16px] font-medium text-paper disabled:cursor-wait lg:mt-2 lg:p-[18px] lg:text-[17px]"
+          >
+            {status === 'sending' ? 'Odesílám…' : 'Chci návrh'}
+          </button>
+
+          {/* Not in the design: kept from the earlier form, as the privacy notice at the point of collection. */}
+          <p id="form-note" className="m-0 text-[14px] leading-5 text-ink-soft">
+            {nb('Údaje použijeme jen k odpovědi na vaši poptávku.')}{' '}
+            <a href={PAGES.privacy} className="text-ink underline underline-offset-2">
+              Ochrana osobních údajů
+            </a>
+          </p>
+
+          {status === 'error' && (
+            <p role="alert" className="m-0 rounded-input border-2 border-solid border-pen p-3 text-[14px] leading-5 text-pen">
+              Chyba: zprávu se nepodařilo odeslat. Zkuste to prosím znovu, nebo nám napište přímo na{' '}
+              <a className="underline underline-offset-2" href={`mailto:${SITE.email}`}>
+                {SITE.email}
+              </a>
+              .
+            </p>
+          )}
+        </form>
+      </div>
 
       <ResultDialog result={result} onClose={() => setResult(null)} />
     </section>
@@ -155,8 +205,8 @@ interface FieldProps {
 function Field({ label, name, value, onChange, error, optional, multiline, type = 'text', ...rest }: FieldProps) {
   const id = useId()
   const control = cx(
-    'w-full rounded-input border bg-surface-raised px-3 text-body text-ink',
-    error ? 'border-2 border-error' : 'border-control-border',
+    'w-full rounded-input bg-white p-[13px] font-sans text-[16px] text-ink lg:p-[14px] lg:text-[17px]',
+    error ? 'border-2 border-solid border-pen' : 'border border-solid border-ink',
   )
   const shared = {
     id,
@@ -167,18 +217,18 @@ function Field({ label, name, value, onChange, error, optional, multiline, type 
     'aria-describedby': error ? `${id}-error` : undefined,
   }
   return (
-    <div>
-      <label htmlFor={id} className="mb-2 flex items-baseline gap-2 text-small font-semibold">
+    <div className="flex flex-col gap-1.5 lg:gap-2">
+      <label htmlFor={id} className="text-[14px] font-semibold">
         {label}
-        {optional && <span className="font-normal text-muted">nepovinné</span>}
+        {optional && <span className="font-normal text-muted"> (nepovinné)</span>}
       </label>
       {multiline ? (
-        <textarea {...shared} rows={5} maxLength={5000} onChange={(e) => onChange(e.target.value)} className={cx(control, 'min-h-32 py-3')} />
+        <textarea {...shared} rows={3} maxLength={5000} onChange={(e) => onChange(e.target.value)} className={cx(control, 'resize-y')} />
       ) : (
-        <input {...shared} type={type} maxLength={200} onChange={(e) => onChange(e.target.value)} className={cx(control, 'h-12')} {...rest} />
+        <input {...shared} type={type} maxLength={200} onChange={(e) => onChange(e.target.value)} className={control} {...rest} />
       )}
       {error && (
-        <p id={`${id}-error`} className="mt-2 text-small text-error">
+        <p id={`${id}-error`} className="m-0 text-[14px] leading-5 text-pen">
           {error}
         </p>
       )}

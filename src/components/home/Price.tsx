@@ -1,0 +1,72 @@
+import { MANAGEMENT_CMS_FROM, MANAGEMENT_EDITS_FROM, kc, previewDaysStart, priceText } from '../../data/site'
+import { nb } from '../../lib/text'
+
+/*
+ * "Cena": the starting price, monthly care, and four questions. Built from
+ * docs/design/source/Rest.dc.html (1440) and RestMobile.dc.html (390).
+ * Prices and days come from src/data/site.ts. The answers are Dan's text
+ * (2026-10-10), which replaced the design's.
+ */
+
+const FAQ: { q: string; a: string }[] = [
+  {
+    q: 'Co když se mi návrh nelíbí?',
+    a: 'Návrh je zdarma a nezávazný: dostanete hotovou úvodní stránku svého nového webu. Nic nepodepisujete a nic neplatíte.',
+  },
+  {
+    q: 'Jak dlouho to celé trvá?',
+    a: `${previewDaysStart()}, jakmile nám pošlete podklady, třeba odkaz na váš stávající web.`,
+  },
+  {
+    q: 'Můžu si web pak upravovat sám?',
+    a: `Ano. S redakčním systémem (CMS) si web upravujete sami a správa stojí od ${kc(MANAGEMENT_CMS_FROM)} měsíčně. Nebo úpravy děláme za vás, od ${kc(MANAGEMENT_EDITS_FROM)} měsíčně.`,
+  },
+  {
+    q: 'Co doména a hosting?',
+    a: 'Pokud už je máte, web na ně přesuneme. Pokud ne, zařídíme všechno za vás.',
+  },
+]
+
+export function Price() {
+  return (
+    <section id="cena" aria-labelledby="cena-title" className="container-x pb-24 lg:pb-40">
+      <div className="flex flex-col gap-8 border-0 border-t border-solid border-ink pt-10 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6 lg:pt-16">
+        <div className="flex flex-col lg:col-span-5">
+          <h2 id="cena-title" className="mono m-0 mb-4 text-[11px] font-normal text-muted lg:mb-6 lg:text-[12px]">
+            Cena
+          </h2>
+          <p className="m-0 mb-3 text-[56px] font-bold leading-[0.92] tracking-[-0.045em] lg:mb-4 lg:text-[clamp(64px,6.6667vw,96px)] lg:leading-[0.9]">
+            od {priceText()}
+          </p>
+          <p className="m-0 max-w-[400px] text-[16px] leading-6 text-ink-soft lg:text-[18px] lg:leading-7">
+            Za hotový web. Přesnou částku znáte dřív, než cokoli podepíšete.
+          </p>
+          {/* Not in the design: Dan's line about monthly care (2026-10-10). Breaks only at the separators. */}
+          <p className="m-0 mt-4 max-w-[400px] text-[14px] leading-5 text-ink-soft lg:mt-6 lg:text-meta">
+            Správa webu: <span className="whitespace-nowrap">S CMS od {kc(MANAGEMENT_CMS_FROM)} měsíčně</span> ·{' '}
+            <span className="whitespace-nowrap">S úpravami od nás od {kc(MANAGEMENT_EDITS_FROM)} měsíčně</span>
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:col-span-6 lg:col-start-7">
+          {FAQ.map(({ q, a }, i) => (
+            <details
+              key={q}
+              open={i === 0}
+              className="group border-0 border-t border-solid border-ink py-5 last:border-b lg:py-6"
+            >
+              <summary className="flex cursor-pointer list-none justify-between gap-3 text-[19px] font-bold leading-[26px] lg:gap-4 lg:text-[clamp(20px,1.6667vw,24px)] lg:leading-[1.25] [&::-webkit-details-marker]:hidden">
+                {q}
+                <span aria-hidden="true" className="text-terracotta">
+                  <span className="group-open:hidden">+</span>
+                  <span className="hidden group-open:inline">–</span>
+                </span>
+              </summary>
+              <p className="m-0 mt-2.5 max-w-[520px] text-[16px] leading-6 text-ink-soft lg:mt-3 lg:text-[17px] lg:leading-[26px]">{nb(a)}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

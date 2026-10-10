@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 250" width="200" height="250">
+<!-- Placeholder portrait of Daniel Švéda from docs/design/source/Rest.dc.html. Replace this file (4:5, white background) with the real portrait. -->
+<rect width="200" height="250" fill="#FFFFFF"/>
+<g fill="none" stroke="#161110" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M70 74 C 70 42, 130 40, 132 76 C 134 110, 120 140, 100 142 C 80 142, 68 116, 70 74"/>
+<path d="M66 76 C 62 42, 100 26, 128 38 C 140 44, 138 60, 134 76"/>
+<path d="M84 46 C 100 54, 118 52, 130 60"/>
+<path d="M70 94 C 62 92, 62 106, 70 108"/><path d="M132 94 C 140 92, 140 106, 132 108"/>
+<path d="M86 94 q4 -3 8 0"/><path d="M108 94 q4 -3 8 0"/>
+<path d="M100 98 C 98 106, 96 112, 102 114"/>
+<path d="M90 124 C 96 130, 106 130, 112 124"/>
+<path d="M88 140 L 86 160"/><path d="M114 140 L 116 160"/>
+<path d="M40 250 C 44 196, 70 170, 86 160 L 100 178 L 116 160 C 132 170, 158 196, 162 250"/>
+</g><path d="M136 70 L 150 46" stroke="#B4472A" stroke-width="5" stroke-linecap="round"/>
+</svg>

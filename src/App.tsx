@@ -4,7 +4,9 @@ import { CookieBanner } from './components/CookieBanner'
 import { Footer } from './components/Footer'
 import { Hero } from './components/home/Hero'
 import { HowWeWork } from './components/home/HowWeWork'
+import { Price } from './components/home/Price'
 import { RealProposal } from './components/home/RealProposal'
+import { Team } from './components/home/Team'
 import { Navbar } from './components/Navbar'
 import { InquirySent } from './components/pages/InquirySent'
 import { LegalPage } from './components/pages/LegalPage'
@@ -21,12 +23,14 @@ function Titled({ title, description, children }: { title?: string; description?
 
 /** Every address and what it shows. The header and footer stay the same around it. */
 const ROUTES: Record<string, () => ReactNode> = {
-  // Steps 4–5: the hero scene and the first two sections. The enquiry form stays below until step 6.
+  // The homepage, in the design's order. The enquiry form is the "Poptávka" section.
   [PAGES.home]: () => (
     <Titled>
       <Hero />
       <HowWeWork />
       <RealProposal />
+      <Team />
+      <Price />
       <ContactForm />
     </Titled>
   ),

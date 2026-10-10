@@ -9,29 +9,28 @@ export const SITE = {
   description:
     'Vyberte si styl, barvy, písmo a další prvky vašeho webu. Webtix z vaší představy vytvoří konkrétní návrh na míru.',
   year: 2026,
-  /**
-   * Legal identity shown in the footer, e.g. 'IČO: 12345678'. One line per
-   * person or company. Leave empty and the footer line is hidden.
-   */
-  legal: [] as string[],
 } as const
 
 /** Every price and day count on the site comes from these values. */
 export const PRICE_FROM = 9990
 export const PREVIEW_DAYS = 5
 
+/** Monthly web care: with a CMS (the client edits the site) and with edits made by us. */
+export const MANAGEMENT_CMS_FROM = 790
+export const MANAGEMENT_EDITS_FROM = 1490
+
 /**
  * Not known yet. While it is null, `npm run build` fails on purpose (see
- * vite.config.ts); `npm run build:draft` builds anyway for local review.
+ * vite.config.ts); `npm run build:draft` and `npm run build:staging` build anyway.
  */
 export const ICO = null as string | null
 
 /**
- * Café AdAstra ("Skutečný návrh") is a real client. We have the owner's verbal
- * OK; written permission is pending. While this is false, `npm run build`
- * fails on purpose (see vite.config.ts); `npm run build:draft` shows the section.
+ * Café AdAstra ("Skutečný návrh") is a real client. The owner's written
+ * permission is in. Set this back to false and `npm run build` refuses to
+ * run, should the permission ever be withdrawn.
  */
-export const ADASTRA_WRITTEN_OK = false as boolean
+export const ADASTRA_WRITTEN_OK = true as boolean
 
 /** The AdAstra proposal itself, linked from the "Skutečný návrh" section. */
 export const ADASTRA_URL = 'https://adastra.webtix.cz/'
@@ -46,8 +45,18 @@ export function previewDaysWords(n: number = PREVIEW_DAYS) {
   return `${word} pracovních dnů`
 }
 
-/** "9 990 Kč" with Czech non-breaking spaces. */
-export const priceText = () => `${PRICE_FROM.toLocaleString('cs-CZ')} Kč`
+/** "Pět pracovních dnů začíná běžet", with the verb agreeing with the number. */
+export function previewDaysStart(n: number = PREVIEW_DAYS) {
+  const words = previewDaysWords(n)
+  const verb = n >= 2 && n <= 4 ? 'začínají' : 'začíná'
+  return `${words[0].toUpperCase()}${words.slice(1)} ${verb} běžet`
+}
+
+/** "1 490 Kč" with Czech non-breaking spaces. */
+export const kc = (amount: number) => `${amount.toLocaleString('cs-CZ')}\u00a0Kč`
+
+/** "9 990 Kč": the starting price of a site. */
+export const priceText = () => kc(PRICE_FROM)
 
 /**
  * The cookie banner stays in the code for Google Ads later. Until then the

@@ -8,12 +8,12 @@ const base =
   'inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-card font-semibold disabled:pointer-events-none disabled:opacity-60'
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-brand text-on-brand hover:bg-ink hover:text-surface',
-  secondary: 'border-2 border-ink text-ink hover:bg-ink hover:text-surface',
+  primary: 'bg-ink text-paper hover:bg-terracotta',
+  secondary: 'border-2 border-ink text-ink hover:bg-ink hover:text-paper',
 }
 
 const sizes: Record<Size, string> = {
-  md: 'h-11 px-5 text-small',
+  md: 'h-11 px-5 text-[14px] leading-5',
   lg: 'h-12 px-6 text-body',
 }
 

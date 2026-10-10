@@ -29,7 +29,7 @@ export function ResultDialog({ result, onClose }: { result: InquiryResult | null
         role="dialog"
         aria-modal="true"
         aria-labelledby="result-title"
-        className="relative w-full max-w-lg rounded-card border border-line bg-surface-raised p-6 sm:p-8"
+        className="relative w-full max-w-lg rounded-card border border-ink/20 bg-white p-6 sm:p-8"
       >
         <NotConfigured payload={result.payload} onClose={onClose} />
       </div>
@@ -69,14 +69,14 @@ function NotConfigured({ payload, onClose }: { payload: InquiryPayload; onClose:
           `Odesílání přímo z webu zatím není zapojené, proto vaše zpráva ještě neodešla. Otevřete připravený e-mail ve své poště, nebo text zkopírujte a pošlete na ${SITE.email}.`,
         )}
       </p>
-      <pre className="mt-6 max-h-44 overflow-auto whitespace-pre-wrap rounded-input border border-line bg-surface p-4 text-small text-muted">
+      <pre className="mt-6 max-h-44 overflow-auto whitespace-pre-wrap rounded-input border border-ink/20 bg-paper p-4 text-[14px] leading-5 text-muted">
         {payload.text}
       </pre>
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
         <a
           data-autofocus
           href={mailtoHref(payload)}
-          className="inline-flex h-12 flex-1 items-center justify-center rounded-card bg-brand px-5 font-semibold text-on-brand hover:bg-ink hover:text-surface"
+          className="inline-flex h-12 flex-1 items-center justify-center rounded-card bg-ink px-5 font-semibold text-paper hover:bg-terracotta"
         >
           Otevřít v e-mailu
         </a>
@@ -84,9 +84,9 @@ function NotConfigured({ payload, onClose }: { payload: InquiryPayload; onClose:
           Zkopírovat text
         </CtaButton>
       </div>
-      <p aria-live="polite" className="mt-3 min-h-5 text-small text-muted">
+      <p aria-live="polite" className="mt-3 min-h-5 text-[14px] leading-5 text-muted">
         {copy === 'done' && 'Text poptávky je zkopírovaný.'}
-        {copy === 'failed' && <span className="text-error">Chyba: kopírování se nepovedlo. Označte text ručně.</span>}
+        {copy === 'failed' && <span className="text-pen">Chyba: kopírování se nepovedlo. Označte text ručně.</span>}
       </p>
     </div>
   )

@@ -31,12 +31,12 @@ export function InquirySent() {
 
   return (
     <section className="container-x py-16 sm:py-24">
-      <p className="label text-muted">Poptávka odeslána</p>
-      <h1 className="mt-4 text-h1 sm:text-display">
+      <p className="mono text-muted">Poptávka odeslána</p>
+      <h1 className="mt-4 text-[40px] leading-[0.96] tracking-[-0.035em] lg:text-h2">
         Děkujeme{firstName ? `, ${firstName}` : ''}
-        <span className="text-brand-text">!</span>
+        <span className="text-terracotta">!</span>
       </h1>
-      <p className="measure mt-6 text-muted">
+      <p className="max-w-[65ch] mt-6 text-muted">
         {nb('Vaši poptávku jsme přijali a už je u nás. Projdeme si váš výběr a ozveme se vám')}
         {inquiry?.email ? (
           <>
@@ -48,11 +48,11 @@ export function InquirySent() {
         )}
       </p>
 
-      <h2 className="mt-16 text-h2">Co bude dál</h2>
+      <h2 className="mt-16 text-[40px] leading-[0.96] tracking-[-0.035em] lg:text-h2">Co bude dál</h2>
       <ol className="mt-6 grid gap-8 md:grid-cols-3">
         {NEXT_STEPS.map((step) => (
           <li key={step.number} className="border-t-2 border-ink pt-4">
-            <span className="text-h2 text-brand-text" aria-hidden="true">
+            <span className="text-[40px] font-bold leading-none text-terracotta lg:text-h2" aria-hidden="true">
               {step.number}
             </span>
             <h3 className="mt-2 text-h3">
@@ -64,12 +64,12 @@ export function InquirySent() {
         ))}
       </ol>
 
-      <div className="mt-16 flex flex-col gap-6 rounded-card border border-line bg-surface-raised p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+      <div className="mt-16 flex flex-col gap-6 rounded-card border border-ink/20 bg-white p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
         <div>
           <p className="font-semibold">Napadlo vás ještě něco?</p>
           <p className="mt-1 text-muted">
             {nb('Doplňky, odkazy nebo podklady nám pošlete na ')}
-            <a href={`mailto:${SITE.email}`} className="text-brand-text underline underline-offset-2">
+            <a href={`mailto:${SITE.email}`} className="text-terracotta underline underline-offset-2">
               {SITE.email}
             </a>
             .
