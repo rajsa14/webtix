@@ -100,7 +100,7 @@ export function ContactForm() {
       style={{ ['--focus' as string]: 'var(--color-cream)' }}
     >
       <div className="container-x flex flex-col gap-8 py-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6 lg:py-40">
-        <div className="flex flex-col lg:col-span-6">
+        <div data-reveal className="flex flex-col lg:col-span-6">
           <h2
             id="poptavka-title"
             className="m-0 mb-4 text-[48px] leading-[0.92] tracking-[-0.045em] lg:mb-8 lg:text-[clamp(56px,calc((100vw-128px)*0.06707),88px)] lg:leading-[0.9]"
@@ -118,11 +118,12 @@ export function ContactForm() {
 
         <form
           ref={formRef}
+          data-reveal
           noValidate
           onSubmit={onSubmit}
           aria-describedby="form-note"
           className="relative flex flex-col gap-4 rounded-form bg-paper p-5 text-ink lg:col-span-5 lg:col-start-8 lg:gap-5 lg:p-10"
-          style={{ ['--focus' as string]: 'var(--color-ink)' }}
+          style={{ ['--focus' as string]: 'var(--color-ink)', ['--reveal-delay' as string]: '150ms' }}
         >
           <Field label="Jméno" name="name" autoComplete="name" value={form.name} onChange={set('name')} error={errors.name} />
           <Field

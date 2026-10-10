@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { ContactForm } from './components/ContactForm'
 import { CookieBanner } from './components/CookieBanner'
+import { Cursor } from './components/Cursor'
 import { Footer } from './components/Footer'
 import { Hero } from './components/home/Hero'
 import { HowWeWork } from './components/home/HowWeWork'
@@ -13,6 +14,7 @@ import { LegalPage } from './components/pages/LegalPage'
 import { NotFound } from './components/pages/NotFound'
 import { PAGES } from './data/site'
 import { usePageMeta } from './lib/meta'
+import { useRevealAll } from './lib/motion'
 import { usePath } from './lib/router'
 
 /** Sets the browser title and description of a page, then shows its sections. */
@@ -42,6 +44,7 @@ const ROUTES: Record<string, () => ReactNode> = {
 export default function App() {
   const path = usePath()
   const page = ROUTES[path] ?? (() => <NotFound />)
+  useRevealAll(path)
 
   return (
     <>
@@ -63,6 +66,7 @@ export default function App() {
       </main>
       <Footer />
       <CookieBanner />
+      <Cursor />
     </>
   )
 }

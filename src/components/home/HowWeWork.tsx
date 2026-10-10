@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { previewDaysWords } from '../../data/site'
 import { NOTE_MIN_PX, noteSize } from '../../lib/notes'
+import { revealDelay } from '../../lib/motion'
 import { cx } from '../../lib/text'
 import { useGroupScale } from './heroScene'
 import { ShopAfter, ShopBefore, ShopScreen } from './Shop'
@@ -30,7 +31,7 @@ export function HowWeWork() {
   const cut = days.lastIndexOf(' ')
   return (
     <section id="jak-to-delame" aria-labelledby="jak-title" className="container-x py-24 lg:py-40">
-      <div className="flex flex-col lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-6">
+      <div data-reveal className="flex flex-col lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-6">
         <div className="flex flex-col lg:col-span-7">
           <p className="mono m-0 mb-4 text-[11px] text-muted lg:mb-6 lg:text-[12px]">Jak to děláme</p>
           <h2
@@ -50,14 +51,16 @@ export function HowWeWork() {
       </div>
 
       <ol className="m-0 mt-10 flex list-none flex-col gap-10 p-0 lg:mt-[72px] lg:grid lg:grid-cols-3 lg:gap-6">
-        <Step number="01" title="Pošlete odkaz" text="Web, Instagram, nebo jen název podniku." card={<SceneCard className="bg-pink">{LinkScene}</SceneCard>} />
+        <Step i={0} number="01" title="Pošlete odkaz" text="Web, Instagram, nebo jen název podniku." card={<SceneCard className="bg-pink">{LinkScene}</SceneCard>} />
         <Step
+          i={1}
           number="02"
           title="Postavíme první stránku"
           text="Z vašich fotek, textů a menu. Na vlastní adrese, ne v PDF."
           card={<SceneCard className="bg-terracotta">{BuildScene}</SceneCard>}
         />
         <Step
+          i={2}
           number="03"
           title="Rozhodnete se"
           text="Líbí se vám? Domluvíme cenu a dokončíme zbytek. Nelíbí? Nic neplatíte."
@@ -68,9 +71,9 @@ export function HowWeWork() {
   )
 }
 
-function Step({ number, title, text, card }: { number: string; title: string; text: string; card: ReactNode }) {
+function Step({ i, number, title, text, card }: { i: number; number: string; title: string; text: string; card: ReactNode }) {
   return (
-    <li className="flex flex-col gap-4 lg:gap-6">
+    <li data-reveal style={revealDelay(i, 140)} className="flex flex-col gap-4 lg:gap-6">
       {card}
       <div className="flex items-baseline gap-3 lg:gap-4">
         <span className="mono text-[11px] text-terracotta lg:text-[12px]">{number}</span>
@@ -88,7 +91,7 @@ type Scene = (variant: Variant, scale: number) => ReactNode
 /** A 4:3 card. Its picture is drawn once per layout and only the matching one is shown. */
 function SceneCard({ className, children }: { className: string; children: Scene }) {
   return (
-    <div aria-hidden="true" className={cx('relative aspect-[4/3] overflow-hidden rounded-card', className)}>
+    <div aria-hidden="true" className={cx('scene-card relative aspect-[4/3] overflow-hidden rounded-card', className)}>
       <CardGroup variant="desktop" className="hidden lg:flex">
         {children}
       </CardGroup>
@@ -122,7 +125,7 @@ const LinkScene: Scene = (variant, scale) => {
       >
         <span className="flex-1" style={{ fontSize: desktop ? 17 : 15 }}>
           slapadlo.cz
-          {desktop && <span className="ml-0.5 inline-block h-[18px] w-0.5 bg-ink align-[-3px]" />}
+          {desktop && <span className="caret ml-0.5 inline-block h-[18px] w-0.5 bg-ink align-[-3px]" />}
         </span>
         <span
           className="rounded-[6px] bg-ink font-medium text-paper"
@@ -142,7 +145,7 @@ const LinkScene: Scene = (variant, scale) => {
 function SmallPhone({ variant, className, children }: { variant: Variant; className: string; children: ReactNode }) {
   return (
     <div
-      className={cx('absolute left-1/2 -ml-[77px] h-[316px] w-[154px] overflow-hidden rounded-[22px] border-[5px] border-solid', className)}
+      className={cx('scene-lift absolute left-1/2 -ml-[77px] h-[316px] w-[154px] overflow-hidden rounded-[22px] border-[5px] border-solid', className)}
       style={{ top: variant === 'desktop' ? 22 : 20 }}
     >
       {children}

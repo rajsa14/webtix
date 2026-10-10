@@ -1,4 +1,6 @@
-import { MANAGEMENT_CMS_FROM, MANAGEMENT_EDITS_FROM, kc, previewDaysStart, priceText } from '../../data/site'
+import { useEffect, useRef, useState } from 'react'
+import { MANAGEMENT_CMS_FROM, MANAGEMENT_EDITS_FROM, PRICE_FROM, kc, previewDaysStart } from '../../data/site'
+import { revealDelay, useInViewOnce } from '../../lib/motion'
 import { nb } from '../../lib/text'
 
 /*
@@ -31,12 +33,12 @@ export function Price() {
   return (
     <section id="cena" aria-labelledby="cena-title" className="container-x pb-24 lg:pb-40">
       <div className="flex flex-col gap-8 border-0 border-t border-solid border-ink pt-10 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6 lg:pt-16">
-        <div className="flex flex-col lg:col-span-5">
+        <div data-reveal className="flex flex-col lg:col-span-5">
           <h2 id="cena-title" className="mono m-0 mb-4 text-[11px] font-normal text-muted lg:mb-6 lg:text-[12px]">
             Cena
           </h2>
           <p className="m-0 mb-3 text-[56px] font-bold leading-[0.92] tracking-[-0.045em] lg:mb-4 lg:text-[clamp(64px,6.6667vw,96px)] lg:leading-[0.9]">
-            od {priceText()}
+            od <CountUp to={PRICE_FROM} />
           </p>
           <p className="m-0 max-w-[400px] text-[16px] leading-6 text-ink-soft lg:text-[18px] lg:leading-7">
             Za hotový web. Přesnou částku znáte dřív, než cokoli podepíšete.
@@ -52,6 +54,8 @@ export function Price() {
           {FAQ.map(({ q, a }, i) => (
             <details
               key={q}
+              data-reveal
+              style={revealDelay(i + 1, 90)}
               open={i === 0}
               className="group border-0 border-t border-solid border-ink py-5 last:border-b lg:py-6"
             >
@@ -68,5 +72,37 @@ export function Price() {
         </div>
       </div>
     </section>
+  )
+}
+
+/** The price counts up once when it first comes into view. Screen readers get the final amount only. */
+function CountUp({ to }: { to: number }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const seen = useInViewOnce(ref, 0.6)
+  // Start from a four-digit amount, so the width barely changes while counting.
+  const from = Math.min(1000, to)
+  const [value, setValue] = useState(() => (seen ? to : from))
+  // Seen from the start means no motion is allowed: show the amount, do not count.
+  const [counts] = useState(() => !seen)
+  useEffect(() => {
+    if (!seen || !counts) return
+    let raf = 0
+    const start = performance.now()
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / 1100)
+      const eased = 1 - (1 - t) ** 3
+      setValue(t >= 1 ? to : Math.round((from + (to - from) * eased) / 10) * 10)
+      if (t < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [seen, counts, from, to])
+  return (
+    <>
+      <span ref={ref} aria-hidden="true" className="tabular-nums">
+        {kc(value)}
+      </span>
+      <span className="sr-only">{kc(to)}</span>
+    </>
   )
 }

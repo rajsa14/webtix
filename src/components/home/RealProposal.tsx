@@ -1,4 +1,5 @@
 import { ADASTRA_URL } from '../../data/site'
+import { revealDelay } from '../../lib/motion'
 import { cx } from '../../lib/text'
 
 /*
@@ -29,7 +30,7 @@ export function RealProposal() {
       style={{ ['--focus' as string]: 'var(--color-cream)' }}
     >
       <div className="container-x flex flex-col gap-10 py-24 lg:grid lg:grid-cols-12 lg:items-center lg:gap-x-6 lg:gap-y-0 lg:py-40">
-        <div className="flex flex-col lg:col-span-5">
+        <div data-reveal className="flex flex-col lg:col-span-5">
           <p className="mono m-0 mb-4 text-[11px] text-[#A79C94] lg:mb-6 lg:text-[12px]">Skutečný návrh</p>
           <h2
             id="navrhy-title"
@@ -49,7 +50,7 @@ export function RealProposal() {
         </div>
 
         <div className="flex items-start justify-center gap-4 lg:col-span-6 lg:col-start-7 lg:gap-[min(40px,7.1429%)]">
-          <figure className="m-0 mt-10 flex w-[160px] flex-col items-center gap-3 lg:mt-[min(64px,11.4286%)] lg:w-[min(260px,46.4286%)] lg:gap-4">
+          <figure data-reveal style={revealDelay(1, 150)} className="m-0 mt-10 flex w-[160px] flex-col items-center gap-3 lg:mt-[min(64px,11.4286%)] lg:w-[min(260px,46.4286%)] lg:gap-4">
             <div className="h-[332px] w-full overflow-hidden rounded-[24px] border-[6px] border-solid border-[#3A3230] bg-[#3A3230] lg:aspect-[260/540] lg:h-auto lg:rounded-[36px] lg:border-8">
               <img
                 {...IMAGES.old}
@@ -62,7 +63,7 @@ export function RealProposal() {
             </div>
             <figcaption className="mono text-[11px] text-[#A79C94] lg:text-[12px]">Dnes</figcaption>
           </figure>
-          <figure className="m-0 flex w-[160px] flex-col items-center gap-3 lg:w-[min(260px,46.4286%)] lg:gap-4">
+          <figure data-reveal style={revealDelay(2, 150)} className="m-0 flex w-[160px] flex-col items-center gap-3 lg:w-[min(260px,46.4286%)] lg:gap-4">
             <div className="h-[332px] w-full overflow-hidden rounded-[24px] border-[6px] border-solid border-paper bg-paper lg:aspect-[260/540] lg:h-auto lg:rounded-[36px] lg:border-8">
               <img
                 {...IMAGES.new}

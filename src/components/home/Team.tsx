@@ -1,4 +1,5 @@
 import { team } from '../../data/team'
+import { revealDelay } from '../../lib/motion'
 import { cx, nb } from '../../lib/text'
 
 /*
@@ -10,7 +11,7 @@ export function Team() {
   return (
     <section id="kdo-jsme" aria-labelledby="kdo-title" className="container-x py-24 lg:py-40">
       <div className="flex flex-col gap-8 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6">
-        <div className="flex flex-col lg:col-span-5">
+        <div data-reveal className="flex flex-col lg:col-span-5">
           <p className="mono m-0 mb-4 text-[11px] text-muted lg:mb-6 lg:text-[12px]">Kdo jsme</p>
           <h2
             id="kdo-title"
@@ -26,7 +27,7 @@ export function Team() {
 
         <ul className="m-0 grid list-none grid-cols-2 gap-4 p-0 lg:col-span-6 lg:col-start-7 lg:gap-6">
           {team.map((member, i) => (
-            <li key={member.name} className={cx('flex flex-col gap-3 lg:gap-4', i === 1 && 'mt-10 lg:mt-16')}>
+            <li key={member.name} data-reveal style={revealDelay(i + 1, 150)} className={cx('flex flex-col gap-3 lg:gap-4', i === 1 && 'mt-10 lg:mt-16')}>
               <div className="flex aspect-[4/5] flex-col overflow-hidden rounded-card border-2 border-solid border-ink bg-white">
                 {/* The name follows right below, so the portrait needs no text of its own. */}
                 <img
