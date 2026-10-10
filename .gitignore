@@ -28,3 +28,7 @@ dist-offline
 .env
 .env.*
 !.env.example
+
+# Cloudflare Worker secrets for wrangler dev
+.dev.vars
+.wrangler
