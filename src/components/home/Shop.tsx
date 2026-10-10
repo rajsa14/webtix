@@ -271,8 +271,12 @@ export function ShopAfter() {
           <span>Velký servis</span>
           <span>1 490 Kč</span>
         </div>
-        <span style={{ marginTop: 8, fontSize: 14, fontWeight: 700, color: '#121212', textDecoration: 'underline' }}>
-          Dělnická 12, Praha 7 · mapa ↗
+        <span style={{ marginTop: 8, fontSize: 14, lineHeight: '17px', fontWeight: 700, color: '#121212', textDecoration: 'underline' }}>
+          Dělnická 12, Praha 7 · mapa{' '}
+          {/* Archivo has no ↗ glyph, so the arrow is drawn. */}
+          <svg width="10" height="10" viewBox="0 0 10 10" style={{ display: 'inline', verticalAlign: 0 }}>
+            <path d="M1.5 8.5 L8.5 1.5 M3.5 1.5 H8.5 V6.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="square" />
+          </svg>
         </span>
       </div>
     </div>
