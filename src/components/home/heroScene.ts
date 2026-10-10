@@ -1,14 +1,14 @@
-import { useCallback, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react'
 
 /*
- * The hero scroll scene: one progress value p (0 to 1) drives everything.
+ * The hero scene: one progress value p (0 to 1) drives everything, from the
+ * old Šlapadlo site with red-pen notes (0) to the new one with cream notes (1).
  *
- * p comes from native scroll: the scene is a tall section with a sticky inner
- * box, and p is how far the page has scrolled through it. A passive scroll
- * listener schedules one requestAnimationFrame; the frame reads only
- * window.scrollY (sizes are measured on resize, never in the loop) and writes
- * transform, opacity and clip-path straight to the DOM, without React renders.
- * Scrolling back gives the same p, so everything reverses exactly.
+ * p plays like a short video: once the scene is at least half on screen it
+ * runs from 0 to 1 over PLAY_MS. A small button pauses, resumes and replays it.
+ * Each animation frame writes transform, opacity and clip-path straight to the
+ * DOM, without React renders and without reading layout.
+ * With reduced motion nothing moves: the button switches between 0 and 1.
  */
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
@@ -16,13 +16,16 @@ const clamp01 = (v: number) => Math.min(1, Math.max(0, v))
 /** 0 before a, 1 after b, linear in between. */
 export const ramp = (p: number, a: number, b: number) => clamp01((p - a) / (b - a))
 
-/** Piecewise linear value through [p, value] points, held flat outside them. */
+/** Smooth start and stop between two points. */
+const ease = (t: number) => t * t * (3 - 2 * t)
+
+/** Value through [p, value] points, eased between them, held flat outside them. */
 export function track(p: number, points: [number, number][]) {
   if (p <= points[0][0]) return points[0][1]
   for (let i = 1; i < points.length; i++) {
     const [p0, v0] = points[i - 1]
     const [p1, v1] = points[i]
-    if (p <= p1) return v0 + (v1 - v0) * ((p - p0) / (p1 - p0))
+    if (p <= p1) return v0 + (v1 - v0) * ease((p - p0) / (p1 - p0))
   }
   return points[points.length - 1][1]
 }
@@ -67,72 +70,18 @@ export function useGroupScale(base: { width: number; height?: number }, [min, ma
   return [ref, state.scale, state.boxHeight] as const
 }
 
-/* ---------- scroll progress ---------- */
+/* ---------- playback ---------- */
 
-export type SceneMeasure = { start: number; range: number; stickyTop: number }
+/** One run from the old site to the new one. */
+export const PLAY_MS = 7000
+/** Wait after the scene appears, so the red-pen notes have drawn in first. */
+const START_DELAY_MS = 1400
+/** Replay: wind back to the old site, wait a moment, play again. */
+const REWIND_MS = 900
+const REWIND_PAUSE_MS = 500
 
-/**
- * Progress through a pinned section. Put `sectionRef` on the tall section and
- * `stickyRef` on its sticky child. `onFrame` runs once per animation frame
- * while scrolling, and again whenever the layout is measured.
- */
-export function useScrollScene(onFrame: (p: number, m: SceneMeasure) => void, enabled: boolean) {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const stickyRef = useRef<HTMLDivElement>(null)
-  const frameRef = useRef(onFrame)
-  const measureRef = useRef<SceneMeasure>({ start: 0, range: 0, stickyTop: 0 })
-  const pRef = useRef(0)
-
-  useLayoutEffect(() => {
-    frameRef.current = onFrame
-  })
-
-  useLayoutEffect(() => {
-    const section = sectionRef.current
-    const sticky = stickyRef.current
-    if (!enabled || !section || !sticky) return
-    let raf = 0
-    const tick = () => {
-      raf = 0
-      const m = measureRef.current
-      // A range of 0 means the scene is hidden (the other breakpoint's layout).
-      if (m.range <= 0) return
-      pRef.current = clamp01((window.scrollY - m.start) / m.range)
-      frameRef.current(pRef.current, m)
-    }
-    const measure = () => {
-      const stickyTop = parseFloat(getComputedStyle(sticky).top) || 0
-      measureRef.current = {
-        start: section.getBoundingClientRect().top + window.scrollY - stickyTop,
-        range: section.offsetHeight - sticky.offsetHeight,
-        stickyTop,
-      }
-      tick()
-    }
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(tick)
-    }
-    measure()
-    const observer = new ResizeObserver(measure)
-    observer.observe(section)
-    observer.observe(sticky)
-    observer.observe(document.body)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('scroll', onScroll)
-      cancelAnimationFrame(raf)
-    }
-  }, [enabled])
-
-  /** Jump (no smooth scroll) to the scroll position of progress p. */
-  const scrollToProgress = useCallback((p: number) => {
-    const { start, range } = measureRef.current
-    if (range > 0) window.scrollTo({ top: start + p * range, behavior: 'instant' })
-  }, [])
-
-  return { sectionRef, stickyRef, pRef, measureRef, scrollToProgress }
-}
+export type PlayState = 'waiting' | 'playing' | 'paused' | 'done'
+type Phase = 'play' | 'rewind' | 'hold'
 
 /* ---------- painting ---------- */
 
@@ -236,24 +185,106 @@ export function paintScene(n: SceneNodes, f: Frame) {
 
 /**
  * A whole scene: `rootRef` goes on the element holding its animated parts.
- * Live, it follows the scroll through `sectionRef`/`stickyRef`; otherwise it
- * shows the fixed progress `fixed`. It repaints after every render, so React
- * never leaves stale values behind.
+ * It plays p from 0 to 1 when at least half of it is on screen (and pauses
+ * while it is off screen), repaints after every render so React never leaves
+ * stale values behind, and returns the state and the action of the control
+ * button. With `reduced`, nothing animates: `toggle` jumps between 0 and 1.
  */
-export function useScene(fixed: number | undefined, frame: (p: number, m: SceneMeasure) => Frame) {
-  const live = fixed === undefined
+export function useScene(frame: (p: number) => Frame, reduced: boolean) {
   const rootRef = useRef<HTMLDivElement>(null)
   const nodes = useRef<SceneNodes | null>(null)
-  const scene = useScrollScene((p, m) => {
-    if (nodes.current) paintScene(nodes.current, frame(p, m))
-  }, live)
-  const { pRef, measureRef } = scene
+  const pRef = useRef(0)
+  const frameRef = useRef(frame)
+  const phase = useRef<Phase>('play')
+  const holdUntil = useRef(0)
+  const visible = useRef(false)
+  const [state, setState] = useState<PlayState>(reduced ? 'paused' : 'waiting')
+  const stateRef = useRef(state)
+
   useLayoutEffect(() => {
+    frameRef.current = frame
+    stateRef.current = state
     if (!rootRef.current) return
     nodes.current = collectNodes(rootRef.current)
-    paintScene(nodes.current, frame(fixed ?? pRef.current, measureRef.current))
+    paintScene(nodes.current, frame(pRef.current))
   })
-  return { ...scene, rootRef }
+
+  const paint = useCallback((p: number) => {
+    pRef.current = p
+    if (nodes.current) paintScene(nodes.current, frameRef.current(p))
+  }, [])
+
+  // Start once at least half the scene is on screen; keep track of visibility.
+  useEffect(() => {
+    const el = rootRef.current
+    if (!el || reduced) return
+    let timer = 0
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible.current = entry.isIntersecting
+        if (entry.isIntersecting && stateRef.current === 'waiting' && !timer) {
+          timer = window.setTimeout(() => setState((s) => (s === 'waiting' ? 'playing' : s)), START_DELAY_MS)
+        }
+      },
+      { threshold: 0.5 },
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      clearTimeout(timer)
+    }
+  }, [reduced])
+
+  // The animation loop: runs only while playing and on screen.
+  useEffect(() => {
+    if (state !== 'playing' || reduced) return
+    let raf = 0
+    let last = performance.now()
+    const tick = (now: number) => {
+      const dt = Math.min(now - last, 100)
+      last = now
+      if (visible.current) {
+        if (phase.current === 'rewind') {
+          const p = pRef.current - dt / REWIND_MS
+          if (p <= 0) {
+            paint(0)
+            phase.current = 'hold'
+            holdUntil.current = now + REWIND_PAUSE_MS
+          } else paint(p)
+        } else if (phase.current === 'hold') {
+          if (now >= holdUntil.current) phase.current = 'play'
+        } else {
+          const p = pRef.current + dt / PLAY_MS
+          if (p >= 1) {
+            paint(1)
+            setState('done')
+            return
+          }
+          paint(p)
+        }
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [state, reduced, paint])
+
+  /** Pause, resume, replay; with reduced motion, switch old ↔ new at once. */
+  const toggle = useCallback(() => {
+    if (reduced) {
+      const next = pRef.current < 0.5 ? 1 : 0
+      paint(next)
+      setState(next === 1 ? 'done' : 'paused')
+      return
+    }
+    setState((s) => {
+      if (s === 'playing' || s === 'waiting') return 'paused'
+      if (s === 'done') phase.current = 'rewind'
+      return 'playing'
+    })
+  }, [reduced, paint])
+
+  return { rootRef, state, toggle }
 }
 
 /* ---------- timelines ---------- */

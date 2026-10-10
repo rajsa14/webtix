@@ -13,21 +13,23 @@ import {
   useGroupScale,
   useReducedMotion,
   useScene,
+  type PlayState,
 } from './heroScene'
 import { ShopAfter, ShopBefore, ShopScreen } from './Shop'
 
 /*
- * The hero: one scroll scene in three states, from docs/design/source/
- * S1Pred (před), S2Siti (předělávka) and S3Po (po), 1440 × 900, and
- * S1Mobile for phones. Timing and painting live in heroScene.ts.
+ * The hero, from docs/design/source/S1Pred (před), S2Siti (předělávka) and
+ * S3Po (po), 1440 × 900, and S1Mobile for phones. Timing and painting live in
+ * heroScene.ts.
  *
- * Desktop (1024px and up) is a fluid two-column layout. The text column holds
- * all three states stacked in one grid cell (they cross-fade at the same
- * top); the pink panel holds the phone with its notes and arrows as one group
- * in the design's 720 × 900 coordinates, scaled to fit.
- * Phone: the header text stays put; below it the pink block pins and runs the
- * same wipe with the two notes from S1Mobile.
- * Reduced motion: no pinning, the states are shown as static blocks.
+ * Desktop (1024px and up) is a fluid two-column layout: the text column (state
+ * 1, it stays put) and the pink panel with the phone, its notes and arrows as
+ * one group in the design's 720 × 900 coordinates, scaled to fit.
+ * Phone: the header text, then the pink block with the phone and two notes.
+ * In both, the phone scene plays once like a short video when it comes into
+ * view: old site, the dashed line wipes down, new site. A button pauses,
+ * resumes and replays it. Reduced motion: nothing moves, the button switches
+ * between the old and the new site.
  */
 
 const PANEL = { width: 720, height: 900 }
@@ -48,17 +50,47 @@ export function Hero() {
         <PhoneHero reduced={reduced} />
       </div>
       <div className="hidden lg:block">
-        {reduced ? (
-          <>
-            <DesktopScene fixed={0} />
-            <DesktopScene fixed={0.5} />
-            <DesktopScene fixed={1} />
-          </>
-        ) : (
-          <DesktopScene />
-        )}
+        <DesktopScene reduced={reduced} />
       </div>
     </section>
+  )
+}
+
+const PLAY_LABEL: Record<PlayState, string> = {
+  waiting: 'Pozastavit ukázku',
+  playing: 'Pozastavit ukázku',
+  paused: 'Přehrát ukázku',
+  done: 'Přehrát znovu',
+}
+
+/** Pause, resume and replay the phone scene; with reduced motion, switch old ↔ new site. */
+function PlayButton({ state, reduced, onClick, className }: { state: PlayState; reduced: boolean; onClick: () => void; className: string }) {
+  const label = reduced ? (state === 'done' ? 'Ukázat starý web' : 'Ukázat nový web') : PLAY_LABEL[state]
+  const icon = reduced ? 'swap' : state === 'playing' || state === 'waiting' ? 'pause' : state === 'done' ? 'replay' : 'play'
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`mono inline-flex cursor-pointer items-center gap-2 rounded-full border border-solid border-ink/15 bg-paper px-3.5 py-2 text-[12px] text-ink ${className}`}
+    >
+      <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="currentColor" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        {icon === 'pause' && (
+          <>
+            <rect x="2.5" y="2" width="2" height="8" stroke="none" />
+            <rect x="7.5" y="2" width="2" height="8" stroke="none" />
+          </>
+        )}
+        {icon === 'play' && <path d="M3 2 L10 6 L3 10 Z" stroke="none" />}
+        {icon === 'replay' && (
+          <>
+            <path d="M2.5 6 A3.5 3.5 0 1 0 4 3.1" fill="none" />
+            <path d="M2 1.5 V4 H4.5" fill="none" />
+          </>
+        )}
+        {icon === 'swap' && <path d="M2 4 H10 M7.5 1.5 L10 4 L7.5 6.5 M10 8 H2 M4.5 5.5 L2 8 L4.5 10.5" fill="none" />}
+      </svg>
+      {label}
+    </button>
   )
 }
 
@@ -168,37 +200,23 @@ function Fill({ width, strokeWidth }: { width: number; strokeWidth: number }) {
   )
 }
 
-const STATES_AT: Record<number, number> = { 0: 1, 0.5: 2, 1: 3 }
-
-/** Desktop. Live: a 300vh section with a sticky screen. `fixed`: one static state (reduced motion). */
-function DesktopScene({ fixed }: { fixed?: number }) {
-  const live = fixed === undefined
-  const show = (state: number) => live || STATES_AT[fixed ?? 0] === state
-
+/** Desktop: the text column and the pink panel, one screen tall. */
+function DesktopScene({ reduced }: { reduced: boolean }) {
   const [panelRef, scale, panelHeight] = useGroupScale(PANEL)
   // When the 26px notes would drop below 20px, keep only the right-hand notes (with their marks).
   const allNotes = 26 * scale >= NOTE_MIN_PX
   const [site, setSite] = useState('')
 
   const groupTop = (panelHeight - PANEL.height * scale) / 2
-  const { rootRef, sectionRef, stickyRef, pRef, scrollToProgress } = useScene(fixed, (p) =>
-    desktopFrame(p, { scale, groupTop, allNotes }),
-  )
-
-  // Keyboard: a form that is faded out scrolls its state into view when it gets focus.
-  const reveal = (form: 1 | 3) => {
-    if (!live) return
-    const p = pRef.current
-    if (form === 1 && p > 0.24) scrollToProgress(0)
-    if (form === 3 && p < 0.78) scrollToProgress(1)
-  }
+  // The text column stays on state 1 ("Vpravo je typický web…"); only the panel plays.
+  const { rootRef, state, toggle } = useScene((p) => ({ ...desktopFrame(p, { scale, groupTop, allNotes }), texts: { 1: 1 }, form: '1' }), reduced)
 
   const s1 = allNotes ? ['a0', 'a1', 'a2', 'a3'] : ['a0', 'a2']
-  const n1 = (key: string) => intro(live, s1.indexOf(key))
+  const n1 = (key: string) => intro(!reduced, s1.indexOf(key))
   const heading = 'm-0 text-[clamp(48px,5.5556cqw,80px)] leading-[0.92] tracking-[-0.04em] text-balance'
   const lead = 'm-0 w-[min(500px,100%)] text-[clamp(17px,1.3889cqw,20px)] leading-[1.5] text-ink-soft'
 
-  const stage = (
+  return (
     <div
       ref={rootRef}
       className="h-screen-stable relative grid min-h-[640px] grid-cols-2 [container-type:inline-size]"
@@ -206,47 +224,20 @@ function DesktopScene({ fixed }: { fixed?: number }) {
       style={{ ['--edge' as string]: 'max(64px, calc(50cqw - 656px))' }}
     >
       {/* First in the DOM so the keyboard reaches the header before the hero form; z-10 keeps it over the panel. */}
-      {show(1) && (
-        <div data-nav className="hero-nav absolute inset-x-[var(--edge)] top-0 z-10">
-          <Navbar variant="desktop" />
-        </div>
-      )}
+      <div data-nav className="hero-nav absolute inset-x-[var(--edge)] top-0 z-10">
+        <Navbar variant="desktop" />
+      </div>
       <div className="bg-paper pl-[var(--edge)] pt-[clamp(112px,18.667svh,168px)]">
-        {/* The three states share one grid cell, in reading order. */}
-        <div className="grid w-[min(620px,calc(50cqw-var(--edge)-36px))]">
-          {show(1) && (
-            <div data-text="1" className="col-start-1 row-start-1 flex flex-col">
-              <p className="mono m-0 mb-6 text-muted">Webové studio · Praha</p>
-              <h1 id="hero-title" className={`${heading} mb-8`}>
-                Podíváme se na váš web. Pak vám ukážeme <em className="italic text-terracotta">lepší.</em>
-              </h1>
-              <p className={`${lead} mb-10`}>Vpravo je typický web malého podniku. Podnik jsme si vymysleli, chyby jsou skutečné.</p>
-              <div data-form="1" className="mb-4" onFocusCapture={() => reveal(1)}>
-                <HeroForm variant="desktop" value={site} onValueChange={setSite} />
-              </div>
-              <p className="m-0 text-meta text-muted">{metaText()}</p>
-            </div>
-          )}
-          {/* State 2 and 3 headings sit 4px higher than state 1's (204 vs 208 in the design). */}
-          {show(2) && (
-            <div data-text="2" className="col-start-1 row-start-1 flex flex-col pt-9">
-              <h2 className={`${heading} mb-8 w-[min(560px,90.33%)]`}>
-                Co funguje, <em className="italic text-terracotta">necháme.</em> Zbytek uděláme znovu.
-              </h2>
-              <p className={lead}>Adresa, hodiny, služby i&nbsp;ceny zůstanou. Jen je zákazník konečně najde.</p>
-            </div>
-          )}
-          {show(3) && (
-            <div data-text="3" className="col-start-1 row-start-1 flex flex-col pt-9">
-              <h2 className={`${heading} mb-8`}>
-                Stejný podnik. <em className="italic text-terracotta">Nový</em> web.
-              </h2>
-              <p className={`${lead} mb-10`}>Takhle může vypadat i&nbsp;ten váš. Návrh uvidíte dřív, než cokoli zaplatíte.</p>
-              <div data-form="3" onFocusCapture={() => reveal(3)}>
-                <HeroForm variant="desktop" value={site} onValueChange={setSite} />
-              </div>
-            </div>
-          )}
+        <div data-text="1" className="flex w-[min(620px,calc(50cqw-var(--edge)-36px))] flex-col">
+          <p className="mono m-0 mb-6 text-muted">Webové studio · Praha</p>
+          <h1 id="hero-title" className={`${heading} mb-8`}>
+            Podíváme se na váš web. Pak vám ukážeme <em className="italic text-terracotta">lepší.</em>
+          </h1>
+          <p className={`${lead} mb-10`}>Vpravo je typický web malého podniku. Podnik jsme si vymysleli, chyby jsou skutečné.</p>
+          <div data-form="1" className="mb-4">
+            <HeroForm variant="desktop" value={site} onValueChange={setSite} />
+          </div>
+          <p className="m-0 text-meta text-muted">{metaText()}</p>
         </div>
       </div>
 
@@ -360,15 +351,7 @@ function DesktopScene({ fixed }: { fixed?: number }) {
             </Note>
           </div>
         </div>
-      </div>
-    </div>
-  )
-
-  if (!live) return stage
-  return (
-    <div ref={sectionRef} data-hero-scene className="h-scene relative">
-      <div ref={stickyRef} className="sticky top-0">
-        {stage}
+        <PlayButton state={state} reduced={reduced} onClick={toggle} className="absolute bottom-6 right-[var(--edge)] z-10" />
       </div>
     </div>
   )
@@ -397,28 +380,18 @@ function PhoneHero({ reduced }: { reduced: boolean }) {
         <HeroForm variant="phone" value={site} onValueChange={setSite} />
         <p className="m-0 text-meta-m text-muted">{metaText()}</p>
       </div>
-      <div ref={sceneRef} className="mt-7 flex flex-col gap-4">
-        {reduced ? (
-          <>
-            <PhoneScene scale={scale} fixed={0} />
-            <PhoneScene scale={scale} fixed={0.5} />
-            <PhoneScene scale={scale} fixed={1} />
-          </>
-        ) : (
-          <PhoneScene scale={scale} />
-        )}
+      <div ref={sceneRef} className="mt-7">
+        <PhoneScene scale={scale} reduced={reduced} />
       </div>
     </>
   )
 }
 
-/** Phone: the pink block of S1Mobile. Live, it pins (centred) while the wipe runs; `fixed` is one static state. */
-function PhoneScene({ scale, fixed }: { scale: number; fixed?: number }) {
-  const live = fixed === undefined
-  // The line starts and ends past what is on screen: the pink above and below the pinned block.
-  const { rootRef, sectionRef, stickyRef } = useScene(fixed, (p, m) => phoneFrame(p, { pad: m.stickyTop / scale + 12 }))
+/** Phone: the pink block of S1Mobile, playing the same wipe; the control sits below it. */
+function PhoneScene({ scale, reduced }: { scale: number; reduced: boolean }) {
+  const { rootRef, state, toggle } = useScene((p) => phoneFrame(p, { pad: 12 }), reduced)
+  const live = !reduced
 
-  const notes = live || fixed === 0
   const group = (
     <div ref={rootRef} className="relative mx-auto" style={{ width: PHONE_SCENE.width, height: PHONE_SCENE.height, zoom: scale }}>
       <Fill width={PHONE_SCENE.width} strokeWidth={2.5} />
@@ -427,8 +400,7 @@ function PhoneScene({ scale, fixed }: { scale: number; fixed?: number }) {
         band={{ height: 10, dash: 2 }}
         className="absolute left-[150px] top-[28px] h-[460px] w-[220px] overflow-hidden rounded-[30px] border-[7px] border-solid border-ink bg-ink"
       />
-      {notes && (
-        <>
+      <>
           <svg aria-hidden="true" width="390" height="424" viewBox="0 0 390 424" className="pointer-events-none absolute left-0 top-0">
             <g fill="none" stroke="#9B2C1F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <g data-note="m0" {...intro(live, 0)}>
@@ -451,21 +423,15 @@ function PhoneScene({ scale, fixed }: { scale: number; fixed?: number }) {
               Fotka se nenačte.
             </Note>
           </div>
-        </>
-      )}
+      </>
     </div>
   )
 
-  if (!live) return <div className="overflow-clip bg-pink">{group}</div>
   return (
-    <div
-      ref={sectionRef}
-      data-hero-scene
-      className="phone-scene relative overflow-clip bg-pink"
-      style={{ ['--h' as string]: `${PHONE_SCENE.height * scale}px` }}
-    >
-      <div ref={stickyRef} className="phone-scene-sticky sticky">
-        {group}
+    <div>
+      <div className="overflow-clip bg-pink">{group}</div>
+      <div className="flex justify-end px-4 pt-3">
+        <PlayButton state={state} reduced={reduced} onClick={toggle} className="" />
       </div>
     </div>
   )
