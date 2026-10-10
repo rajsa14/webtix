@@ -202,7 +202,8 @@ function Fill({ width, strokeWidth }: { width: number; strokeWidth: number }) {
 
 /** Desktop: the text column and the pink panel, one screen tall. */
 function DesktopScene({ reduced }: { reduced: boolean }) {
-  const [panelRef, scale, panelHeight] = useGroupScale(PANEL)
+  // The phone may grow a little past the design size on large screens.
+  const [panelRef, scale, panelHeight] = useGroupScale(PANEL, [0, 1.12])
   // When the 26px notes would drop below 20px, keep only the right-hand notes (with their marks).
   const allNotes = 26 * scale >= NOTE_MIN_PX
   const [site, setSite] = useState('')
@@ -213,15 +214,15 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
 
   const s1 = allNotes ? ['a0', 'a1', 'a2', 'a3'] : ['a0', 'a2']
   const n1 = (key: string) => intro(!reduced, s1.indexOf(key))
-  const heading = 'm-0 text-[clamp(48px,5.5556cqw,80px)] leading-[0.92] tracking-[-0.04em] text-balance'
-  const lead = 'm-0 w-[min(500px,100%)] text-[clamp(17px,1.3889cqw,20px)] leading-[1.5] text-ink-soft'
+  const heading = 'm-0 text-[clamp(48px,5.5556cqw,88px)] leading-[0.92] tracking-[-0.04em] text-balance'
+  const lead = 'm-0 w-[min(500px,100%)] text-[clamp(17px,1.3889cqw,21px)] leading-[1.5] text-ink-soft'
 
   return (
     <div
       ref={rootRef}
       className="h-screen-stable relative grid min-h-[640px] grid-cols-2 [container-type:inline-size]"
-      // Outer margin: 64px, and wider screens keep the 1440 content width centred.
-      style={{ ['--edge' as string]: 'max(64px, calc(50cqw - 656px))' }}
+      // Outer margin: 64px, and wider screens keep a 1600 content width centred.
+      style={{ ['--edge' as string]: 'max(64px, calc(50cqw - 736px))' }}
     >
       {/* First in the DOM so the keyboard reaches the header before the hero form; z-10 keeps it over the panel. */}
       <div data-nav className="hero-nav absolute inset-x-[var(--edge)] top-0 z-10">

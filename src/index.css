@@ -145,10 +145,10 @@
     animation: note-in 450ms ease-out backwards;
   }
 
-  /* Page container below the hero: 1440 grid with 64px margins, 16px on phones. */
+  /* Page container below the hero: up to 1600 wide with 64px margins, 16px on phones. */
   .container-x {
     width: 100%;
-    max-width: 1440px;
+    max-width: 1600px;
     margin-inline: auto;
     padding-inline: 16px;
   }
@@ -198,7 +198,12 @@
 
   .reveal-on [data-reveal]:not([data-revealed]) {
     opacity: 0;
-    translate: 0 18px;
+    translate: 0 24px;
+  }
+
+  /* Left through the top: it comes back down from above. */
+  .reveal-on [data-reveal][data-from='above']:not([data-revealed]) {
+    translate: 0 -24px;
   }
 
   /* Scene cards: the small phone rises a little on hover; the caret in card 01 blinks. */
@@ -254,6 +259,114 @@
   50% {
     opacity: 0;
   }
+}
+
+/* Desktop nav (Navbar.tsx): the underline draws in on hover and stays on the section on screen. */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 1.5px;
+  background: currentColor;
+  scale: 0 1;
+  transform-origin: right;
+  transition: scale 350ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.nav-link:hover::after,
+.nav-link.is-current::after {
+  scale: 1 1;
+  transform-origin: left;
+}
+
+/* Phone menu: the two lines turn into a cross; the panel slides open, links follow one by one. */
+.menu-toggle span {
+  transition:
+    translate 300ms ease,
+    rotate 300ms ease;
+}
+
+.menu-toggle[data-open] span:first-child {
+  translate: 0 4px;
+  rotate: 45deg;
+}
+
+.menu-toggle[data-open] span:last-child {
+  translate: 0 -4px;
+  rotate: -45deg;
+}
+
+.phone-menu {
+  clip-path: inset(0 0 100% 0);
+  visibility: hidden;
+  transition:
+    clip-path 450ms cubic-bezier(0.7, 0, 0.2, 1),
+    visibility 0s linear 450ms;
+}
+
+.phone-menu[data-open] {
+  clip-path: inset(0 0 0 0);
+  visibility: visible;
+  transition:
+    clip-path 450ms cubic-bezier(0.7, 0, 0.2, 1),
+    visibility 0s;
+}
+
+.phone-menu li {
+  opacity: 0;
+  translate: 0 12px;
+  transition:
+    opacity 300ms ease,
+    translate 400ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.phone-menu[data-open] li {
+  opacity: 1;
+  translate: 0 0;
+  transition-delay: calc(120ms + var(--i) * 60ms);
+}
+
+/* Scrollbar: thin ink on paper, terracotta on hover. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-paper);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink);
+  border: 3px solid var(--color-paper);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-terracotta);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-color: var(--color-ink) var(--color-paper);
+    scrollbar-width: thin;
+  }
+}
+
+/* Lenis smooth scrolling (src/lib/smoothScroll.ts). */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
 }
 
 /* Custom cursor (Cursor.tsx): the system cursor hides, except in text fields. */

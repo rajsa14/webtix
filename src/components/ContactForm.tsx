@@ -103,11 +103,11 @@ export function ContactForm() {
         <div data-reveal className="flex flex-col lg:col-span-6">
           <h2
             id="poptavka-title"
-            className="m-0 mb-4 text-[48px] leading-[0.92] tracking-[-0.045em] lg:mb-8 lg:text-[clamp(56px,calc((100vw-128px)*0.06707),88px)] lg:leading-[0.9]"
+            className="m-0 mb-4 text-[48px] leading-[0.92] tracking-[-0.045em] lg:mb-8 lg:text-[clamp(56px,calc((100vw-128px)*0.06707),96px)] lg:leading-[0.9]"
           >
             Pošlete odkaz. Zbytek je na <em className="italic">nás.</em>
           </h2>
-          <p className="m-0 max-w-[420px] text-[16px] leading-6 lg:text-[18px] lg:leading-7">
+          <p className="m-0 max-w-[420px] text-[16px] leading-6 lg:text-[20px] lg:leading-[30px]">
             Ozveme se do dvou pracovních dnů. Nebo napište <span className="hidden lg:inline">rovnou </span>na{' '}
             <a href={`mailto:${SITE.email}`} className="text-cream underline underline-offset-4">
               {SITE.email}

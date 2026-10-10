@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { MANAGEMENT_CMS_FROM, MANAGEMENT_EDITS_FROM, PRICE_FROM, kc, previewDaysStart } from '../../data/site'
-import { revealDelay, useInViewOnce } from '../../lib/motion'
+import { revealDelay, useInView } from '../../lib/motion'
 import { nb } from '../../lib/text'
 
 /*
@@ -37,10 +37,10 @@ export function Price() {
           <h2 id="cena-title" className="mono m-0 mb-4 text-[11px] font-normal text-muted lg:mb-6 lg:text-[12px]">
             Cena
           </h2>
-          <p className="m-0 mb-3 text-[56px] font-bold leading-[0.92] tracking-[-0.045em] lg:mb-4 lg:text-[clamp(64px,6.6667vw,96px)] lg:leading-[0.9]">
+          <p className="m-0 mb-3 text-[56px] font-bold leading-[0.92] tracking-[-0.045em] lg:mb-4 lg:text-[clamp(64px,7vw,108px)] lg:leading-[0.9]">
             od <CountUp to={PRICE_FROM} />
           </p>
-          <p className="m-0 max-w-[400px] text-[16px] leading-6 text-ink-soft lg:text-[18px] lg:leading-7">
+          <p className="m-0 max-w-[400px] text-[16px] leading-6 text-ink-soft lg:text-[20px] lg:leading-[30px]">
             Za hotový web. Přesnou částku znáte dřív, než cokoli podepíšete.
           </p>
           {/* Not in the design: Dan's line about monthly care (2026-10-10). Breaks only at the separators. */}
@@ -59,14 +59,14 @@ export function Price() {
               open={i === 0}
               className="group border-0 border-t border-solid border-ink py-5 last:border-b lg:py-6"
             >
-              <summary className="flex cursor-pointer list-none justify-between gap-3 text-[19px] font-bold leading-[26px] lg:gap-4 lg:text-[clamp(20px,1.6667vw,24px)] lg:leading-[1.25] [&::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none justify-between gap-3 text-[19px] font-bold leading-[26px] lg:gap-4 lg:text-[clamp(20px,1.75vw,27px)] lg:leading-[1.25] [&::-webkit-details-marker]:hidden">
                 {q}
                 <span aria-hidden="true" className="text-terracotta">
                   <span className="group-open:hidden">+</span>
                   <span className="hidden group-open:inline">–</span>
                 </span>
               </summary>
-              <p className="m-0 mt-2.5 max-w-[520px] text-[16px] leading-6 text-ink-soft lg:mt-3 lg:text-[17px] lg:leading-[26px]">{nb(a)}</p>
+              <p className="m-0 mt-2.5 max-w-[520px] text-[16px] leading-6 text-ink-soft lg:mt-3 lg:text-[18px] lg:leading-7">{nb(a)}</p>
             </details>
           ))}
         </div>
@@ -75,14 +75,14 @@ export function Price() {
   )
 }
 
-/** The price counts up once when it first comes into view. Screen readers get the final amount only. */
+/** The price counts up every time it comes into view. Screen readers get the final amount only. */
 function CountUp({ to }: { to: number }) {
   const ref = useRef<HTMLSpanElement>(null)
-  const seen = useInViewOnce(ref, 0.6)
+  const seen = useInView(ref, 0.6)
   // Start from a four-digit amount, so the width barely changes while counting.
   const from = Math.min(1000, to)
   const [value, setValue] = useState(() => (seen ? to : from))
-  // Seen from the start means no motion is allowed: show the amount, do not count.
+  // In view from the start means no motion is allowed: show the amount, do not count.
   const [counts] = useState(() => !seen)
   useEffect(() => {
     if (!seen || !counts) return

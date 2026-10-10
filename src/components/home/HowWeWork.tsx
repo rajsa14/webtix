@@ -19,7 +19,7 @@ type Variant = 'desktop' | 'phone'
 
 /** Card content size in the design: 421.33 × 316 at 1440, 358 × 268.5 at 390. */
 const CARD = {
-  desktop: { width: (1312 - 48) / 3, height: 316, clamp: [0, 1] as [number, number] },
+  desktop: { width: (1312 - 48) / 3, height: 316, clamp: [0, 1.15] as [number, number] },
   phone: { width: 358, height: 268.5, clamp: [0.8, 1.25] as [number, number] },
 }
 
@@ -36,7 +36,7 @@ export function HowWeWork() {
           <p className="mono m-0 mb-4 text-[11px] text-muted lg:mb-6 lg:text-[12px]">Jak to děláme</p>
           <h2
             id="jak-title"
-            className="m-0 mb-5 text-[40px] leading-[0.96] tracking-[-0.035em] lg:mb-0 lg:text-[clamp(44px,4.4444vw,64px)] lg:leading-[0.95]"
+            className="m-0 mb-5 text-[40px] leading-[0.96] tracking-[-0.035em] lg:mb-0 lg:text-[clamp(46px,4.6vw,72px)] lg:leading-[0.95]"
           >
             Od odkazu k&nbsp;hotovému návrhu za{' '}
             <em className="italic text-terracotta">
@@ -44,7 +44,7 @@ export function HowWeWork() {
             </em>
           </h2>
         </div>
-        <p className="m-0 text-[16px] leading-6 text-ink-soft lg:col-span-4 lg:col-start-9 lg:text-[18px] lg:leading-7">
+        <p className="m-0 text-[16px] leading-6 text-ink-soft lg:col-span-4 lg:col-start-9 lg:text-[20px] lg:leading-[30px]">
           {/* The phone copy is one phrase shorter. */}
           Nepotřebujeme <span className="hidden lg:inline">od vás </span>zadání ani schůzku. Stačí odkaz na to, co už máte.
         </p>
@@ -78,8 +78,8 @@ function Step({ i, number, title, text, card }: { i: number; number: string; tit
       <div className="flex items-baseline gap-3 lg:gap-4">
         <span className="mono text-[11px] text-terracotta lg:text-[12px]">{number}</span>
         <div className="flex flex-col gap-1.5 lg:gap-2">
-          <h3 className="m-0 text-[22px] leading-7 lg:text-[clamp(22px,1.9444vw,28px)] lg:leading-[1.1429] lg:tracking-[-0.01em]">{title}</h3>
-          <p className="m-0 text-[16px] leading-6 text-ink-soft lg:text-[17px] lg:leading-[26px]">{text}</p>
+          <h3 className="m-0 text-[22px] leading-7 lg:text-[clamp(22px,2.0833vw,31px)] lg:leading-[1.1429] lg:tracking-[-0.01em]">{title}</h3>
+          <p className="m-0 text-[16px] leading-6 text-ink-soft lg:text-[18px] lg:leading-7">{text}</p>
         </div>
       </div>
     </li>

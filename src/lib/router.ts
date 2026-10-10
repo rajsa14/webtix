@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react'
+import { scrollToTarget } from './smoothScroll'
 
 /*
  * A page is an address; ordinary <a href="/obchodni-podminky"> links switch pages without
@@ -25,15 +26,19 @@ function sync() {
 /** Goes to a page, optionally to an element on it: navigate('/#kontakt'). */
 export function navigate(to: string) {
   const [pathname, id] = to.split('#')
-  if (pathname !== path) {
+  const samePage = pathname === path
+  if (!samePage) {
     if (offline) window.location.hash = pathname
     else window.history.pushState(null, '', to)
     sync()
   }
-  // Wait for the new page to render before scrolling.
+  // Wait for the new page to render before scrolling. On the same page, glide there.
   window.setTimeout(() => {
     const target = id ? document.getElementById(id) : null
-    if (target) target.scrollIntoView()
+    if (target) {
+      if (samePage) scrollToTarget(target)
+      else target.scrollIntoView()
+    } else if (samePage) scrollToTarget(null)
     else window.scrollTo({ top: 0, behavior: 'instant' })
     if (!id) document.getElementById('obsah')?.focus({ preventScroll: true })
   }, 60)

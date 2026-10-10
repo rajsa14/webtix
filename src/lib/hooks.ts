@@ -1,4 +1,5 @@
 import { useEffect, useState, type RefObject } from 'react'
+import { setSmoothScrollPaused } from './smoothScroll'
 
 /** Returns the id of the section currently crossing the middle of the viewport. */
 export function useActiveSection(ids: readonly string[], rootMargin = '-45% 0px -50% 0px') {
@@ -29,8 +30,10 @@ export function useScrollLock(locked: boolean) {
     const { overflow, paddingRight } = document.body.style
     const scrollbar = window.innerWidth - document.documentElement.clientWidth
     document.body.style.overflow = 'hidden'
+    setSmoothScrollPaused(true)
     if (scrollbar > 0) document.body.style.paddingRight = `${scrollbar}px`
     return () => {
+      setSmoothScrollPaused(false)
       document.body.style.overflow = overflow
       document.body.style.paddingRight = paddingRight
     }

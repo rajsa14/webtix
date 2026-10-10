@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { PRICE_FROM, kc, previewDaysGenitive } from '../../data/site'
 import { team } from '../../data/team'
-import { revealDelay, useInViewOnce } from '../../lib/motion'
+import { revealDelay, useInView } from '../../lib/motion'
 import { cx, nb } from '../../lib/text'
 
 /*
@@ -19,11 +19,11 @@ export function Team() {
           <p className="mono m-0 mb-4 text-[11px] text-muted lg:mb-6 lg:text-[12px]">Kdo jsme</p>
           <h2
             id="kdo-title"
-            className="m-0 mb-5 text-[40px] leading-[0.96] tracking-[-0.035em] lg:mb-8 lg:text-[clamp(44px,4.4444vw,64px)] lg:leading-[0.95]"
+            className="m-0 mb-5 text-[40px] leading-[0.96] tracking-[-0.035em] lg:mb-8 lg:text-[clamp(46px,4.6vw,72px)] lg:leading-[0.95]"
           >
             Dva lidé. Mluvíte <em className="italic text-terracotta">přímo</em> s&nbsp;námi.
           </h2>
-          <p className="m-0 max-w-[420px] text-[16px] leading-6 text-ink-soft lg:text-[18px] lg:leading-7">
+          <p className="m-0 max-w-[420px] text-[16px] leading-6 text-ink-soft lg:text-[20px] lg:leading-[30px]">
             {/* The phone copy drops the first sentence. */}
             <span className="hidden lg:inline">Žádný account manager. </span>Kdo váš web navrhne, ten vám ho taky ukáže.
           </p>
@@ -45,8 +45,8 @@ export function Team() {
                 />
               </div>
               <div>
-                <h3 className="m-0 text-[17px] leading-[22px] lg:text-[22px] lg:leading-7">{member.name}</h3>
-                <p className="m-0 mt-0.5 text-[14px] leading-5 text-ink-soft lg:mt-1 lg:text-[16px] lg:leading-6">{nb(member.bio)}</p>
+                <h3 className="m-0 text-[17px] leading-[22px] lg:text-[24px] lg:leading-[30px]">{member.name}</h3>
+                <p className="m-0 mt-0.5 text-[14px] leading-5 text-ink-soft lg:mt-1 lg:text-[17px] lg:leading-[26px]">{nb(member.bio)}</p>
               </div>
             </li>
           ))}
@@ -83,8 +83,9 @@ const PORTRAIT = { daniel: team[0].portrait, richard: team[1].portrait }
 
 function Chat() {
   const ref = useRef<HTMLOListElement>(null)
-  const seen = useInViewOnce(ref, 0.35)
-  // Seen at once means no motion is allowed: show the whole chat, no typing.
+  const seen = useInView(ref, 0.35)
+  // In view at once means no motion is allowed: show the whole chat, no typing.
+  // Otherwise the chat replays every time it comes back on screen.
   const [animated] = useState(() => !seen)
   const [elapsed, setElapsed] = useState(() => (seen ? Infinity : -1))
 
@@ -135,7 +136,7 @@ function Chat() {
               {/* The message is always in the page (screen readers read the whole chat); it only fades in. */}
               <p
                 className={cx(
-                  'm-0 rounded-[14px] px-4 py-3 text-[15px] leading-[22px] transition-[opacity,translate] duration-500 lg:text-[16px] lg:leading-6',
+                  'm-0 rounded-[14px] px-4 py-3 text-[15px] leading-[22px] transition-[opacity,translate] duration-500 lg:text-[17px] lg:leading-[26px]',
                   m.from === 'you' && 'rounded-br-[4px] border border-solid border-ink bg-white text-ink',
                   m.from === 'daniel' && 'rounded-bl-[4px] bg-pink text-ink',
                   m.from === 'richard' && 'rounded-bl-[4px] bg-terracotta text-cream',
