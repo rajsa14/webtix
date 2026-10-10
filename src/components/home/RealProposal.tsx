@@ -36,7 +36,7 @@ export function RealProposal() {
             id="navrhy-title"
             className="m-0 mb-5 text-[40px] leading-[0.96] tracking-[-0.035em] lg:mb-8 lg:text-[clamp(46px,4.6vw,72px)] lg:leading-[0.95]"
           >
-            Café AdAstra, <em className="italic text-pink">Praha&nbsp;2.</em>
+            Café AdAstra, <em className="scribble italic text-pink">Praha&nbsp;2.</em>
           </h2>
           {/* The phone and desktop copy differ in the design. */}
           <p className="m-0 text-[16px] leading-6 text-[#C9C0B9] lg:hidden">

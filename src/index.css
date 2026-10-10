@@ -261,6 +261,127 @@
   }
 }
 
+/* Paper grain over the whole page: very fine noise, so the paper is not flat. */
+body {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.09 0 0 0 0 0.07 0 0 0 0 0.06 0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Marquee bands (Marquee.tsx). Two copies of the line; the track moves by one copy. */
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+
+.marquee-reverse {
+  animation-direction: reverse;
+}
+
+@keyframes marquee {
+  to {
+    translate: -50% 0;
+  }
+}
+
+/* The old mini sites' blinking announcement (CaseGallery.tsx). */
+.old-blink {
+  animation: caret 1s steps(1) infinite;
+}
+
+/*
+ * Hand-drawn doodles. .scribble: a wavy pen line under one italic word.
+ * .doodle-draw: an SVG whose paths draw themselves (pathLength="1").
+ * Both draw in when their [data-reveal] block appears, and are simply drawn
+ * without JS or with reduced motion.
+ */
+.scribble {
+  position: relative;
+  display: inline-block;
+}
+
+.scribble::after {
+  content: '';
+  position: absolute;
+  left: -3%;
+  right: -3%;
+  bottom: -0.14em;
+  height: 0.2em;
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M3 13 C 40 4, 75 18, 112 10 S 170 5, 197 12' fill='none' stroke='black' stroke-width='4.5' stroke-linecap='round'/%3E%3C/svg%3E")
+    no-repeat 0 0 / 100% 100%;
+}
+
+.doodle-draw path,
+.doodle-draw ellipse {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-on [data-reveal] .scribble::after {
+    transition: clip-path 800ms cubic-bezier(0.65, 0, 0.35, 1) 450ms;
+  }
+
+  .reveal-on [data-reveal]:not([data-revealed]) .scribble::after {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  .reveal-on [data-reveal] .doodle-draw :is(path, ellipse) {
+    transition: stroke-dashoffset 1100ms cubic-bezier(0.65, 0, 0.35, 1) 400ms;
+  }
+
+  .reveal-on [data-reveal]:not([data-revealed]) .doodle-draw :is(path, ellipse) {
+    stroke-dashoffset: 1;
+  }
+}
+
+/* Hero attention cue: the phone rises in, the pen arrow nudges towards it (Hero.tsx). */
+.hero-cue {
+  color: var(--color-pen);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-phone-in {
+    animation: phone-in 1000ms cubic-bezier(0.2, 0.7, 0.2, 1) 150ms backwards;
+  }
+
+  .hero-cue {
+    animation: note-in 600ms ease-out 1100ms backwards;
+  }
+
+  .cue-arrow {
+    animation: nudge-x 1.4s ease-in-out 1.7s infinite;
+  }
+
+  .cue-bounce {
+    animation: nudge-y 1.4s ease-in-out 1.7s infinite;
+  }
+}
+
+@keyframes phone-in {
+  from {
+    opacity: 0;
+    translate: 0 60px;
+    rotate: 3deg;
+  }
+}
+
+@keyframes nudge-x {
+  50% {
+    translate: 8px 0;
+  }
+}
+
+@keyframes nudge-y {
+  50% {
+    translate: 0 6px;
+  }
+}
+
+/* Giant outlined step numbers behind the "Jak to děláme" cards. */
+.step-num {
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(22, 17, 16, 0.22);
+}
+
 /* Desktop nav (Navbar.tsx): the underline draws in on hover and stays on the section on screen. */
 .nav-link::after {
   content: '';

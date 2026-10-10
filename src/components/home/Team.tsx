@@ -21,7 +21,7 @@ export function Team() {
             id="kdo-title"
             className="m-0 mb-5 text-[40px] leading-[0.96] tracking-[-0.035em] lg:mb-8 lg:text-[clamp(46px,4.6vw,72px)] lg:leading-[0.95]"
           >
-            Dva lidé. Mluvíte <em className="italic text-terracotta">přímo</em> s&nbsp;námi.
+            Dva lidé. Mluvíte <em className="scribble italic text-terracotta">přímo</em> s&nbsp;námi.
           </h2>
           <p className="m-0 max-w-[420px] text-[16px] leading-6 text-ink-soft lg:text-[20px] lg:leading-[30px]">
             {/* The phone copy drops the first sentence. */}
@@ -31,7 +31,17 @@ export function Team() {
 
         <ul className="m-0 grid list-none grid-cols-2 gap-4 p-0 lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 lg:gap-6">
           {team.map((member, i) => (
-            <li key={member.name} data-reveal style={revealDelay(i + 1, 150)} className={cx('flex flex-col gap-3 lg:gap-4', i === 1 && 'mt-10 lg:mt-16')}>
+            <li key={member.name} data-reveal style={revealDelay(i + 1, 150)} className={cx('relative', 'flex flex-col gap-3 lg:gap-4', i === 1 && 'mt-10 lg:mt-16')}>
+              {i === 1 && (
+                // A pen note pointing at the two of us (desktop only).
+                <span aria-hidden="true" className="pointer-events-none absolute -top-16 left-2 hidden items-start gap-1 lg:flex">
+                  <svg viewBox="0 0 60 40" className="mt-4 h-8 w-12 text-pen" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M56 8 C 40 6, 20 14, 8 32" />
+                    <path d="M6 20 L 7 33 L 19 30" />
+                  </svg>
+                  <span className="hand rotate-3 text-[26px]">To jsme my.</span>
+                </span>
+              )}
               <div className="flex aspect-[4/5] flex-col overflow-hidden rounded-card border-2 border-solid border-ink bg-white">
                 {/* The name follows right below, so the portrait needs no text of its own. */}
                 <img

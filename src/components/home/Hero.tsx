@@ -15,6 +15,7 @@ import {
   useScene,
   type PlayState,
 } from './heroScene'
+import { scrollToTarget } from '../../lib/smoothScroll'
 import { ShopAfter, ShopBefore, ShopScreen } from './Shop'
 
 /*
@@ -71,9 +72,25 @@ function PlayButton({ state, reduced, onClick, className }: { state: PlayState; 
     <button
       type="button"
       onClick={onClick}
-      className={`mono inline-flex cursor-pointer items-center gap-2 rounded-full border border-solid border-ink/15 bg-paper px-3.5 py-2 text-[12px] text-ink ${className}`}
+      className={`mono inline-flex cursor-pointer items-center gap-2.5 rounded-full border border-solid border-ink/15 bg-paper py-1.5 pl-1.5 pr-4 text-[12px] text-ink ${className}`}
     >
-      <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="currentColor" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      {/* Progress ring around the icon, so the control reads as a video player. */}
+      <span className="relative grid size-7 place-items-center">
+        <svg aria-hidden="true" viewBox="0 0 28 28" className="absolute inset-0 size-full -rotate-90">
+          <circle cx="14" cy="14" r="12.5" fill="none" stroke="currentColor" strokeOpacity="0.15" strokeWidth="2" />
+          <circle
+            cx="14"
+            cy="14"
+            r="12.5"
+            pathLength={1}
+            fill="none"
+            stroke="var(--color-terracotta)"
+            strokeWidth="2"
+            strokeDasharray="1"
+            style={{ strokeDashoffset: 'calc(1 - var(--play, 0))' }}
+          />
+        </svg>
+        <svg aria-hidden="true" width="10" height="10" viewBox="0 0 12 12" fill="currentColor" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         {icon === 'pause' && (
           <>
             <rect x="2.5" y="2" width="2" height="8" stroke="none" />
@@ -88,7 +105,8 @@ function PlayButton({ state, reduced, onClick, className }: { state: PlayState; 
           </>
         )}
         {icon === 'swap' && <path d="M2 4 H10 M7.5 1.5 L10 4 L7.5 6.5 M10 8 H2 M4.5 5.5 L2 8 L4.5 10.5" fill="none" />}
-      </svg>
+        </svg>
+      </span>
       {label}
     </button>
   )
@@ -220,6 +238,7 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
   return (
     <div
       ref={rootRef}
+      data-scene
       className="h-screen-stable relative grid min-h-[640px] grid-cols-2 [container-type:inline-size]"
       // Outer margin: 64px, and wider screens keep a 1600 content width centred.
       style={{ ['--edge' as string]: 'max(64px, calc(50cqw - 736px))' }}
@@ -228,7 +247,7 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
       <div data-nav className="hero-nav absolute inset-x-[var(--edge)] top-0 z-10">
         <Navbar variant="desktop" />
       </div>
-      <div className="bg-paper pl-[var(--edge)] pt-[clamp(112px,18.667svh,168px)]">
+      <div className="pl-[var(--edge)] pt-[clamp(112px,18.667svh,168px)]">
         <div data-text="1" className="flex w-[min(620px,calc(50cqw-var(--edge)-36px))] flex-col">
           <p className="mono m-0 mb-6 text-muted">Webové studio · Praha</p>
           <h1 id="hero-title" className={`${heading} mb-8`}>
@@ -239,6 +258,14 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
             <HeroForm variant="desktop" value={site} onValueChange={setSite} />
           </div>
           <p className="m-0 text-meta text-muted">{metaText()}</p>
+          {/* Points first-time visitors at the phone, so they watch before scrolling on. */}
+          <p aria-hidden="true" className="hand hero-cue mt-8 flex items-center gap-3 text-[30px]">
+            Sledujte, co s tím webem uděláme
+            <svg viewBox="0 0 100 26" className="cue-arrow h-6 w-20 shrink-0" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 15 C 30 6, 62 22, 94 12" />
+              <path d="M81 4 L 95 12 L 82 21" />
+            </svg>
+          </p>
         </div>
       </div>
 
@@ -248,7 +275,7 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
           <Fill width={PANEL.width} strokeWidth={3} />
           <ScenePhone
             band={{ height: 16, dash: 3 }}
-            className="absolute left-[160px] top-[104px] h-[740px] w-[360px] overflow-hidden rounded-[44px] border-[10px] border-solid border-ink bg-ink shadow-[0_30px_60px_-30px_rgba(22,17,16,0.5)]"
+            className="hero-phone-in absolute left-[160px] top-[104px] h-[740px] w-[360px] overflow-hidden rounded-[44px] border-[10px] border-solid border-ink bg-ink shadow-[0_30px_60px_-30px_rgba(22,17,16,0.5)]"
           />
 
           {/* Design coordinates minus 720, the panel's left edge in the 1440 artboard. */}
@@ -380,6 +407,17 @@ function PhoneHero({ reduced }: { reduced: boolean }) {
         <p className="m-0 text-body-m text-ink-soft">Níž je typický web malého podniku. Podnik je vymyšlený, chyby jsou skutečné.</p>
         <HeroForm variant="phone" value={site} onValueChange={setSite} />
         <p className="m-0 text-meta-m text-muted">{metaText()}</p>
+        <button
+          type="button"
+          onClick={() => scrollToTarget(sceneRef.current)}
+          className="hand hero-cue flex cursor-pointer items-center gap-2 self-start border-0 bg-transparent p-0 text-left text-[25px]"
+        >
+          Koukněte níž, co s tím webem uděláme
+          <svg aria-hidden="true" viewBox="0 0 26 40" className="cue-bounce h-8 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M13 3 C 9 14, 16 24, 13 36" />
+            <path d="M4 27 L 13 37 L 22 27" />
+          </svg>
+        </button>
       </div>
       <div ref={sceneRef} className="mt-7">
         <PhoneScene scale={scale} reduced={reduced} />
@@ -429,7 +467,7 @@ function PhoneScene({ scale, reduced }: { scale: number; reduced: boolean }) {
   )
 
   return (
-    <div>
+    <div data-scene>
       <div className="overflow-clip bg-pink">{group}</div>
       <div className="flex justify-end px-4 pt-3">
         <PlayButton state={state} reduced={reduced} onClick={toggle} className="" />

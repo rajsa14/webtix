@@ -183,6 +183,11 @@ export function paintScene(n: SceneNodes, f: Frame) {
   }
 }
 
+/** The play button's progress ring reads --play (0 to 1) from the nearest [data-scene]. */
+function setProgress(root: HTMLElement, p: number) {
+  ;(root.closest<HTMLElement>('[data-scene]') ?? root).style.setProperty('--play', p.toFixed(4))
+}
+
 /**
  * A whole scene: `rootRef` goes on the element holding its animated parts.
  * It plays p from 0 to 1 when at least half of it is on screen (and pauses
@@ -207,11 +212,13 @@ export function useScene(frame: (p: number) => Frame, reduced: boolean) {
     if (!rootRef.current) return
     nodes.current = collectNodes(rootRef.current)
     paintScene(nodes.current, frame(pRef.current))
+    setProgress(rootRef.current, pRef.current)
   })
 
   const paint = useCallback((p: number) => {
     pRef.current = p
     if (nodes.current) paintScene(nodes.current, frameRef.current(p))
+    if (rootRef.current) setProgress(rootRef.current, p)
   }, [])
 
   // Start once at least half the scene is on screen; keep track of visibility.

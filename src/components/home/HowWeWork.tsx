@@ -30,7 +30,7 @@ export function HowWeWork() {
   const days = previewDaysWords()
   const cut = days.lastIndexOf(' ')
   return (
-    <section id="jak-to-delame" aria-labelledby="jak-title" className="container-x py-24 lg:py-40">
+    <section id="jak-to-delame" aria-labelledby="jak-title" className="container-x pb-24 pt-10 lg:pb-40 lg:pt-16">
       <div data-reveal className="flex flex-col lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-6">
         <div className="flex flex-col lg:col-span-7">
           <p className="mono m-0 mb-4 text-[11px] text-muted lg:mb-6 lg:text-[12px]">Jak to děláme</p>
@@ -73,7 +73,10 @@ export function HowWeWork() {
 
 function Step({ i, number, title, text, card }: { i: number; number: string; title: string; text: string; card: ReactNode }) {
   return (
-    <li data-reveal style={revealDelay(i, 140)} className="flex flex-col gap-4 lg:gap-6">
+    <li data-reveal style={revealDelay(i, 140)} className="relative z-0 flex flex-col gap-4 lg:gap-6">
+      <span aria-hidden="true" className="step-num pointer-events-none absolute -left-2 -top-[86px] -z-10 hidden text-[150px] font-bold leading-none tracking-[-0.05em] lg:block">
+        {number}
+      </span>
       {card}
       <div className="flex items-baseline gap-3 lg:gap-4">
         <span className="mono text-[11px] text-terracotta lg:text-[12px]">{number}</span>

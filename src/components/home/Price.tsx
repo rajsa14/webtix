@@ -38,7 +38,26 @@ export function Price() {
             Cena
           </h2>
           <p className="m-0 mb-3 text-[56px] font-bold leading-[0.92] tracking-[-0.045em] lg:mb-4 lg:text-[clamp(64px,7vw,108px)] lg:leading-[0.9]">
-            od <CountUp to={PRICE_FROM} />
+            od{' '}
+            <span className="relative inline-block">
+              <CountUp to={PRICE_FROM} />
+              {/* A pen circle drawn around the price. */}
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 300 120"
+                preserveAspectRatio="none"
+                className="doodle-draw pointer-events-none absolute -left-[6%] -top-[20%] h-[140%] w-[112%] text-terracotta"
+              >
+                <path
+                  pathLength={1}
+                  d="M160 9 C 70 4, 10 28, 9 62 C 8 99, 92 117, 172 112 C 252 107, 296 83, 290 51 C 284 17, 208 3, 118 13"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
           </p>
           <p className="m-0 max-w-[400px] text-[16px] leading-6 text-ink-soft lg:text-[20px] lg:leading-[30px]">
             Za hotový web. Přesnou částku znáte dřív, než cokoli podepíšete.

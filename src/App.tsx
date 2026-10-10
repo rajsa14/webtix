@@ -4,7 +4,9 @@ import { CookieBanner } from './components/CookieBanner'
 import { Cursor } from './components/Cursor'
 import { Footer } from './components/Footer'
 import { Hero } from './components/home/Hero'
+import { CaseGallery } from './components/home/CaseGallery'
 import { HowWeWork } from './components/home/HowWeWork'
+import { Marquee } from './components/home/Marquee'
 import { Price } from './components/home/Price'
 import { RealProposal } from './components/home/RealProposal'
 import { Team } from './components/home/Team'
@@ -30,8 +32,10 @@ const ROUTES: Record<string, () => ReactNode> = {
   [PAGES.home]: () => (
     <Titled>
       <Hero />
+      <Marquee />
       <HowWeWork />
       <RealProposal />
+      <CaseGallery />
       <Team />
       <Price />
       <ContactForm />
