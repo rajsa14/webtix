@@ -1,9 +1,9 @@
 import { useSyncExternalStore } from 'react'
 
 /*
- * A page is an address; ordinary <a href="/katalog"> links switch pages without
+ * A page is an address; ordinary <a href="/obchodni-podminky"> links switch pages without
  * reloading. The offline copy is one file opened from disk, so there the page
- * lives in the hash instead (#/katalog).
+ * lives in the hash instead (#/obchodni-podminky).
  */
 const offline = import.meta.env.MODE === 'offline'
 const listeners = new Set<() => void>()
@@ -22,7 +22,7 @@ function sync() {
   listeners.forEach((listener) => listener())
 }
 
-/** Goes to a page, optionally to an element on it: navigate('/katalog#kategorie-fonts'). */
+/** Goes to a page, optionally to an element on it: navigate('/#kontakt'). */
 export function navigate(to: string) {
   const [pathname, id] = to.split('#')
   if (pathname !== path) {
@@ -49,8 +49,8 @@ export function usePath() {
   )
 }
 
-/** Links to pages, not to files (/og.png), brand or reference images, or the API. */
-const PAGE_LINK = /^\/(?!brand\/|references\/|api\/)[^.]*$/
+/** Links to pages, not to files (/og.png), brand images, or the API. */
+const PAGE_LINK = /^\/(?!brand\/|api\/)[^.]*$/
 
 window.addEventListener('popstate', sync)
 window.addEventListener('hashchange', sync)

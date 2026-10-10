@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { defineConfig, type Plugin } from 'vite'
-import { ADASTRA_WRITTEN_OK, ICO } from './src/data/site.ts'
+import { ADASTRA_WRITTEN_OK, HOME_META } from './src/data/site.ts'
 
 /**
  * Dev-only mock of the inquiry endpoint. It never sends e-mail: it only prints
@@ -36,11 +36,10 @@ function devInquiryMock(): Plugin {
 }
 
 /**
- * Values that must be decided before the site goes live: the company ID (IČO)
- * and written permission to show Café AdAstra. A real build refuses to run
- * while either is still open in src/data/site.ts, so neither can go live by
- * mistake. `npm run build:draft` builds anyway for local review, and
- * `npm run build:staging` allows the IČO placeholder (the staging site is noindex).
+ * Values that must be decided before the site goes live. Today that is the
+ * written permission to show Café AdAstra: a real build refuses to run while
+ * ADASTRA_WRITTEN_OK is false in src/data/site.ts. `npm run build:draft` builds
+ * anyway for local review. (The IČO may stay null: the footer then hides its line.)
  */
 function decidedValues(): Plugin {
   return {
@@ -49,7 +48,6 @@ function decidedValues(): Plugin {
     configResolved(config) {
       if (config.mode === 'draft') return
       const open: string[] = []
-      if (ICO === null && config.mode !== 'staging') open.push('ICO is still the placeholder (null). Set the real value.')
       if (!ADASTRA_WRITTEN_OK) {
         open.push(
           "ADASTRA_WRITTEN_OK is false: the Café AdAstra section must not go live without the owner's written permission. Set it to true once Dan has it in writing.",
@@ -84,7 +82,28 @@ function stagingNoindex(): Plugin {
   }
 }
 
+/**
+ * The homepage title and description are written once, in src/data/site.ts
+ * (HOME_META, built from PREVIEW_DAYS and PRICE_FROM). This fills them into
+ * index.html: %HOME_TITLE%, %HOME_DESCRIPTION% and, inside the JSON-LD,
+ * %HOME_DESCRIPTION_JSON%.
+ */
+function homeMeta(): Plugin {
+  const attr = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
+  return {
+    name: 'webtix-home-meta',
+    transformIndexHtml: {
+      order: 'pre',
+      handler: (html) =>
+        html
+          .replaceAll('%HOME_TITLE%', attr(HOME_META.title))
+          .replaceAll('%HOME_DESCRIPTION_JSON%', JSON.stringify(HOME_META.description).slice(1, -1).replace(/</g, '\\u003c'))
+          .replaceAll('%HOME_DESCRIPTION%', attr(HOME_META.description)),
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [react(), tailwindcss(), devInquiryMock(), decidedValues(), stagingNoindex()],
+  plugins: [homeMeta(), react(), tailwindcss(), devInquiryMock(), decidedValues(), stagingNoindex()],
   server: { port: Number(process.env.PORT) || 5178 },
 })

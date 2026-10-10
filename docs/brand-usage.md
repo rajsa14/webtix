@@ -11,14 +11,18 @@
 - The stitched x runs exactly from baseline to x-height, with no overshoot.
 - The x starts where the font's own x ink would start; the i–x gap is 52 units.
 
-## Colour (palette B · Střechy)
+## Colour
+The palette of the website (docs/design/README.md). Contrast ratios are WCAG 2.
 | Role | Hex | Use |
 |---|---|---|
-| Terracotta | #B4472A | primary, logo ground, links on cream (4.75:1) |
-| Pink | #F4B6C8 | accent surfaces only, with ink text (10.0:1); never as text |
-| Cream | #F6EFE5 | page ground, logo on terracotta (4.75:1) |
-| Ink | #241A16 | text (14.9:1 on cream) |
-| Grey | #6E625B | secondary text (5.2:1 on cream) |
+| Paper | #F2F1EE | page ground |
+| Ink | #161110 | text, primary buttons, phone frames, logo on light grounds (16.6:1 on paper) |
+| Ink soft | #4A433E | paragraphs (8.6:1 on paper) |
+| Muted | #6B625C | eyebrow labels, meta text (5.3:1 on paper) |
+| Terracotta | #B4472A | the one accent: italic word in headings, step numbers, colour panels (4.8:1 on paper) |
+| Pen | #9B2C1F | handwritten notes on pink (4.5:1, large text only), form errors (6.7:1 on paper) |
+| Pink | #F4B6C8 | colour panels with ink text (11.0:1); never as text on light grounds |
+| Cream | #F6EFE5 | text, notes and logo on terracotta (4.75:1) |
 
 ## Minimum size
 - Master: ≥ 32 px tall on screen, ≥ 25 mm wide in print.
@@ -34,7 +38,7 @@ One x-height on every side of the wordmark.
 - Stretch, squash, rotate or skew it.
 - Recolour individual stitches. The x is always one colour with "webti".
 - Add shadows, outlines, gradients, glows or 3D.
-- Place it on low-contrast grounds (for example, cream on pink is 1.5:1).
+- Place it on low-contrast grounds (for example, cream on pink is 1.5:1, ink on terracotta 3.5:1).
 - Retype it in another font, or with a normal x.
 - Use the master below 32 px.
 - Use the Otevřeno sign as the favicon or avatar, or without the wordmark appearing on the same surface.

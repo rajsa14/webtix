@@ -17,8 +17,8 @@ React 19, TypeScript, Vite, Tailwind CSS v4. Hosted on Cloudflare Workers (`wran
 - Before deleting or rewriting anything outside the current step, list the files and wait.
 - Never redraw or approximate the logo. Use `public/brand/`.
 
-## Placeholders that must block a production build
-`PRICE_FROM` is now `9 990` (filled). `PREVIEW_DAYS` is `5` pracovních dnů (filled). `ICO` is not known yet: keep it as a placeholder in `src/data/site.ts` and make `npm run build` fail while it is the placeholder (`build:draft` still works).
+## Placeholders and build checks
+`PRICE_FROM` is `9 990` and `PREVIEW_DAYS` is `5` pracovních dnů (filled). `ICO` is not known yet: it stays `null` in `src/data/site.ts`, and while it is null the footer hides the IČO line ("[IČO]" must never be visible). `npm run build` fails only while `ADASTRA_WRITTEN_OK` is false. `npm run build:staging` adds noindex (meta and `X-Robots-Tag`); the production build must contain neither.
 
 ## Content rules
 - Šlapadlo (the bike shop in the hero and in "Jak to děláme") is an invented business. The page must keep the lines that say so ("Podnik jsme si vymysleli, chyby jsou skutečné."). Never present it as a client.

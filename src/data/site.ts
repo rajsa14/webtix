@@ -1,13 +1,8 @@
 /** Global Webtix facts. Change them here and they update everywhere. */
 export const SITE = {
   name: 'Webtix',
-  tagline: 'Weby podle vašich představ.',
   email: 'info@webtix.cz',
   url: 'https://webtix.cz',
-  /** Browser title and description of the homepage. Keep in sync with index.html. */
-  title: 'Webtix — Weby podle vašich představ',
-  description:
-    'Vyberte si styl, barvy, písmo a další prvky vašeho webu. Webtix z vaší představy vytvoří konkrétní návrh na míru.',
   year: 2026,
 } as const
 
@@ -19,10 +14,7 @@ export const PREVIEW_DAYS = 5
 export const MANAGEMENT_CMS_FROM = 790
 export const MANAGEMENT_EDITS_FROM = 1490
 
-/**
- * Not known yet. While it is null, `npm run build` fails on purpose (see
- * vite.config.ts); `npm run build:draft` and `npm run build:staging` build anyway.
- */
+/** The company ID (IČO). While it is null, the footer hides the IČO line. */
 export const ICO = null as string | null
 
 /**
@@ -45,6 +37,14 @@ export function previewDaysWords(n: number = PREVIEW_DAYS) {
   return `${word} pracovních dnů`
 }
 
+const NUMBER_WORDS_GENITIVE = ['nula', 'jednoho', 'dvou', 'tří', 'čtyř', 'pěti', 'šesti', 'sedmi', 'osmi', 'devíti', 'deseti']
+
+/** PREVIEW_DAYS in words, as after "do": "pěti pracovních dnů". */
+export function previewDaysGenitive(n: number = PREVIEW_DAYS) {
+  const word = NUMBER_WORDS_GENITIVE[n] ?? String(n)
+  return n === 1 ? `${word} pracovního dne` : `${word} pracovních dnů`
+}
+
 /** "Pět pracovních dnů začíná běžet", with the verb agreeing with the number. */
 export function previewDaysStart(n: number = PREVIEW_DAYS) {
   const words = previewDaysWords(n)
@@ -57,6 +57,16 @@ export const kc = (amount: number) => `${amount.toLocaleString('cs-CZ')}\u00a0K�
 
 /** "9 990 Kč": the starting price of a site. */
 export const priceText = () => kc(PRICE_FROM)
+
+/**
+ * Browser title and description of the homepage. The one place they are
+ * written: vite.config.ts puts them into index.html (title, description,
+ * Open Graph, structured data), src/lib/meta.ts uses them in the app.
+ */
+export const HOME_META = {
+  title: 'Webtix: nový web pro váš podnik, návrh zdarma',
+  description: `Podíváme se na váš web a do ${previewDaysGenitive()} vám ukážeme lepší. Návrh úvodní stránky je zdarma a nezávazný. Weby od ${priceText()}.`,
+}
 
 /**
  * The cookie banner stays in the code for Google Ads later. Until then the

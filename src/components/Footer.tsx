@@ -5,8 +5,7 @@ import { Wordmark } from './Wordmark'
 /**
  * Footer from the design (Rest.dc.html / RestMobile.dc.html): wordmark,
  * e-mail and IČO, legal links. Desktop: one row on the 12-column grid.
- * Phone: stacked. IČO shows "[IČO]" until it is filled in src/data/site.ts
- * (a real build refuses to run before that).
+ * Phone: stacked. The IČO line shows once ICO is set in src/data/site.ts.
  */
 export function Footer() {
   const openCookies = useConsent((s) => s.openBanner)
@@ -23,8 +22,12 @@ export function Footer() {
         <a href={`mailto:${SITE.email}`} className="text-ink-soft no-underline hover:underline">
           {SITE.email}
         </a>
-        <br />
-        IČO {ICO ?? '[IČO]'}
+        {ICO && (
+          <>
+            <br />
+            IČO {ICO}
+          </>
+        )}
       </p>
       <p className="m-0 flex flex-col items-start text-[14px] leading-[22px] text-ink-soft lg:col-span-4 lg:col-start-9 lg:block lg:text-right lg:text-[15px]">
         <a href={PAGES.privacy} className={link}>

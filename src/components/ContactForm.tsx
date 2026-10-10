@@ -44,7 +44,6 @@ export function ContactForm() {
   const [result, setResult] = useState<InquiryResult | null>(null)
   const honeypot = useRef<HTMLInputElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
-  const setLastInquiry = useUi((s) => s.setLastInquiry)
 
   // The hero box sends its address here, so the visitor doesn't type it twice.
   useEffect(
@@ -81,7 +80,6 @@ export function ContactForm() {
       const res = await sendInquiry(payload, { website: '', elapsed: msSincePageOpened() })
       setStatus('idle')
       if (res.status === 'sent') {
-        setLastInquiry({ name: form.name, email: form.email.trim() })
         setForm(EMPTY)
         setSubmitted(false)
         setErrors({})

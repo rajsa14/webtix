@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { SITE } from '../data/site'
+import { HOME_META, SITE } from '../data/site'
 
 function setMeta(name: string, content: string | null) {
   let tag = document.head.querySelector<HTMLMetaElement>(`meta[name="${name}"]`)
@@ -22,8 +22,8 @@ const STAGING = import.meta.env.MODE === 'staging'
 export function usePageMeta({ title, description, noindex: pageNoindex }: { title?: string; description?: string; noindex?: boolean } = {}) {
   const noindex = STAGING || pageNoindex
   useEffect(() => {
-    document.title = title ? `${title} | ${SITE.name}` : SITE.title
-    setMeta('description', description ?? SITE.description)
+    document.title = title ? `${title} | ${SITE.name}` : HOME_META.title
+    setMeta('description', description ?? HOME_META.description)
     setMeta('robots', noindex ? 'noindex, nofollow' : null)
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')
     if (noindex) {
