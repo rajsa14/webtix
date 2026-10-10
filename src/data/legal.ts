@@ -1,4 +1,4 @@
-import { SITE } from './site'
+import { OPERATOR } from './site'
 
 export type LegalDoc = 'privacy' | 'terms'
 
@@ -11,11 +11,13 @@ interface LegalSection {
 }
 
 /*
- * Draft legal texts. Review them before relying on them, ideally with someone
- * who knows GDPR and Czech consumer law. Still missing: the operator's
- * identification (IČO and address), which Czech law requires on a business site.
+ * Legal texts, describing the site as it runs today: Cloudflare Workers,
+ * Cloudflare Web Analytics, enquiries by e-mail through Resend. Review them
+ * before relying on them, ideally with someone who knows GDPR and Czech
+ * consumer law. The operator is named in OPERATOR (src/data/site.ts); its
+ * registration details follow once the company is registered.
  */
-export const LEGAL_UPDATED = '9. 10. 2026'
+export const LEGAL_UPDATED = '10. 10. 2026'
 
 export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: LegalSection[] }> = {
   privacy: {
@@ -25,18 +27,17 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
       {
         h: 'Kdo údaje spravuje',
         p: [
-          `Správcem údajů je ${SITE.name}, tedy Richard Buchníček a Daniel Švéda. S čímkoliv ohledně vašich údajů nám napište na ${SITE.email}.`,
+          `Správcem údajů je ${OPERATOR.name}, tedy Richard Buchníček a Daniel Švéda. S čímkoliv ohledně vašich údajů nám napište na ${OPERATOR.email}.`,
         ],
       },
       {
         h: 'Jaké údaje zpracováváme',
         p: ['Jen ty, které nám sami pošlete formulářem:'],
         list: [
-          'jméno a název firmy',
-          'e-mail a telefon (telefon jen pokud ho uvedete)',
-          'adresu vašeho webu nebo profilu na Instagramu, pokud ji vyplníte. Podíváme se jen na to, co je na ní veřejně, abychom vám mohli připravit návrh.',
-          'informace o projektu, rozpočet, termín a odkazy na inspiraci',
-          'váš výběr z katalogu',
+          'jméno',
+          'e-mail',
+          'adresu vašeho webu nebo profilu na Instagramu, případně název podniku. Podíváme se jen na to, co je na ní veřejně, abychom vám mohli připravit návrh.',
+          'zprávu, pokud ji napíšete',
         ],
       },
       {
@@ -56,37 +57,28 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
         h: 'Kdo další údaje vidí',
         p: ['K provozu webu používáme tyto služby. Údaje dostanou jen v rozsahu, který potřebují:'],
         list: [
-          'Netlify (hosting webu, příjem formuláře a jeho doručení do naší schránky)',
-          'poskytovatel naší e-mailové schránky, kde poptávky čteme',
-          'Unsplash (ilustrační fotografie se načítají z jejich serverů, které při tom vidí vaši IP adresu)',
+          'Cloudflare (hosting a doručování webu přes Cloudflare Workers, přes které prochází i odeslaný formulář)',
+          `Resend (odeslání poptávky e-mailem do naší schránky ${OPERATOR.email})`,
+          'Google (Google Workspace, kde v naší schránce poptávky čteme)',
         ],
       },
       {
         h: 'Cookies a úložiště prohlížeče',
-        p: [
-          'Web nepoužívá reklamní cookies ani nástroje třetích stran. Ve vašem prohlížeči ukládáme jen toto:',
-        ],
-        list: [
-          'váš výběr z katalogu, aby nezmizel po obnovení stránky (nezbytné)',
-          'vaši volbu ohledně statistik (nezbytné)',
-          'náhodný identifikátor návštěvníka, jen pokud povolíte statistiky',
-        ],
+        p: ['Web neukládá do vašeho prohlížeče žádné cookies ani jiné údaje.'],
       },
       {
         h: 'Měření návštěvnosti',
         p: [
-          'Návštěvnost si měříme sami, bez Google Analytics a podobných služeb. Počítáme zobrazení stránek, typ zařízení a web, ze kterého jste přišli. IP adresu neukládáme.',
-          'Pokud povolíte statistiky, uložíme ve vašem prohlížeči náhodný identifikátor, podle kterého poznáme opakovanou návštěvu. Nespojujeme ho s vaším jménem ani e-mailem. Souhlas můžete kdykoliv změnit odkazem Nastavení cookies v patičce.',
+          'Návštěvnost měříme nástrojem Cloudflare Web Analytics. Nenastavuje žádné cookies a nevytváří profil návštěvníka. Vidíme jen souhrnné údaje, například počet zobrazení stránek, typ zařízení a web, ze kterého jste přišli.',
         ],
       },
       {
         h: 'Vaše práva',
-        p: [`Stačí napsat na ${SITE.email}. Máte právo:`],
+        p: [`Stačí napsat na ${OPERATOR.email}. Máte právo:`],
         list: [
           'zjistit, jaké údaje o vás máme, a dostat jejich kopii',
           'nechat údaje opravit nebo smazat',
           'omezit zpracování nebo proti němu vznést námitku',
-          'odvolat souhlas se statistikami',
           'podat stížnost u Úřadu pro ochranu osobních údajů (uoou.gov.cz)',
         ],
       },
@@ -98,11 +90,11 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
     sections: [
       {
         h: 'Kdo web provozuje',
-        p: [`Web provozuje ${SITE.name}, tedy Richard Buchníček a Daniel Švéda. Kontakt: ${SITE.email}.`],
+        p: [`Web provozuje ${OPERATOR.name}, tedy Richard Buchníček a Daniel Švéda. Kontakt: ${OPERATOR.email}.`],
       },
       {
         h: 'Poptávka je nezávazná',
-        p: ['Odesláním výběru a formuláře nevzniká žádná smlouva ani povinnost cokoliv platit.'],
+        p: ['Odesláním formuláře nevzniká žádná smlouva ani povinnost cokoliv platit.'],
       },
       {
         h: 'Cena a rozsah',
@@ -113,13 +105,7 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
       {
         h: 'Ukázka webu',
         p: [
-          'Ukázka připravená podle vašeho výběru slouží k odsouhlasení směru designu. Počet úprav a podmínky předání webu jsou součástí nabídky.',
-        ],
-      },
-      {
-        h: 'Fotografie v katalogu',
-        p: [
-          'Fotografie v katalogu jsou ilustrační a pocházejí z Unsplash. Pro váš web použijeme vlastní nebo řádně licencované snímky.',
+          'Návrh úvodní stránky, který vám ukážeme, slouží k odsouhlasení směru designu. Počet úprav a podmínky předání webu jsou součástí nabídky.',
         ],
       },
       {

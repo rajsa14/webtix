@@ -14,6 +14,15 @@ export const PREVIEW_DAYS = 5
 export const MANAGEMENT_CMS_FROM = 790
 export const MANAGEMENT_EDITS_FROM = 1490
 
+/**
+ * Who runs the site, as named in the legal texts (src/data/legal.ts). Change
+ * it here once the company is registered. No "s.r.o." and no IČO until then.
+ */
+export const OPERATOR = {
+  name: 'Webtix (společnost v zakládání)',
+  email: 'info@webtix.cz',
+}
+
 /** The company ID (IČO). While it is null, the footer hides the IČO line. */
 export const ICO = null as string | null
 
