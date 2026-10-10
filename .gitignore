@@ -32,3 +32,6 @@ dist-offline
 # Cloudflare Worker secrets for wrangler dev
 .dev.vars
 .wrangler
+
+# Third-party reference screenshots: internal only, never published
+docs/references/*.jpg
