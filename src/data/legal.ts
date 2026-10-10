@@ -1,21 +1,34 @@
-import { OPERATOR } from './site'
+import { OPERATOR, previewDaysGenitive } from './site'
 
 export type LegalDoc = 'privacy' | 'terms'
 
 interface LegalSection {
   h: string
   /** Paragraphs. */
-  p: string[]
+  p?: string[]
+  /** Lettered parts (a, b, …), each a heading and a list. Shown after the paragraphs. */
+  parts?: { h: string; list: string[] }[]
   /** Optional bullet list shown under the paragraphs. */
   list?: string[]
+  /** Paragraphs shown after the list. */
+  after?: string[]
 }
 
 /*
- * Legal texts, describing the site as it runs today: Cloudflare Workers,
- * Cloudflare Web Analytics, enquiries by e-mail through Resend. Review them
- * before relying on them, ideally with someone who knows GDPR and Czech
- * consumer law. The operator is named in OPERATOR (src/data/site.ts); its
- * registration details follow once the company is registered.
+ * Legal texts from docs/legal-text.md (a draft: a lawyer should review it
+ * before launch). The operator and e-mail come from OPERATOR in site.ts.
+ *
+ * Facts behind section 2b (checked 2026-10-10):
+ * - worker/index.ts stores nothing itself (no KV, D1 or other storage). The form
+ *   content goes out by e-mail through Resend.
+ * - The rate limiter (wrangler.jsonc, INQUIRY_LIMITER) counts submissions per
+ *   IP address, 5 per 60 s. Cloudflare keeps the counter only in the location
+ *   that handled the request.
+ * - observability.enabled = true: Workers Logs store each /api/* request with
+ *   its IP address, user agent and IP-based location. Retention: 3 days on
+ *   Workers Free, 7 days on Workers Paid (Cloudflare docs, Workers Logs).
+ * Transfers (section 3): Cloudflare and Resend DPAs name the EU-US DPF and the
+ * EU SCCs; Google LLC is DPF-certified and its Workspace DPA uses the SCCs.
  */
 export const LEGAL_UPDATED = '10. 10. 2026'
 
@@ -25,98 +38,160 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
     intro: 'Stručně a srozumitelně: jaké údaje od vás máme, proč je máme a co s nimi můžete udělat.',
     sections: [
       {
-        h: 'Kdo údaje spravuje',
+        h: '1. Kdo vaše údaje spravuje',
         p: [
-          `Správcem údajů je ${OPERATOR.name}, tedy Richard Buchníček a Daniel Švéda. S čímkoliv ohledně vašich údajů nám napište na ${OPERATOR.email}.`,
+          `Správcem osobních údajů je ${OPERATOR.name}, tedy Richard Buchníček a Daniel Švéda (dále „my“).`,
+          `Kontakt pro všechny dotazy k ochraně údajů: ${OPERATOR.email}.`,
         ],
       },
       {
-        h: 'Jaké údaje zpracováváme',
-        p: ['Jen ty, které nám sami pošlete formulářem:'],
+        h: '2. Jaké údaje zpracováváme, proč a jak dlouho',
+        parts: [
+          {
+            h: 'a) Vaše poptávka a příprava návrhu',
+            list: [
+              'Údaje: jméno, e-mail, adresa vašeho webu nebo profilu na sociální síti, případně název podniku, a zpráva, pokud ji napíšete.',
+              'Účel: odpovědět vám a připravit ukázkový návrh. Podíváme se jen na to, co je na vašem webu nebo profilu veřejně dostupné.',
+              'Právní základ: kroky před uzavřením smlouvy na vaši žádost (čl. 6 odst. 1 písm. b) nařízení GDPR).',
+              'Doba: nejdéle 12 měsíců od posledního kontaktu, pokud nedojde ke spolupráci. Pak údaje smažeme.',
+            ],
+          },
+          {
+            h: 'b) Ochrana webu před zneužitím',
+            list: [
+              'Údaje: při odeslání formuláře vaše IP adresa, typ prohlížeče, přibližná poloha odvozená z IP adresy (například země a město) a čas odeslání.',
+              'Podle IP adresy počítáme, kolikrát byl formulář odeslán (nejvýše pětkrát za minutu). Toto počítadlo vede jen datové centrum Cloudflare, které požadavek zpracovalo, a jinam ho neukládáme.',
+              'Technické záznamy o odeslání formuláře se ukládají u Cloudflare a nejpozději po 7 dnech se samy smažou. Obsah formuláře na webu neukládáme, odchází e-mailem.',
+              'Účel: zabránit spamu a přetěžování formuláře.',
+              'Právní základ: náš oprávněný zájem na bezpečném provozu webu (čl. 6 odst. 1 písm. f) GDPR).',
+            ],
+          },
+          {
+            h: 'c) Měření návštěvnosti',
+            list: [
+              'Nástroj: Cloudflare Web Analytics. Nenastavuje cookies ani neukládá nic do vašeho zařízení a nevytváří profil návštěvníka.',
+              'Vidíme jen souhrnné údaje, například počet zobrazení stránek, typ zařízení a web, ze kterého jste přišli.',
+              'Právní základ: náš oprávněný zájem zjistit, jak web funguje (čl. 6 odst. 1 písm. f) GDPR). Můžete vznést námitku (viz Vaše práva).',
+            ],
+          },
+          {
+            h: 'd) Spolupráce a účetnictví (pokud k ní dojde)',
+            list: [
+              'Údaje: fakturační a kontaktní údaje, které nám pro spolupráci sdělíte.',
+              'Účel: plnění smlouvy, fakturace a splnění zákonných povinností.',
+              'Právní základ: plnění smlouvy a zákonná povinnost (čl. 6 odst. 1 písm. b) a c) GDPR).',
+              'Doba: po dobu spolupráce a poté po dobu stanovenou zákonem (účetní doklady 10 let).',
+            ],
+          },
+        ],
+      },
+      {
+        h: '3. Komu údaje předáváme',
+        p: ['Údaje zpracovávají naši dodavatelé, kteří pro nás zajišťují provoz:'],
         list: [
-          'jméno',
-          'e-mail',
-          'adresu vašeho webu nebo profilu na Instagramu, případně název podniku. Podíváme se jen na to, co je na ní veřejně, abychom vám mohli připravit návrh.',
-          'zprávu, pokud ji napíšete',
+          'Cloudflare, Inc. (hosting a doručování webu, přes které prochází i odeslaný formulář, a měření návštěvnosti),',
+          'Resend, Inc. (odeslání poptávky e-mailem do naší schránky),',
+          'Google LLC (Google Workspace, naše e-mailová schránka, kde poptávky čteme).',
+        ],
+        after: [
+          'Tito dodavatelé mohou údaje zpracovávat ve Spojených státech. Všichni tři jsou certifikováni v rámci EU–US Data Privacy Framework, takže předání je zajištěno rozhodnutím Evropské komise o odpovídající ochraně. Jejich smlouvy o zpracování údajů navíc obsahují standardní smluvní doložky.',
+          'Údaje neprodáváme a nepředáváme je nikomu dalšímu, pokud nám to neukládá zákon.',
         ],
       },
       {
-        h: 'Proč a na jakém základě',
-        p: [
-          'Údaje z formuláře potřebujeme, abychom mohli odpovědět na vaši poptávku a připravit ukázku a nabídku. Právním základem je jednání o smlouvě na vaši žádost (čl. 6 odst. 1 písm. b GDPR).',
-          'Údaje nepoužíváme k reklamě, neprodáváme je a neposíláme vám nevyžádané zprávy.',
-        ],
+        h: '4. Musíte nám údaje poskytnout?',
+        p: ['Ne, je to dobrovolné. Bez jména a e-mailu vám ale nemůžeme odpovědět.'],
       },
       {
-        h: 'Jak dlouho údaje uchováváme',
-        p: [
-          'Poptávku uchováváme po dobu, kdy spolu jednáme, a nejdéle dva roky od poslední zprávy. Pokud spolu uzavřeme smlouvu, uchováváme doklady po dobu, kterou ukládá zákon.',
-        ],
+        h: '5. Automatizované rozhodování',
+        p: ['Neprovádíme žádné automatizované rozhodování ani profilování.'],
       },
       {
-        h: 'Kdo další údaje vidí',
-        p: ['K provozu webu používáme tyto služby. Údaje dostanou jen v rozsahu, který potřebují:'],
-        list: [
-          'Cloudflare (hosting a doručování webu přes Cloudflare Workers, přes které prochází i odeslaný formulář)',
-          `Resend (odeslání poptávky e-mailem do naší schránky ${OPERATOR.email})`,
-          'Google (Google Workspace, kde v naší schránce poptávky čteme)',
-        ],
-      },
-      {
-        h: 'Cookies a úložiště prohlížeče',
+        h: '6. Cookies',
         p: ['Web neukládá do vašeho prohlížeče žádné cookies ani jiné údaje.'],
       },
       {
-        h: 'Měření návštěvnosti',
-        p: [
-          'Návštěvnost měříme nástrojem Cloudflare Web Analytics. Nenastavuje žádné cookies a nevytváří profil návštěvníka. Vidíme jen souhrnné údaje, například počet zobrazení stránek, typ zařízení a web, ze kterého jste přišli.',
+        h: '7. Vaše práva',
+        p: ['Podle GDPR máte právo:'],
+        list: [
+          'na přístup ke svým údajům,',
+          'na opravu nepřesných údajů,',
+          'na výmaz,',
+          'na omezení zpracování,',
+          'na přenositelnost údajů,',
+          'vznést námitku proti zpracování založenému na oprávněném zájmu.',
         ],
+        after: [`Stačí napsat na ${OPERATOR.email}. Odpovíme nejpozději do jednoho měsíce.`],
       },
       {
-        h: 'Vaše práva',
-        p: [`Stačí napsat na ${OPERATOR.email}. Máte právo:`],
-        list: [
-          'zjistit, jaké údaje o vás máme, a dostat jejich kopii',
-          'nechat údaje opravit nebo smazat',
-          'omezit zpracování nebo proti němu vznést námitku',
-          'podat stížnost u Úřadu pro ochranu osobních údajů (uoou.gov.cz)',
+        h: '8. Stížnost',
+        p: [
+          'Pokud se domníváte, že s údaji nakládáme nesprávně, můžete podat stížnost u Úřadu pro ochranu osobních údajů, Pplk. Sochora 27, 170 00 Praha 7, www.uoou.gov.cz.',
         ],
       },
     ],
   },
   terms: {
-    title: 'Obchodní podmínky',
+    title: 'Obchodní podmínky a podmínky používání webu',
     intro: 'Pravidla, podle kterých funguje tento web a naše spolupráce.',
     sections: [
       {
-        h: 'Kdo web provozuje',
+        h: '1. Kdo web provozuje',
         p: [`Web provozuje ${OPERATOR.name}, tedy Richard Buchníček a Daniel Švéda. Kontakt: ${OPERATOR.email}.`],
       },
       {
-        h: 'Poptávka je nezávazná',
-        p: ['Odesláním formuláře nevzniká žádná smlouva ani povinnost cokoliv platit.'],
-      },
-      {
-        h: 'Cena a rozsah',
+        h: '2. Pro koho jsou naše služby',
         p: [
-          'Cenu, rozsah prací a termín vždy domlouváme individuálně. Před zahájením práce vše potvrdíme písemně. Smlouva vzniká až tímto potvrzením.',
+          'Naše služby jsou určeny především podnikatelům a firmám. Pokud jste spotřebitel, nejsou těmito podmínkami dotčena vaše zákonná práva.',
         ],
       },
       {
-        h: 'Ukázka webu',
-        p: [
-          'Návrh úvodní stránky, který vám ukážeme, slouží k odsouhlasení směru designu. Počet úprav a podmínky předání webu jsou součástí nabídky.',
+        h: '3. Poptávka je nezávazná',
+        p: ['Odesláním formuláře nevzniká žádná smlouva ani povinnost cokoliv platit. Web sám smlouvu neuzavírá.'],
+      },
+      {
+        h: '4. Návrh zdarma',
+        list: [
+          'Na základě vaší poptávky vám zdarma a nezávazně připravíme návrh úvodní stránky vašeho nového webu.',
+          `Lhůta ${previewDaysGenitive()} začíná běžet, jakmile nám pošlete podklady, například odkaz na váš stávající web.`,
+          'Vycházíme jen z veřejně dostupných informací a z podkladů, které nám sami pošlete. Vaše podklady nikomu nepředáváme a nepoužijeme je jinak než pro váš návrh.',
+          'Návrh slouží k odsouhlasení směru designu. Autorská práva k návrhu zůstávají nám. Bez uzavření smlouvy a zaplacení ho nesmíte zveřejnit ani používat.',
         ],
       },
       {
-        h: 'Obsah webu',
+        h: '5. Cena',
         p: [
-          'Texty, grafika a kód tohoto webu patří Webtix. Bez našeho souhlasu je prosím nekopírujte.',
+          'Uváděné ceny („od …“) jsou orientační. Přesnou cenu a rozsah práce vám sdělíme v písemné nabídce dříve, než cokoli podepíšete, včetně informace o DPH.',
         ],
       },
       {
-        h: 'Změny podmínek',
-        p: ['Podmínky můžeme upravit. Platí vždy znění zveřejněné na této stránce.'],
+        h: '6. Uzavření smlouvy',
+        p: [
+          'Spolupráce vzniká až samostatnou písemnou smlouvou nebo odsouhlasením naší písemné nabídky. Podmínky konkrétní spolupráce (rozsah, cena, lhůty, předání webu, licence, správa) jsou pak v ní.',
+        ],
+      },
+      {
+        h: '7. Ukázky na webu',
+        list: [
+          'Šlapadlo je vymyšlený podnik. Chyby, které na něm ukazujeme, jsou ale skutečné a typické.',
+          'Ukázku Café AdAstra zveřejňujeme s písemným souhlasem majitelky.',
+        ],
+      },
+      {
+        h: '8. Obsah webu',
+        p: [
+          'Texty, grafika a kód tohoto webu jsou naším dílem. Bez našeho souhlasu je nekopírujte. Obsah webu je informativní a snažíme se, aby byl aktuální a přesný.',
+        ],
+      },
+      {
+        h: '9. Reklamace a spory',
+        p: [
+          'Pokud jste spotřebitel, můžete se při sporu obrátit na Českou obchodní inspekci (www.coi.cz, www.adr.coi.cz), která řeší spotřebitelské spory mimosoudně. Naše vztahy se řídí právem České republiky.',
+        ],
+      },
+      {
+        h: '10. Změny podmínek',
+        p: ['Tyto podmínky můžeme změnit. Platí vždy verze zveřejněná na webu v den odeslání vaší poptávky.'],
       },
     ],
   },

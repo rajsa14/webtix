@@ -17,18 +17,15 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
             {sections.map((section) => (
               <section key={section.h}>
                 <h2 className="text-h3">{section.h}</h2>
-                {section.p.map((paragraph) => (
-                  <p key={paragraph} className="mt-3">
-                    {nb(paragraph)}
-                  </p>
+                <Paragraphs items={section.p} />
+                {section.parts?.map((part) => (
+                  <div key={part.h} className="mt-6">
+                    <h3 className="m-0 text-[18px] leading-7 lg:text-[20px]">{part.h}</h3>
+                    <List items={part.list} />
+                  </div>
                 ))}
-                {section.list && (
-                  <ul className="mt-3 grid list-disc gap-1.5 pl-5 marker:text-terracotta">
-                    {section.list.map((item) => (
-                      <li key={item}>{nb(item)}</li>
-                    ))}
-                  </ul>
-                )}
+                <List items={section.list} />
+                <Paragraphs items={section.after} />
               </section>
             ))}
           </div>
@@ -37,5 +34,24 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
         </div>
       </article>
     </>
+  )
+}
+
+function Paragraphs({ items }: { items?: string[] }) {
+  return items?.map((paragraph) => (
+    <p key={paragraph} className="mt-3">
+      {nb(paragraph)}
+    </p>
+  ))
+}
+
+function List({ items }: { items?: string[] }) {
+  if (!items) return null
+  return (
+    <ul className="mt-3 grid list-disc gap-1.5 pl-5 marker:text-terracotta">
+      {items.map((item) => (
+        <li key={item}>{nb(item)}</li>
+      ))}
+    </ul>
   )
 }
