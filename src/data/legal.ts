@@ -27,6 +27,9 @@ interface LegalSection {
  * - observability.enabled = true: Workers Logs store each /api/* request with
  *   its IP address, user agent and IP-based location. Retention: 3 days on
  *   Workers Free, 7 days on Workers Paid (Cloudflare docs, Workers Logs).
+ *   The text describes hosting logs for every request (Dan, 2026-10-10).
+ * - Resend keeps its own copy of each sent e-mail for a period it sets; the
+ *   text does not promise to delete it.
  * Transfers (section 3): Cloudflare and Resend DPAs name the EU-US DPF and the
  * EU SCCs; Google LLC is DPF-certified and its Workspace DPA uses the SCCs.
  */
@@ -53,15 +56,15 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
               'Údaje: jméno, e-mail, adresa vašeho webu nebo profilu na sociální síti, případně název podniku, a zpráva, pokud ji napíšete.',
               'Účel: odpovědět vám a připravit ukázkový návrh. Podíváme se jen na to, co je na vašem webu nebo profilu veřejně dostupné.',
               'Právní základ: kroky před uzavřením smlouvy na vaši žádost (čl. 6 odst. 1 písm. b) nařízení GDPR).',
-              'Doba: nejdéle 12 měsíců od posledního kontaktu, pokud nedojde ke spolupráci. Pak údaje smažeme.',
+              'Doba: kopii zprávy v naší schránce smažeme nejpozději 12 měsíců od posledního kontaktu, pokud nedojde ke spolupráci. Kopie zůstává také v e-mailovém záznamu služby Resend, který se uchovává po dobu, kterou určuje Resend.',
             ],
           },
           {
             h: 'b) Ochrana webu před zneužitím',
             list: [
-              'Údaje: při odeslání formuláře vaše IP adresa, typ prohlížeče, přibližná poloha odvozená z IP adresy (například země a město) a čas odeslání.',
+              'Údaje: IP adresa, typ prohlížeče a přibližná poloha odvozená z IP adresy (například země a město), a to při každém požadavku na web, tedy při zobrazení stránky i při odeslání formuláře.',
               'Podle IP adresy počítáme, kolikrát byl formulář odeslán (nejvýše pětkrát za minutu). Toto počítadlo vede jen datové centrum Cloudflare, které požadavek zpracovalo, a jinam ho neukládáme.',
-              'Technické záznamy o odeslání formuláře se ukládají u Cloudflare a nejpozději po 7 dnech se samy smažou. Obsah formuláře na webu neukládáme, odchází e-mailem.',
+              'Tyto technické záznamy (logy) ukládá náš hosting Cloudflare a nejpozději po 7 dnech se samy smažou. Obsah formuláře na webu neukládáme, odchází e-mailem.',
               'Účel: zabránit spamu a přetěžování formuláře.',
               'Právní základ: náš oprávněný zájem na bezpečném provozu webu (čl. 6 odst. 1 písm. f) GDPR).',
             ],
@@ -90,7 +93,7 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
         p: ['Údaje zpracovávají naši dodavatelé, kteří pro nás zajišťují provoz:'],
         list: [
           'Cloudflare, Inc. (hosting a doručování webu, přes které prochází i odeslaný formulář, a měření návštěvnosti),',
-          'Resend, Inc. (odeslání poptávky e-mailem do naší schránky),',
+          'Resend, Inc. (odeslání poptávky e-mailem do naší schránky; kopie zprávy zůstává v jeho e-mailovém záznamu po dobu, kterou určuje Resend),',
           'Google LLC (Google Workspace, naše e-mailová schránka, kde poptávky čteme).',
         ],
         after: [
@@ -100,7 +103,7 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
       },
       {
         h: '4. Musíte nám údaje poskytnout?',
-        p: ['Ne, je to dobrovolné. Bez jména a e-mailu vám ale nemůžeme odpovědět.'],
+        p: ['Jméno, e-mail a adresu webu (nebo název podniku) potřebujeme, abychom vám mohli odpovědět a připravit návrh. Zprávu psát nemusíte.'],
       },
       {
         h: '5. Automatizované rozhodování',
