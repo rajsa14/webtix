@@ -77,6 +77,61 @@ export const references: Reference[] = [
     kind: 'proposal',
   },
   {
+    title: 'Hostinec U Kamenné kašny',
+    client: 'Tradiční hospoda',
+    type: 'Web restaurace',
+    year: 2026,
+    description:
+      'Hospoda s tradicí. Polední menu podle dne v týdnu, pivo na čepu jako tabule za výčepem a salonek na oslavy s jasnými podmínkami.',
+    image: 'references/hostinec.jpg',
+    url: 'koncepty/hostinec/index.html',
+    kind: 'concept',
+  },
+  {
+    title: 'Vinárna Sklípek 14',
+    client: 'Vinárna a vinotéka',
+    type: 'Web podniku',
+    year: 2026,
+    description:
+      'Gotický sklep. Velká serifová typografie na tmavém plátně, vinný lístek filtrovaný podle oblasti a degustace jako vstupenky.',
+    image: 'references/sklipek.jpg',
+    url: 'koncepty/sklipek/index.html',
+    kind: 'concept',
+  },
+  {
+    title: 'Forno 400',
+    client: 'Pizzerie',
+    type: 'Web s rozvozem',
+    year: 2026,
+    description:
+      'Neapolská pizzerie. Kondenzované písmo, výrazná červená, menu s přepínáním velikosti a rozvozové zóny na jednom místě.',
+    image: 'references/forno.jpg',
+    url: 'koncepty/forno/index.html',
+    kind: 'concept',
+  },
+  {
+    title: 'Ranní ptáče',
+    client: 'Snídaňové bistro',
+    type: 'Web podniku',
+    year: 2026,
+    description:
+      'Bistro se snídaněmi celý den. Hravé tvary, živé barvy, menu filtrované na slané a sladké a víkendové akce.',
+    image: 'references/ranni-ptace.jpg',
+    url: 'koncepty/ranni-ptace/index.html',
+    kind: 'concept',
+  },
+  {
+    title: 'Pekárna Kvásek',
+    client: 'Řemeslná pekárna',
+    type: 'Web s předobjednávkou',
+    year: 2026,
+    description:
+      'Kvasová pekárna. Časová osa dnešní pece, která ukazuje, co se právě peče, a předobjednávka pečiva na ráno.',
+    image: 'references/kvasek.jpg',
+    url: 'koncepty/kvasek/index.html',
+    kind: 'concept',
+  },
+  {
     title: 'Pražírna Lampa',
     client: 'Pražírna kávy',
     type: 'Web s e-shopem',
