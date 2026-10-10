@@ -27,7 +27,6 @@ interface LegalSection {
  * - observability.enabled = true: Workers Logs store each /api/* request with
  *   its IP address, user agent and IP-based location. Retention: 3 days on
  *   Workers Free, 7 days on Workers Paid (Cloudflare docs, Workers Logs).
- *   The text describes hosting logs for every request (Dan, 2026-10-10).
  * - Resend keeps its own copy of each sent e-mail for a period it sets; the
  *   text does not promise to delete it.
  * Transfers (section 3): Cloudflare and Resend DPAs name the EU-US DPF and the
@@ -62,9 +61,9 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
           {
             h: 'b) Ochrana webu před zneužitím',
             list: [
-              'Údaje: IP adresa, typ prohlížeče a přibližná poloha odvozená z IP adresy (například země a město), a to při každém požadavku na web, tedy při zobrazení stránky i při odeslání formuláře.',
+              'Údaje: při odeslání formuláře vaše IP adresa, typ prohlížeče a přibližná poloha odvozená z IP adresy (například země a město).',
               'Podle IP adresy počítáme, kolikrát byl formulář odeslán (nejvýše pětkrát za minutu). Toto počítadlo vede jen datové centrum Cloudflare, které požadavek zpracovalo, a jinam ho neukládáme.',
-              'Tyto technické záznamy (logy) ukládá náš hosting Cloudflare a nejpozději po 7 dnech se samy smažou. Obsah formuláře na webu neukládáme, odchází e-mailem.',
+              'Tyto technické záznamy (logy) o odeslání formuláře ukládá náš hosting Cloudflare a nejpozději po 7 dnech se samy smažou. Obsah formuláře na webu neukládáme, odchází e-mailem.',
               'Účel: zabránit spamu a přetěžování formuláře.',
               'Právní základ: náš oprávněný zájem na bezpečném provozu webu (čl. 6 odst. 1 písm. f) GDPR).',
             ],
@@ -92,7 +91,7 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
         h: '3. Komu údaje předáváme',
         p: ['Údaje zpracovávají naši dodavatelé, kteří pro nás zajišťují provoz:'],
         list: [
-          'Cloudflare, Inc. (hosting a doručování webu, přes které prochází i odeslaný formulář, a měření návštěvnosti),',
+          'Cloudflare, Inc. (hosting a doručování webu, přes které prochází i odeslaný formulář, a měření návštěvnosti). Cloudflare jako hosting při doručování webu technicky zpracovává IP adresu každého návštěvníka.',
           'Resend, Inc. (odeslání poptávky e-mailem do naší schránky; kopie zprávy zůstává v jeho e-mailovém záznamu po dobu, kterou určuje Resend),',
           'Google LLC (Google Workspace, naše e-mailová schránka, kde poptávky čteme).',
         ],
