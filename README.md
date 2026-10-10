@@ -38,13 +38,15 @@ Novou položku katalogu přidáte tak, že do příslušného souboru připíše
 
 ## Odesílání poptávek
 
-Web je frontend a sám e-maily neposílá. Bez nastavení formulář nic nepředstírá: připraví text poptávky a nabídne návštěvníkovi otevřít ho ve vlastní poště nebo zkopírovat.
+Web běží na Cloudflare Workers (`wrangler.jsonc`). Stránky se servírují z `dist/`, jen adresy `/api/*` obsluhuje `worker/index.ts`. Formulář posílá poptávku na `/api/inquiry` a Worker ji přes Resend odešle na info@webtix.cz.
 
-Pro automatické odesílání nastavte proměnnou `VITE_INQUIRY_ENDPOINT` (viz `.env.example`):
+Nastavení:
 
-- **Netlify Function s Resend**: `netlify/functions/inquiry.mts` běží na adrese `/api/inquiry`. V Netlify (Site configuration → Environment variables) nastavte `RESEND_API_KEY`, `INQUIRY_FROM` (jen na serveru, nikdy s prefixem `VITE_`) a `VITE_INQUIRY_ENDPOINT=/api/inquiry`, pak spusťte nový deploy.
-- **Formspree**: vytvořte formulář s cílovým e-mailem info@webtix.cz a nastavte `VITE_INQUIRY_ENDPOINT=https://formspree.io/f/<id>`.
-- **Lokální test**: `VITE_INQUIRY_ENDPOINT=/api/dev-inquiry` v `.env.local`. Poptávka se jen vypíše do terminálu dev serveru.
+1. V Resend (resend.com → API Keys) vytvořte klíč s oprávněním *Sending access*.
+2. V Cloudflare (Workers & Pages → webtix → Settings → Variables and Secrets) přidejte **Secret** `RESEND_API_KEY` s tímto klíčem.
+3. Odesílatel je `INQUIRY_FROM` ve `wrangler.jsonc`. Musí být na doméně ověřené v Resend.
+
+Bez klíče Worker odpoví chybou a návštěvník uvidí výzvu napsat na info@webtix.cz. Při `npm run dev` Worker neběží, takže formulář nabídne otevřít poptávku ve vlastní poště; celý web i s Workerem lokálně spustíte `npm run build && npx wrangler dev` (klíč dejte do `.dev.vars`).
 
 Integrace je v `src/lib/sendInquiry.ts`, text e-mailu se skládá v `src/lib/inquiry.ts`.
 
