@@ -155,6 +155,36 @@
     text-wrap: wrap;
   }
 
+  /*
+   * Hero scroll scene (Hero.tsx). Heights in svh, with a vh fallback, so the
+   * phone address bar showing or hiding does not make the scene jump.
+   */
+  .h-screen-stable {
+    height: 100vh;
+    height: 100svh;
+  }
+
+  .h-scene {
+    height: 300vh;
+    height: 300svh;
+  }
+
+  /* Phone: the pink block (--h tall) pins centred while 150svh of scroll runs the wipe. */
+  .phone-scene {
+    height: calc(var(--h) + 150vh);
+    height: calc(var(--h) + 150svh);
+  }
+
+  .phone-scene-sticky {
+    top: max(0px, calc((100vh - var(--h)) / 2));
+    top: max(0px, calc((100svh - var(--h)) / 2));
+  }
+
+  /* Handwritten notes draw in one after another when the page opens. */
+  .note-in {
+    animation: note-in 450ms ease-out backwards;
+  }
+
   /* Page container below the hero: 1440 grid with 64px margins, 16px on phones. */
   .container-x {
     width: 100%;
@@ -181,6 +211,29 @@
     text-transform: uppercase;
     font-weight: 500;
   }
+}
+
+@keyframes note-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/*
+ * Hero nav over the terracotta panel (S2Siti, S3Po): cream links. Unlayered so
+ * it beats the links' text-ink utility. Hover goes ink, since the design's
+ * terracotta hover would vanish on terracotta.
+ */
+.hero-nav[data-dark] nav {
+  --focus: var(--color-cream);
+}
+
+.hero-nav[data-dark] nav a {
+  color: var(--color-cream);
+}
+
+.hero-nav[data-dark] nav a:hover {
+  color: var(--color-ink);
 }
 
 /* Everything is still for visitors who ask for less motion. */
