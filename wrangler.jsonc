@@ -13,7 +13,7 @@
   },
   "vars": {
     // Must be on a domain verified in Resend. RESEND_API_KEY is a secret set in the dashboard.
-    "INQUIRY_FROM": "WebTix <poptavky@danielsveda.cz>"
+    "INQUIRY_FROM": "WebTix <poptavky@webtix.cz>"
   },
   // At most 5 inquiries per minute from one IP address.
   "ratelimits": [
