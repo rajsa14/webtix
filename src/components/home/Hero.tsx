@@ -207,6 +207,12 @@ function DesktopScene({ fixed }: { fixed?: number }) {
       // Outer margin: 64px, and wider screens keep the 1440 content width centred.
       style={{ ['--edge' as string]: 'max(64px, calc(50cqw - 656px))' }}
     >
+      {/* First in the DOM so the keyboard reaches the header before the hero form; z-10 keeps it over the panel. */}
+      {show(1) && (
+        <div data-nav className="hero-nav absolute inset-x-[var(--edge)] top-0 z-10">
+          <Navbar variant="desktop" />
+        </div>
+      )}
       <div className="bg-paper pl-[var(--edge)] pt-[clamp(112px,18.667svh,168px)]">
         {/* The three states share one grid cell, in reading order. */}
         <div className="grid w-[min(620px,calc(50cqw-var(--edge)-36px))]">
@@ -357,12 +363,6 @@ function DesktopScene({ fixed }: { fixed?: number }) {
           </div>
         </div>
       </div>
-
-      {show(1) && (
-        <div data-nav className="hero-nav absolute inset-x-[var(--edge)] top-0">
-          <Navbar variant="desktop" />
-        </div>
-      )}
     </div>
   )
 
