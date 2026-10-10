@@ -3,32 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>WebTix — Weby podle vašich představ</title>
+    <title>Webtix — Weby podle vašich představ</title>
     <meta
       name="description"
-      content="Vyberte si styl, barvy, písmo a další prvky vašeho webu. WebTix z vaší představy vytvoří konkrétní návrh na míru."
+      content="Vyberte si styl, barvy, písmo a další prvky vašeho webu. Webtix z vaší představy vytvoří konkrétní návrh na míru."
     />
-    <meta name="theme-color" content="#efeee8" />
+    <meta name="theme-color" content="#F2F1EE" />
     <meta name="color-scheme" content="light" />
     <link rel="canonical" href="https://webtix.cz/" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="cs_CZ" />
-    <meta property="og:site_name" content="WebTix" />
-    <meta property="og:title" content="WebTix — Weby podle vašich představ" />
+    <meta property="og:site_name" content="Webtix" />
+    <meta property="og:title" content="Webtix — Weby podle vašich představ" />
     <meta
       property="og:description"
-      content="Vyberte si styl, barvy, písmo a další prvky vašeho webu. WebTix z vaší představy vytvoří konkrétní návrh na míru."
+      content="Vyberte si styl, barvy, písmo a další prvky vašeho webu. Webtix z vaší představy vytvoří konkrétní návrh na míru."
     />
     <meta property="og:url" content="https://webtix.cz/" />
     <meta property="og:image" content="https://webtix.cz/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="WebTix: weby podle vašich představ" />
+    <meta property="og:image:alt" content="Webtix: weby podle vašich představ" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://webtix.cz/og.png" />
 
@@ -36,7 +35,7 @@
       {
         "@context": "https://schema.org",
         "@type": "ProfessionalService",
-        "name": "WebTix",
+        "name": "Webtix",
         "description": "Malé kreativní webové studio. Weby podle vašich představ.",
         "url": "https://webtix.cz/",
         "image": "https://webtix.cz/og.png",
@@ -50,29 +49,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <!--
-      Blueprint of the inquiry form for Netlify Forms. Netlify reads it at
-      deploy time; the real form is rendered by React and posts the same fields.
-    -->
-    <form name="poptavka" data-netlify="true" netlify-honeypot="website" hidden>
-      <input name="subject" />
-      <input name="name" />
-      <input name="company" />
-      <input name="email" />
-      <input name="phone" />
-      <input name="webType" />
-      <input name="budget" />
-      <input name="deadline" />
-      <textarea name="design"></textarea>
-      <textarea name="message"></textarea>
-      <textarea name="inspiration"></textarea>
-      <input name="website" />
-    </form>
-    <noscript>
-      <p style="font-family: system-ui; padding: 24px; color: #121210; background: #efeee8">
-        WebTix potřebuje pro katalog zapnutý JavaScript. Napište nám na info@webtix.cz.
-      </p>
-    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

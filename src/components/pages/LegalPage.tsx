@@ -8,22 +8,22 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
 
   return (
     <>
-      <article className="container-x pb-16 pt-32 sm:pb-24 sm:pt-40">
-        <div className="mx-auto max-w-2xl">
-          <h1 className="text-[clamp(2.3rem,6vw,4rem)] font-semibold leading-[0.98] tracking-[-0.035em]">{title}</h1>
-          <p className="mt-6 text-lg leading-relaxed text-muted">{nb(intro)}</p>
+      <article className="container-x py-16 sm:py-24">
+        <div className="measure">
+          <h1 className="text-h1">{title}</h1>
+          <p className="mt-6 text-muted">{nb(intro)}</p>
 
           <div className="mt-12 grid gap-10">
             {sections.map((section) => (
               <section key={section.h}>
-                <h2 className="text-[1.35rem] font-semibold tracking-[-0.02em]">{section.h}</h2>
+                <h2 className="text-h3">{section.h}</h2>
                 {section.p.map((paragraph) => (
-                  <p key={paragraph} className="mt-3 leading-relaxed text-fg/85">
+                  <p key={paragraph} className="mt-3">
                     {nb(paragraph)}
                   </p>
                 ))}
                 {section.list && (
-                  <ul className="mt-3 grid list-disc gap-1.5 pl-5 leading-relaxed text-fg/85 marker:text-accent-soft">
+                  <ul className="mt-3 grid list-disc gap-1.5 pl-5 marker:text-brand-text">
                     {section.list.map((item) => (
                       <li key={item}>{nb(item)}</li>
                     ))}
@@ -33,7 +33,7 @@ export function LegalPage({ doc }: { doc: LegalDoc }) {
             ))}
           </div>
 
-          <p className="mt-12 border-t border-line pt-6 text-[14px] text-muted">Poslední aktualizace: {LEGAL_UPDATED}</p>
+          <p className="mt-12 border-t border-line pt-6 text-small text-muted">Poslední aktualizace: {LEGAL_UPDATED}</p>
         </div>
       </article>
     </>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Hero 3, po</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,700;1,700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Caveat:wght@500;700&amp;family=Archivo:wdth,wght@62..125,500..900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#161110}a:hover{color:#B4472A}
+*{box-sizing:border-box}
+.hand{font-family:'Caveat',cursive;color:#F6EFE5;font-weight:700;font-size:26px;line-height:1.05;margin:0;position:absolute}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.04em;text-transform:uppercase}
+</style>
+</helmet>
+<div style="width:1440px;height:900px;background:#F2F1EE;color:#161110;font-family:'Instrument Sans','Helvetica Neue',Arial,sans-serif;position:relative;overflow:hidden">
+
+<div aria-hidden="true" style="position:absolute;left:720px;top:0;right:0;bottom:0;background:#B4472A"></div>
+
+<header style="position:absolute;left:64px;right:64px;top:0;height:88px;display:flex;align-items:center;justify-content:space-between">
+<img src="/brand/wordmark/webtix-wordmark-ink.svg" alt="webtix" style="height:28px;width:auto;display:block">
+<nav class="mono" aria-label="Hlavní" style="display:flex;gap:32px">
+<a href="#" style="text-decoration:none;color:#F6EFE5">Jak to děláme</a>
+<a href="#" style="text-decoration:none;color:#F6EFE5">Návrhy</a>
+<a href="#" style="text-decoration:none;color:#F6EFE5">Kdo jsme</a>
+<a href="#" style="text-decoration:none;color:#F6EFE5">Kontakt</a>
+</nav>
+</header>
+
+<div style="position:absolute;left:64px;top:204px;width:620px;display:flex;flex-direction:column">
+<h2 style="margin:0 0 32px;font-size:80px;line-height:0.92;font-weight:700;letter-spacing:-0.04em">Stejný podnik. <em style="font-style:italic;color:#B4472A">Nový</em> web.</h2>
+<p style="margin:0 0 40px;font-size:20px;line-height:30px;color:#4A433E;width:500px">Takhle může vypadat i ten váš. Návrh uvidíte dřív, než cokoli zaplatíte.</p>
+<div style="display:flex;gap:8px;width:520px">
+<label for="s3-site" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Váš web nebo Instagram</label>
+<input id="s3-site" type="text" placeholder="Váš web nebo @instagram" style="flex:1;min-width:0;background:#FFFFFF;border:1px solid #161110;border-radius:8px;color:#161110;font-family:inherit;font-size:17px;padding:16px">
+<button type="button" style="background:#161110;color:#F2F1EE;border:0;border-radius:8px;font-family:inherit;font-size:16px;font-weight:500;padding:0 24px;cursor:pointer">Chci návrh</button>
+</div>
+</div>
+
+<div style="position:absolute;left:880px;top:104px;width:360px;height:740px;border:10px solid #161110;border-radius:44px;overflow:hidden;background:#FFD23F;box-shadow:0 30px 60px -30px rgba(22,17,16,0.5)">
+<dc-import name="ShopAfter" hint-size="340px,709px"></dc-import>
+</div>
+
+<svg aria-hidden="true" width="1440" height="900" viewBox="0 0 1440 900" style="position:absolute;inset:0;pointer-events:none">
+<g fill="none" stroke="#F6EFE5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<path d="M868 196 C 880 194, 890 194, 900 194"/>
+<path d="M888 186 L 901 194 L 888 202"/>
+<path d="M868 330 C 880 330, 892 330, 904 330"/>
+<path d="M892 322 L 905 330 L 892 338"/>
+<path d="M1268 512 C 1250 510, 1234 508, 1218 506"/>
+<path d="M1230 498 L 1217 506 L 1229 514"/>
+<path d="M1268 712 C 1250 712, 1234 712, 1218 712"/>
+<path d="M1230 704 L 1217 712 L 1230 720"/>
+</g>
+</svg>
+
+<p class="hand" style="left:744px;top:164px;width:124px;transform:rotate(-2deg)">Otevřeno? Hned vidíte.</p>
+<p class="hand" style="left:744px;top:300px;width:124px;transform:rotate(-2deg)">Slib místo „tradice“.</p>
+<p class="hand" style="left:1272px;top:476px;width:156px;transform:rotate(2deg)">Objednávka jedním tlačítkem.</p>
+<p class="hand" style="left:1272px;top:684px;width:156px;transform:rotate(2deg)">Ceník rovnou na stránce.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

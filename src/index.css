@@ -1,239 +1,176 @@
 @import 'tailwindcss';
 
 /*
- * WebTix design tokens
- * Radius rule: cards 20px, inner surfaces 12px, every interactive button is a pill.
- * Z-index scale: nav 40, selection button 45, drawer 50, menu 55, toasts 60.
+ * Webtix tokens, from docs/design/README.md (the approved design).
+ * Light only: dark areas (Skutečný návrh) are sections with an ink ground, not a theme.
+ * Radius 8 on buttons, inputs and scene cards; 12 on the form card.
+ * No gradients. The only shadow is under the hero phone.
  */
 @theme {
-  --font-display: 'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'Geist Mono Variable', ui-monospace, monospace;
+  --font-sans: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-hand: 'Caveat', cursive;
+  --font-archivo: 'Archivo Variable', 'Archivo', sans-serif;
 
-  /* Paper and ink. Names kept from the old dark theme: ink-950 is the page, ink-900 a card, 800 an inner surface. */
-  --color-ink-950: #efeee8;
-  --color-ink-900: #f8f7f3;
-  --color-ink-850: #e7e6de;
-  --color-ink-800: #dfded5;
-  --color-ink-700: #d1d0c6;
-  --color-fg: #121210;
-  --color-muted: #5d5d56;
-  --color-faint: #8a8a82;
-  --color-line: rgb(18 18 16 / 0.12);
-  --color-line-strong: rgb(18 18 16 / 0.24);
-  /* One loud color, used sparingly: electric blue from the logo. */
-  --color-accent: #2433ff;
-  --color-accent-strong: #1b29e6;
-  --color-accent-soft: #2433ff;
-  --color-accent-tint: #e4e6ff;
-  --color-danger: #d23a26;
-  --color-success: #1d8a52;
+  --color-*: initial;
+  --color-paper: #f2f1ee;
+  --color-ink: #161110;
+  --color-ink-soft: #4a433e;
+  --color-muted: #6b625c;
+  --color-placeholder: #e4e0da;
+  --color-terracotta: #b4472a;
+  --color-pen: #9b2c1f;
+  --color-pink: #f4b6c8;
+  --color-cream: #f6efe5;
+  --color-white: #ffffff;
+  --color-transparent: transparent;
+  --color-current: currentColor;
 
-  --radius-card: 24px;
-  --radius-inner: 12px;
+  /*
+   * Legacy names used by the pages that are rebuilt in step 6 (form, footer,
+   * thank-you, legal, 404, dialog, cookie banner). They point at the new
+   * palette so those pages stay readable until then. Do not use in new code.
+   */
+  --color-surface: #f2f1ee;
+  --color-surface-raised: #ffffff;
+  --color-brand: #b4472a;
+  --color-on-brand: #f6efe5;
+  --color-brand-text: #b4472a;
+  --color-line: #ddd0c0;
+  --color-control-border: #161110;
+  --color-error: #9b2c1f;
 
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Type scale (desktop / phone), from the design README. */
+  --text-hero: 5rem;
+  --text-hero--line-height: 0.92;
+  --text-hero--letter-spacing: -0.04em;
+  --text-hero-m: 2.75rem;
+  --text-hero-m--line-height: 0.94;
+  --text-hero-m--letter-spacing: -0.035em;
+  --text-h2: 4rem;
+  --text-h2--line-height: 0.95;
+  --text-h2--letter-spacing: -0.035em;
+  --text-h2-m: 2.5rem;
+  --text-h2-m--line-height: 0.95;
+  --text-h2-m--letter-spacing: -0.035em;
+  --text-h3: 1.75rem;
+  --text-h3--line-height: 2rem;
+  --text-h3-m: 1.375rem;
+  --text-h3-m--line-height: 1.75rem;
+  --text-lead: 1.25rem;
+  --text-lead--line-height: 1.875rem;
+  --text-body: 1.125rem;
+  --text-body--line-height: 1.75rem;
+  --text-body-m: 1rem;
+  --text-body-m--line-height: 1.5rem;
+  --text-meta: 0.9375rem;
+  --text-meta--line-height: 1.375rem;
+  --text-meta-m: 0.875rem;
+  --text-meta-m--line-height: 1.25rem;
+  /* Legacy sizes, see the note above. */
+  --text-display: 4.5rem;
+  --text-display--line-height: 4.5rem;
+  --text-h1: 3rem;
+  --text-h1--line-height: 3.25rem;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.25rem;
+
+  --radius-input: 8px;
+  --radius-card: 8px;
+  --radius-form: 12px;
 }
 
 @layer base {
   html {
     color-scheme: light;
+    line-height: normal;
     -webkit-text-size-adjust: 100%;
-    scroll-padding-top: 88px;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    html {
-      scroll-behavior: smooth;
-    }
   }
 
   body {
-    background: var(--color-ink-950);
-    color: var(--color-fg);
+    background: var(--color-paper);
+    color: var(--color-ink);
     font-family: var(--font-sans);
-    font-feature-settings: 'ss01';
+    /* The design files use the browser default line height; Tailwind's base sets 1.5. */
+    line-height: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: clip;
-    text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    background: var(--color-accent);
-    color: #fff;
+    background: var(--color-terracotta);
+    color: var(--color-cream);
   }
 
+  /* Visible focus everywhere: 2px solid, ink on light grounds. Dark grounds set --focus to cream. */
   :focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-    border-radius: 6px;
+    outline: 2px solid var(--focus, var(--color-ink));
+    outline-offset: 2px;
   }
 
   h1,
   h2,
-  h3,
-  h4 {
-    font-family: var(--font-display);
-    text-wrap: balance;
+  h3 {
+    font-weight: 700;
   }
 
   p {
     text-wrap: pretty;
   }
 
-  img {
-    color: transparent;
+  a {
+    color: inherit;
   }
 }
 
 @layer components {
+  /* Eyebrow labels and nav: JetBrains Mono 12px (11px on phones), uppercase, +0.04em. */
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* Handwritten notes on the pink panel. */
+  .hand {
+    font-family: var(--font-hand);
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--color-pen);
+    margin: 0;
+  }
+
+  /* Page container below the hero: 1440 grid with 64px margins, 16px on phones. */
   .container-x {
     width: 100%;
-    max-width: 1320px;
+    max-width: 1440px;
     margin-inline: auto;
     padding-inline: 16px;
   }
 
-  @media (min-width: 640px) {
-    .container-x {
-      padding-inline: 28px;
-    }
-  }
-
   @media (min-width: 1024px) {
     .container-x {
-      padding-inline: 40px;
+      padding-inline: 64px;
     }
   }
 
-  .hairline-top {
-    background-image: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.14), transparent);
-    background-size: 100% 1px;
-    background-repeat: no-repeat;
+  /* Legacy helpers, see the note in @theme. */
+  .measure {
+    max-width: 65ch;
   }
 
-  /*
-   * Catalog button samples. Colors come from CSS variables so the same
-   * styles render in the catalog (WebTix colors) and in the live preview
-   * (the client's palette).
-   */
-  .wbtn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-    padding: 0.8em 1.4em;
-    border-radius: var(--b-radius);
-    font-weight: 600;
-    line-height: 1;
-    white-space: nowrap;
-    transition:
-      transform 0.3s var(--ease-out-expo),
-      background-color 0.3s,
-      background-position 0.6s var(--ease-out-expo),
-      box-shadow 0.3s var(--ease-out-expo),
-      color 0.3s,
-      filter 0.3s;
-  }
-
-  .wbtn[data-upper] {
+  .label {
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    letter-spacing: 0.09em;
-    font-size: 0.86em;
-    padding: 0.95em 1.6em;
-  }
-
-  .wbtn--filled {
-    background: var(--b-accent);
-    color: var(--b-on);
-  }
-
-  .wbtn--filled[data-shadow] {
-    box-shadow: 0 0.55em 1.3em -0.45em color-mix(in srgb, var(--b-accent) 75%, transparent);
-  }
-
-  .wbtn--outline {
-    box-shadow: inset 0 0 0 1.5px var(--b-text);
-    color: var(--b-text);
-  }
-
-  .wbtn--link {
-    padding: 0.2em 0 0.45em;
-    border-radius: 0;
-    color: var(--b-text);
-    box-shadow: inset 0 -1.5px 0 currentColor;
-  }
-
-  .wbtn--gradient {
-    background-image: linear-gradient(110deg, var(--b-accent), var(--b-accent2), var(--b-accent));
-    background-size: 220% 100%;
-    color: var(--b-on);
-  }
-
-  .wbtn--soft {
-    background: color-mix(in srgb, var(--b-accent) 20%, transparent);
-    color: var(--b-soft-text, var(--b-accent));
-  }
-
-  .wbtn--brutal {
-    background: var(--b-accent);
-    color: var(--b-on);
-    box-shadow:
-      inset 0 0 0 2px var(--b-text),
-      0.28em 0.28em 0 var(--b-text);
-  }
-
-  .wbtn-host:hover .wbtn--filled {
-    transform: translateY(-2px);
-    filter: brightness(1.1);
-  }
-
-  .wbtn-host:hover .wbtn--outline {
-    background: var(--b-text);
-    color: var(--b-bg, #efeee8);
-  }
-
-  .wbtn-host:hover .wbtn--link .wbtn-arrow {
-    transform: translateX(4px);
-  }
-
-  .wbtn-host:hover .wbtn--gradient {
-    background-position: 100% 0;
-  }
-
-  .wbtn-host:hover .wbtn--soft {
-    background: color-mix(in srgb, var(--b-accent) 32%, transparent);
-  }
-
-  .wbtn-host:hover .wbtn--brutal {
-    transform: translate(0.14em, 0.14em);
-    box-shadow:
-      inset 0 0 0 2px var(--b-text),
-      0.14em 0.14em 0 var(--b-text);
-  }
-
-  .wbtn-arrow {
-    transition: transform 0.3s var(--ease-out-expo);
-  }
-
-  /* Huge display type used for section titles. */
-  .display-xl {
-    font-family: var(--font-display);
-    font-weight: 800;
-    letter-spacing: -0.055em;
-    line-height: 0.92;
-    font-size: clamp(2.9rem, 8.4vw, 7.6rem);
-  }
-
-  .no-scrollbar {
-    scrollbar-width: none;
-  }
-
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
+    font-weight: 500;
   }
 }
 
+/* Everything is still for visitors who ask for less motion. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -241,12 +178,6 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-}
-
-@media (prefers-reduced-transparency: reduce) {
-  .glass-fallback {
-    backdrop-filter: none !important;
-    background: var(--color-ink-900) !important;
+    scroll-behavior: auto !important;
   }
 }

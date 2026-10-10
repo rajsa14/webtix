@@ -1,7 +1,7 @@
 import { create } from 'zustand'
-import { onConsentChange } from '../lib/analytics'
+import { CONSENT_NEEDED } from '../data/site'
 
-/** 'all' also allows the visitor id used for counting returning visitors. */
+/** 'all' allows the optional tracking the banner asks about; 'necessary' declines it. */
 export type Consent = 'all' | 'necessary'
 
 const KEY = 'webtix-souhlas'
@@ -22,18 +22,16 @@ interface ConsentState {
   openBanner: () => void
 }
 
-export const useConsent = create<ConsentState>((set, get) => ({
+export const useConsent = create<ConsentState>((set) => ({
   consent: stored(),
-  bannerOpen: stored() === null,
+  bannerOpen: CONSENT_NEEDED && stored() === null,
   decide: (consent) => {
-    const changed = consent !== get().consent
     try {
       localStorage.setItem(KEY, consent)
     } catch {
       // Private mode: the choice lasts for this visit only.
     }
     set({ consent, bannerOpen: false })
-    if (changed) onConsentChange(consent)
   },
-  openBanner: () => set({ bannerOpen: true }),
+  openBanner: () => set({ bannerOpen: CONSENT_NEEDED }),
 }))

@@ -1,0 +1,50 @@
+# Webtix logo: usage
+
+## The pieces
+- **Wordmark (master)**: "webtix" in Instrument Sans Bold (tracking −12) with a stitched x made of five squares that touch at the corners. Use it from 32 px tall.
+- **Wordmark (small cut)**: the same mark with each corner joint filled by a ¼-module square. Use it from 16 to 31 px tall (email signatures, small headers).
+- **x icon**: the five joined stitches on their own. Used for the favicon, app icon and avatar.
+- **Otevřeno sign**: a secondary brand picture. It never replaces the logo.
+
+## Construction
+- Module = x-height ÷ 3 = 170 font units (of 1000).
+- The stitched x runs exactly from baseline to x-height, with no overshoot.
+- The x starts where the font's own x ink would start; the i–x gap is 52 units.
+
+## Colour (palette B · Střechy)
+| Role | Hex | Use |
+|---|---|---|
+| Terracotta | #B4472A | primary, logo ground, links on cream (4.75:1) |
+| Pink | #F4B6C8 | accent surfaces only, with ink text (10.0:1); never as text |
+| Cream | #F6EFE5 | page ground, logo on terracotta (4.75:1) |
+| Ink | #241A16 | text (14.9:1 on cream) |
+| Grey | #6E625B | secondary text (5.2:1 on cream) |
+
+## Minimum size
+- Master: ≥ 32 px tall on screen, ≥ 25 mm wide in print.
+- Small cut: 16–31 px tall, 15–25 mm wide.
+- Below 16 px: use the x icon or the plain word "Webtix".
+- Otevřeno sign: ≥ 120 px / 30 mm wide, master cut only.
+- The print sizes are estimates, so check a proof print first.
+
+## Clear space
+One x-height on every side of the wordmark.
+
+## Don't
+- Stretch, squash, rotate or skew it.
+- Recolour individual stitches. The x is always one colour with "webti".
+- Add shadows, outlines, gradients, glows or 3D.
+- Place it on low-contrast grounds (for example, cream on pink is 1.5:1).
+- Retype it in another font, or with a normal x.
+- Use the master below 32 px.
+- Use the Otevřeno sign as the favicon or avatar, or without the wordmark appearing on the same surface.
+
+## Favicon in <head>
+```html
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+```
+
+## Font
+Instrument Sans (SIL Open Font License), free on Google Fonts. All text in the SVG files is outlined, so you don't need the font to open them.

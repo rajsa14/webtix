@@ -34,6 +34,7 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
         list: [
           'jméno a název firmy',
           'e-mail a telefon (telefon jen pokud ho uvedete)',
+          'adresu vašeho webu nebo profilu na Instagramu, pokud ji vyplníte. Podíváme se jen na to, co je na ní veřejně, abychom vám mohli připravit návrh.',
           'informace o projektu, rozpočet, termín a odkazy na inspiraci',
           'váš výběr z katalogu',
         ],
@@ -124,7 +125,7 @@ export const LEGAL: Record<LegalDoc, { title: string; intro: string; sections: L
       {
         h: 'Obsah webu',
         p: [
-          'Texty, grafika a kód tohoto webu patří WebTix. Bez našeho souhlasu je prosím nekopírujte.',
+          'Texty, grafika a kód tohoto webu patří Webtix. Bez našeho souhlasu je prosím nekopírujte.',
         ],
       },
       {

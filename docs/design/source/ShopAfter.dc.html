@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Šlapadlo, nový web</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width:340px;height:709px;background:#FFD23F;color:#121212;font-family:'Archivo','Arial Narrow',Arial,sans-serif;overflow:hidden;position:relative">
+<div style="height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:#121212;color:#FFD23F">
+<span style="font-size:20px;font-weight:900;font-stretch:125%;letter-spacing:-0.02em">šlapadlo</span>
+<span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#FFFFFF">Servis kol · Praha 7</span>
+</div>
+<div style="padding:16px 16px 0;display:flex;flex-direction:column;gap:12px">
+<span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:#121212;color:#FFFFFF;font-size:12px;font-weight:700;padding:6px 10px;border-radius:999px"><span style="width:8px;height:8px;border-radius:50%;background:#3DDC84"></span>Otevřeno · do 18:00</span>
+<p style="margin:0;font-size:58px;line-height:0.86;font-weight:900;font-stretch:72%;letter-spacing:-0.02em;text-transform:uppercase">Kolo zpátky na silnici do 48 hodin.</p>
+<p style="margin:0;font-size:15px;line-height:21px;font-weight:500">Přivezte kolo ráno, vyzvedněte si ho pozítří. Cenu víte předem.</p>
+<div style="display:flex;gap:8px">
+<a href="#" style="flex:1;text-align:center;background:#121212;color:#FFD23F;text-decoration:none;font-size:15px;font-weight:800;padding:14px 8px;border-radius:10px">Objednat servis</a>
+<a href="#" style="text-align:center;background:#FFFFFF;color:#121212;text-decoration:none;font-size:15px;font-weight:800;padding:14px 14px;border-radius:10px">Zavolat</a>
+</div>
+</div>
+<div style="position:absolute;left:0;right:0;bottom:0;background:#FFFFFF;border-radius:20px 20px 0 0;padding:16px 16px 18px;display:flex;flex-direction:column;gap:0">
+<p style="margin:0 0 6px;font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#6B6B6B">Ceník</p>
+<div style="display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid #E6E6E6;font-size:16px;font-weight:700"><span>Seřízení brzd</span><span>290 Kč</span></div>
+<div style="display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid #E6E6E6;font-size:16px;font-weight:700"><span>Výměna duše</span><span>190 Kč</span></div>
+<div style="display:flex;justify-content:space-between;padding:9px 0;border-top:1px solid #E6E6E6;font-size:16px;font-weight:700"><span>Velký servis</span><span>1 490 Kč</span></div>
+<a href="#" style="margin-top:8px;font-size:14px;font-weight:700;color:#121212">Dělnická 12, Praha 7 · mapa ↗</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":340,"height":709}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

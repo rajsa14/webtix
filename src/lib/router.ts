@@ -1,6 +1,4 @@
 import { useSyncExternalStore } from 'react'
-import { useConsent } from '../store/consent'
-import { trackPageView } from './analytics'
 
 /*
  * A page is an address; ordinary <a href="/katalog"> links switch pages without
@@ -31,7 +29,6 @@ export function navigate(to: string) {
     if (offline) window.location.hash = pathname
     else window.history.pushState(null, '', to)
     sync()
-    trackPageView(useConsent.getState().consent)
   }
   // Wait for the new page to render before scrolling.
   window.setTimeout(() => {
@@ -52,8 +49,8 @@ export function usePath() {
   )
 }
 
-/** Links to pages, not to files (/og.png), concept pages or the API. */
-const PAGE_LINK = /^\/(?!koncepty\/|references\/|api\/)[^.]*$/
+/** Links to pages, not to files (/og.png), brand or reference images, or the API. */
+const PAGE_LINK = /^\/(?!brand\/|references\/|api\/)[^.]*$/
 
 window.addEventListener('popstate', sync)
 window.addEventListener('hashchange', sync)

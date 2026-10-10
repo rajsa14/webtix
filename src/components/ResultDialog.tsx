@@ -1,14 +1,10 @@
-import { CopyIcon, EnvelopeSimpleIcon, XIcon } from '@phosphor-icons/react'
-import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { SITE } from '../data/site'
 import { useEscape, useFocusTrap, useScrollLock } from '../lib/hooks'
 import type { InquiryPayload } from '../lib/inquiry'
 import { mailtoHref } from '../lib/sendInquiry'
 import { nb } from '../lib/text'
-import { useUi } from '../store/ui'
 import { CtaButton } from './Cta'
-import { EASE } from './Reveal'
 
 /** Sent inquiries go to their own page; this dialog only covers sending that is not set up. */
 export type InquiryResult = { type: 'not-configured'; payload: InquiryPayload }
@@ -24,96 +20,74 @@ export function ResultDialog({ result, onClose }: { result: InquiryResult | null
     if (open) ref.current?.querySelector<HTMLElement>('[data-autofocus]')?.focus()
   }, [open])
 
-  return (
-    <AnimatePresence>
-      {result && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[58] grid place-items-center overflow-y-auto bg-ink-950/80 p-4 backdrop-blur-md"
-        >
-          <motion.div
-            ref={ref}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="result-title"
-            initial={{ opacity: 0, y: 30, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.98 }}
-            transition={{ duration: 0.6, ease: EASE }}
-            className="relative w-full max-w-lg overflow-hidden rounded-card border border-line-strong bg-ink-900 p-7 text-center shadow-[0_40px_100px_-30px_rgb(17_17_16/0.22)] sm:p-10"
-          >
-            <NotConfigured payload={result.payload} onClose={onClose} />
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  )
-}
+  if (!result) return null
 
-function Badge({ children }: { children: ReactNode }) {
   return (
-    <motion.span
-      initial={{ scale: 0.3, rotate: -20, opacity: 0 }}
-      animate={{ scale: 1, rotate: 0, opacity: 1 }}
-      transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.15 }}
-      className="relative mx-auto grid size-16 place-items-center rounded-full bg-accent-strong text-white "
-    >
-      {children}
-    </motion.span>
+    <div className="fixed inset-0 z-[58] grid place-items-center overflow-y-auto bg-ink/60 p-4">
+      <div
+        ref={ref}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="result-title"
+        className="relative w-full max-w-lg rounded-card border border-line bg-surface-raised p-6 sm:p-8"
+      >
+        <NotConfigured payload={result.payload} onClose={onClose} />
+      </div>
+    </div>
   )
 }
 
 function NotConfigured({ payload, onClose }: { payload: InquiryPayload; onClose: () => void }) {
-  const toast = useUi((s) => s.toast)
+  const [copy, setCopy] = useState<'idle' | 'done' | 'failed'>('idle')
 
-  const copy = async () => {
+  const copyText = async () => {
     try {
       await navigator.clipboard.writeText(`${payload.subject}\n\n${payload.text}`)
-      toast('Text poptávky je zkopírovaný')
+      setCopy('done')
     } catch {
-      toast('Kopírování se nepovedlo. Označte text ručně.', 'error')
+      setCopy('failed')
     }
   }
 
   return (
-    <div className="relative text-left">
+    <div>
       <button
         type="button"
         onClick={onClose}
         aria-label="Zavřít"
-        className="absolute -right-2 -top-2 grid size-10 place-items-center rounded-full text-muted transition-colors hover:bg-fg/[0.06] hover:text-fg"
+        className="absolute right-3 top-3 grid size-10 place-items-center rounded-card text-muted hover:text-ink"
       >
-        <XIcon size={18} />
+        <svg viewBox="0 0 16 16" aria-hidden="true" className="size-4" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M3 3l10 10M13 3L3 13" />
+        </svg>
       </button>
-      <Badge>
-        <EnvelopeSimpleIcon size={30} weight="fill" />
-      </Badge>
-      <h2 id="result-title" className="mt-7 text-center text-[1.8rem] font-semibold leading-tight tracking-[-0.03em]">
+      <h2 id="result-title" className="text-h3">
         Poptávka je připravená
       </h2>
-      <p className="mx-auto mt-3 max-w-md text-center leading-relaxed text-muted">
+      <p className="mt-3 text-muted">
         {nb(
           `Odesílání přímo z webu zatím není zapojené, proto vaše zpráva ještě neodešla. Otevřete připravený e-mail ve své poště, nebo text zkopírujte a pošlete na ${SITE.email}.`,
         )}
       </p>
-      <pre className="mt-6 max-h-44 overflow-auto whitespace-pre-wrap rounded-[12px] border border-line bg-ink-950 p-4 font-mono text-[12px] leading-relaxed text-muted">
+      <pre className="mt-6 max-h-44 overflow-auto whitespace-pre-wrap rounded-input border border-line bg-surface p-4 text-small text-muted">
         {payload.text}
       </pre>
-      <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
+      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
         <a
           data-autofocus
           href={mailtoHref(payload)}
-          className="inline-flex h-13 flex-1 items-center justify-center gap-2 rounded-full bg-accent-strong px-5 font-medium text-white transition-colors hover:bg-accent"
+          className="inline-flex h-12 flex-1 items-center justify-center rounded-card bg-brand px-5 font-semibold text-on-brand hover:bg-ink hover:text-surface"
         >
-          <EnvelopeSimpleIcon size={18} />
           Otevřít v e-mailu
         </a>
-        <CtaButton variant="secondary" size="lg" onClick={copy} icon={<CopyIcon size={18} />} className="flex-1">
+        <CtaButton variant="secondary" size="lg" onClick={copyText} className="flex-1">
           Zkopírovat text
         </CtaButton>
       </div>
+      <p aria-live="polite" className="mt-3 min-h-5 text-small text-muted">
+        {copy === 'done' && 'Text poptávky je zkopírovaný.'}
+        {copy === 'failed' && <span className="text-error">Chyba: kopírování se nepovedlo. Označte text ručně.</span>}
+      </p>
     </div>
   )
 }

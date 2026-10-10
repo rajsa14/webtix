@@ -1,164 +1,83 @@
-import { ListIcon, XIcon } from '@phosphor-icons/react'
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { NAV_LINKS, PAGES, SITE } from '../data/site'
-import { useEscape, useFocusTrap, useScrollLock } from '../lib/hooks'
-import { usePath } from '../lib/router'
+import { useEscape } from '../lib/hooks'
 import { cx } from '../lib/text'
-import { CtaLink } from './Cta'
-import { Logo } from './Logo'
-import { EASE } from './Reveal'
+import { Wordmark } from './Wordmark'
 
-export function Navbar() {
-  const active = usePath()
-  const [scrolled, setScrolled] = useState(false)
+/**
+ * Site header from the design (S1Pred / S1Mobile).
+ * Desktop: 88px tall, 64px margins, wordmark 28px, mono nav with 32px gaps.
+ * Phone: 60px tall, 16px margins, wordmark 22px, a two-line menu button.
+ * On the homepage the hero places it; elsewhere it sits on the paper ground.
+ */
+export function Navbar({ variant, className }: { variant: 'desktop' | 'phone'; className?: string }) {
+  if (variant === 'desktop') {
+    return (
+      <header className={cx('flex h-[88px] items-center justify-between', className)}>
+        <a href={PAGES.home} aria-label={`${SITE.name}, úvodní stránka`}>
+          <Wordmark height={28} />
+        </a>
+        <nav aria-label="Hlavní" className="mono flex gap-8">
+          {NAV_LINKS.map((link) => (
+            <a key={link.href} href={link.href} className="text-ink no-underline hover:text-terracotta">
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </header>
+    )
+  }
+  return <PhoneHeader className={className} />
+}
+
+function PhoneHeader({ className }: { className?: string }) {
   const [open, setOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
+  const close = useCallback(() => setOpen(false), [])
   const toggleRef = useRef<HTMLButtonElement>(null)
-  const { scrollY } = useScroll()
-
-  useMotionValueEvent(scrollY, 'change', (y) => {
-    const next = y > 24
-    if (next !== scrolled) setScrolled(next)
+  useEscape(open, () => {
+    close()
+    toggleRef.current?.focus()
   })
 
-  const close = useCallback(() => setOpen(false), [])
-  useScrollLock(open)
-  useEscape(open, close)
-  useFocusTrap(open, menuRef)
-
-  const wasOpen = useRef(false)
-  useEffect(() => {
-    if (open) {
-      wasOpen.current = true
-      menuRef.current?.querySelector<HTMLElement>('a')?.focus()
-    } else if (wasOpen.current) {
-      wasOpen.current = false
-      toggleRef.current?.focus({ preventScroll: true })
-    }
-  }, [open])
-
-  // Close the mobile menu when resizing up to desktop.
+  // Close the menu if the screen grows to the desktop layout.
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 1024px)')
-    const onChange = () => mq.matches && setOpen(false)
+    const onChange = () => mq.matches && close()
     mq.addEventListener('change', onChange)
     return () => mq.removeEventListener('change', onChange)
-  }, [])
+  }, [close])
 
   return (
-    <header
-      className={cx(
-        'fixed inset-x-0 top-0 z-40 border-b transition-[background-color,border-color] duration-500',
-        scrolled || open ? 'border-line bg-ink-950/92 backdrop-blur-md' : 'border-transparent bg-transparent',
-      )}
-    >
-      <motion.nav
-        aria-label="Hlavní navigace"
-        initial={{ y: -24, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
-        className="container-x flex h-16 items-center justify-between"
-      >
-        <a href={PAGES.home} className="shrink-0 rounded-full" aria-label={`${SITE.name}, úvodní stránka`}>
-          <Logo />
+    <header className={cx('relative', className)}>
+      <div className="flex h-[60px] items-center justify-between px-4">
+        <a href={PAGES.home} aria-label={`${SITE.name}, úvodní stránka`}>
+          <Wordmark height={22} />
         </a>
-
-        <ul className="hidden items-center gap-1 lg:flex">
-          {NAV_LINKS.map((link) => {
-            const isActive = active === link.href
-            return (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={cx(
-                    'relative flex items-center gap-2 px-3.5 py-2 font-mono text-[12.5px] uppercase tracking-[0.1em] transition-colors duration-300',
-                    isActive ? 'text-fg' : 'text-muted hover:text-fg',
-                  )}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-pill"
-                      className="absolute left-0.5 top-1/2 size-1.5 -translate-y-1/2 rounded-full bg-accent"
-                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                    />
-                  )}
-                  <span className="relative">{link.label}</span>
-                </a>
-              </li>
-            )
-          })}
-        </ul>
-
-        <div className="flex items-center gap-2">
-          <span className="hidden sm:block">
-            <CtaLink href={PAGES.catalog} arrow className="h-11 px-5 text-[14px]">
-              Vytvořit výběr
-            </CtaLink>
-          </span>
-          <button
-            ref={toggleRef}
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            aria-label={open ? 'Zavřít menu' : 'Otevřít menu'}
-            className="grid size-11 place-items-center rounded-full border border-fg text-fg transition-colors hover:bg-fg hover:text-ink-950 lg:hidden"
-          >
-            {open ? <XIcon size={22} /> : <ListIcon size={22} />}
-          </button>
-        </div>
-      </motion.nav>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            id="mobile-menu"
-            ref={menuRef}
-            role="dialog"
-            aria-modal="true"
-            aria-label="Menu"
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35, ease: EASE }}
-            className="fixed inset-x-0 top-16 z-[55] flex max-h-[calc(100dvh-4rem)] flex-col overflow-y-auto border-b border-fg bg-ink-950 p-3 lg:hidden"
-          >
-            <ul>
-              {NAV_LINKS.map((link, i) => (
-                <motion.li
-                  key={link.href}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.04 * i + 0.05, duration: 0.4, ease: EASE }}
-                >
-                  <a
-                    href={link.href}
-                    onClick={close}
-                    aria-current={active === link.href ? 'page' : undefined}
-                    className={cx(
-                      'flex items-center justify-between rounded-[14px] px-4 py-3 font-display text-[2.4rem] font-extrabold leading-none tracking-[-0.05em] transition-colors',
-                      active === link.href ? 'text-accent' : 'text-fg hover:text-accent',
-                    )}
-                  >
-                    {link.label}
-                    <span className="font-mono text-xs text-muted">0{i + 1}</span>
-                  </a>
-                </motion.li>
-              ))}
-            </ul>
-            <div className="mt-3 grid gap-3 border-t border-line p-2 pt-4">
-              <CtaLink href={PAGES.catalog} arrow size="lg" onClick={close} className="w-full">
-                Vytvořit výběr
-              </CtaLink>
-              <a href={`mailto:${SITE.email}`} className="py-2 text-center text-sm text-muted hover:text-fg">
-                {SITE.email}
+        <button
+          ref={toggleRef}
+          type="button"
+          aria-label="Menu"
+          aria-expanded={open}
+          aria-controls="menu-telefon"
+          onClick={() => setOpen((v) => !v)}
+          className="flex size-11 cursor-pointer flex-col items-end justify-center gap-1.5 border-0 bg-transparent p-0"
+        >
+          <span className="h-0.5 w-[22px] bg-ink" />
+          <span className="h-0.5 w-[22px] bg-ink" />
+        </button>
+      </div>
+      {/* The open menu is not in the design; it lists the same four links in the nav style. */}
+      <nav id="menu-telefon" aria-label="Hlavní" hidden={!open} className="absolute inset-x-0 top-[60px] z-50 bg-paper px-4 pb-4">
+        <ul className="m-0 list-none p-0">
+          {NAV_LINKS.map((link) => (
+            <li key={link.href}>
+              <a href={link.href} onClick={close} className="mono flex h-11 items-center text-[11px] text-ink no-underline">
+                {link.label}
               </a>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </header>
   )
 }
