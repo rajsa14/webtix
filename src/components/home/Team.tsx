@@ -1,17 +1,21 @@
+import { useEffect, useRef, useState } from 'react'
+import { PRICE_FROM, kc, previewDaysGenitive } from '../../data/site'
 import { team } from '../../data/team'
-import { revealDelay } from '../../lib/motion'
+import { revealDelay, useInViewOnce } from '../../lib/motion'
 import { cx, nb } from '../../lib/text'
 
 /*
  * "Kdo jsme": the two of us. Built from docs/design/source/Rest.dc.html (1440)
  * and RestMobile.dc.html (390). Portraits come from src/data/team.ts.
+ * Below the heading (desktop) or the portraits (phone), a short sample chat
+ * shows that you talk to us directly: you ask, Daniel and Richard answer.
  */
 
 export function Team() {
   return (
     <section id="kdo-jsme" aria-labelledby="kdo-title" className="container-x py-24 lg:py-40">
       <div className="flex flex-col gap-8 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6">
-        <div data-reveal className="flex flex-col lg:col-span-5">
+        <div data-reveal className="flex flex-col lg:col-span-5 lg:row-start-1">
           <p className="mono m-0 mb-4 text-[11px] text-muted lg:mb-6 lg:text-[12px]">Kdo jsme</p>
           <h2
             id="kdo-title"
@@ -25,7 +29,7 @@ export function Team() {
           </p>
         </div>
 
-        <ul className="m-0 grid list-none grid-cols-2 gap-4 p-0 lg:col-span-6 lg:col-start-7 lg:gap-6">
+        <ul className="m-0 grid list-none grid-cols-2 gap-4 p-0 lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 lg:gap-6">
           {team.map((member, i) => (
             <li key={member.name} data-reveal style={revealDelay(i + 1, 150)} className={cx('flex flex-col gap-3 lg:gap-4', i === 1 && 'mt-10 lg:mt-16')}>
               <div className="flex aspect-[4/5] flex-col overflow-hidden rounded-card border-2 border-solid border-ink bg-white">
@@ -47,7 +51,120 @@ export function Team() {
             </li>
           ))}
         </ul>
+
+        <Chat />
       </div>
     </section>
+  )
+}
+
+type Message = { from: 'you' | 'daniel' | 'richard'; text: string }
+
+// Draft copy (2026-10-10), waiting for Dan's approval. Only promises the site already makes.
+const MESSAGES: Message[] = [
+  { from: 'you', text: 'Dobrý den, kolik by stál nový web pro naši kavárnu?' },
+  {
+    from: 'daniel',
+    text: `Dobrý den! Pošlete nám odkaz na váš současný web nebo Instagram. Do ${previewDaysGenitive()} vám zdarma ukážeme hotovou úvodní stránku.`,
+  },
+  { from: 'you', text: 'A když se mi bude líbit?' },
+  {
+    from: 'richard',
+    text: `Pak web dokončíme, nasadíme na vaši doménu a postaráme se, aby běžel. Web stojí od ${kc(PRICE_FROM)}, přesnou cenu znáte předem.`,
+  },
+]
+
+/** When each message appears (ms after the chat comes into view). Our replies "type" for TYPING_MS first. */
+const SHOW_AT = [200, 1900, 3300, 5100]
+const TYPING_MS = 1000
+
+const NAME = { you: 'Vy', daniel: 'Daniel', richard: 'Richard' }
+const PORTRAIT = { daniel: team[0].portrait, richard: team[1].portrait }
+
+function Chat() {
+  const ref = useRef<HTMLOListElement>(null)
+  const seen = useInViewOnce(ref, 0.35)
+  // Seen at once means no motion is allowed: show the whole chat, no typing.
+  const [animated] = useState(() => !seen)
+  const [elapsed, setElapsed] = useState(() => (seen ? Infinity : -1))
+
+  useEffect(() => {
+    if (!seen || !animated) return
+    const start = performance.now()
+    let raf = 0
+    const tick = () => {
+      const t = performance.now() - start
+      setElapsed(t)
+      if (t < SHOW_AT[SHOW_AT.length - 1] + 100) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [seen, animated])
+
+  return (
+    <ol
+      ref={ref}
+      aria-label="Ukázka rozhovoru s námi"
+      className="m-0 flex list-none flex-col gap-4 p-0 lg:col-span-5 lg:row-start-2 lg:mt-14 lg:max-w-[460px]"
+    >
+      {MESSAGES.map((m, i) => {
+        const ours = m.from !== 'you'
+        const shown = elapsed >= SHOW_AT[i]
+        const typing = ours && !shown && elapsed >= SHOW_AT[i] - TYPING_MS
+        return (
+          <li
+            key={i}
+            className={cx(
+              'flex items-end gap-2.5 transition-opacity duration-300',
+              !ours && 'flex-row-reverse',
+              shown || typing ? 'opacity-100' : 'opacity-0',
+            )}
+          >
+            {ours ? (
+              <img
+                src={import.meta.env.BASE_URL + PORTRAIT[m.from as 'daniel' | 'richard']}
+                alt=""
+                width={36}
+                height={36}
+                loading="lazy"
+                className="size-9 shrink-0 rounded-full border-[1.5px] border-solid border-ink bg-white object-cover object-[50%_25%]"
+              />
+            ) : null}
+            <div className={cx('relative flex max-w-[85%] flex-col gap-1', !ours && 'items-end')}>
+              <span className={cx('mono text-[11px] text-muted transition-opacity duration-500 lg:text-[12px]', shown ? 'opacity-100' : 'opacity-0')}>{NAME[m.from]}</span>
+              {/* The message is always in the page (screen readers read the whole chat); it only fades in. */}
+              <p
+                className={cx(
+                  'm-0 rounded-[14px] px-4 py-3 text-[15px] leading-[22px] transition-[opacity,translate] duration-500 lg:text-[16px] lg:leading-6',
+                  m.from === 'you' && 'rounded-br-[4px] border border-solid border-ink bg-white text-ink',
+                  m.from === 'daniel' && 'rounded-bl-[4px] bg-pink text-ink',
+                  m.from === 'richard' && 'rounded-bl-[4px] bg-terracotta text-cream',
+                  shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
+                )}
+              >
+                {nb(m.text)}
+              </p>
+              {typing && (
+                <span
+                  aria-hidden="true"
+                  className={cx(
+                    'absolute bottom-0 left-0 flex gap-1 rounded-[14px] rounded-bl-[4px] px-4 py-4',
+                    m.from === 'daniel' ? 'bg-pink' : 'bg-terracotta',
+                  )}
+                >
+                  {[0, 1, 2].map((d) => (
+                    <span
+                      key={d}
+                      className={cx('typing-dot size-1.5 rounded-full', m.from === 'daniel' ? 'bg-ink' : 'bg-cream')}
+                      style={{ animationDelay: `${d * 160}ms` }}
+                    />
+                  ))}
+                </span>
+              )}
+            </div>
+          </li>
+        )
+      })}
+    </ol>
   )
 }

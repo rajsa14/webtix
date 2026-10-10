@@ -232,6 +232,24 @@
   }
 }
 
+/* Typing indicator in the "Kdo jsme" chat. */
+.typing-dot {
+  animation: typing 1s ease-in-out infinite;
+}
+
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    translate: 0 0;
+  }
+  30% {
+    opacity: 1;
+    translate: 0 -3px;
+  }
+}
+
 @keyframes caret {
   50% {
     opacity: 0;
