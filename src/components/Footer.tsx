@@ -8,13 +8,24 @@ import { PlayfulWordmark } from './PlayfulWordmark'
  * they jump on hover),
  * then e-mail, IČO (only once ICO is set in src/data/site.ts) and legal links.
  */
-export function Footer() {
+export function Footer({ variant = 'default' }: { variant?: 'default' | 'inquirySent' }) {
   const openCookies = useConsent((s) => s.openBanner)
   const link = 'text-paper/70 underline underline-offset-4 hover:text-paper'
 
   return (
     <footer className="bg-ink text-paper" style={{ ['--focus' as string]: 'var(--color-cream)' }}>
       <div className="container-x pb-8 pt-20 lg:pb-10 lg:pt-28">
+        {/* Post-conversion copy approved by Dan (2026-10-11). */}
+        {variant === 'inquirySent' ? (
+          <div data-reveal className="flex flex-col gap-6 lg:gap-8">
+            <p className="m-0 text-[38px] font-bold leading-[0.96] tracking-[-0.035em] lg:text-[clamp(46px,4.6vw,72px)] lg:leading-[0.95]">
+              Teď je řada na <em className="scribble italic text-pink">nás.</em>
+            </p>
+            <p className="m-0 max-w-[36ch] text-[18px] leading-7 text-paper/80 lg:text-[24px] lg:leading-8">
+              Podíváme se na váš web. Pak vám ukážeme lepší.
+            </p>
+          </div>
+        ) : (
         <div data-reveal className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <p className="m-0 max-w-[15ch] text-[38px] font-bold leading-[0.96] tracking-[-0.035em] lg:text-[clamp(46px,4.6vw,72px)] lg:leading-[0.95]">
             Podíváme se na váš web. Pak vám ukážeme <em className="scribble italic text-pink">lepší.</em>
@@ -29,6 +40,7 @@ export function Footer() {
             </svg>
           </a>
         </div>
+        )}
 
         {/* Hover a letter and it jumps; click it and it turns pink. */}
         <PlayfulWordmark className="mt-16 text-cream lg:mt-24" />

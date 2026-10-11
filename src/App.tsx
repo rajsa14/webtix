@@ -70,7 +70,7 @@ export default function App() {
       <main key={path} id="obsah" tabIndex={-1} className="min-h-[70dvh] outline-none">
         {page()}
       </main>
-      <Footer />
+      <Footer variant={path === PAGES.inquirySent ? 'inquirySent' : 'default'} />
       <CookieBanner />
       <Cursor />
     </>

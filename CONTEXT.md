@@ -60,3 +60,6 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - 2026-10-11: removed all five decorative numbered section labels above homepage headings. Main headings, anchors and process-step numbers remain. Approved production deployment checked at 1440 and 390 pixels.
 
 - 2026-10-11: approved team roles, short responsibilities and a subtle one-time sample conversation deployed; Richard is the primary client contact. Latest pricing and section-label removal retained.
+- 2026-10-11: approved post-conversion thank-you page: mobile recap labels above values, quiet examples link, accessible phone note, explicit freedom not to continue and a dedicated footer saying “Teď je řada na nás.” without a sales CTA. Other pages retain their original footer. Recap remains memory-only; no customer confirmation e-mail is sent.
+
+- 2026-10-11: approved editorial thank-you timeline: desktop 35/65 heading and vertical steps, filled current marker, outlined future markers, always-visible copy; supporting-materials note belongs to the reply step.

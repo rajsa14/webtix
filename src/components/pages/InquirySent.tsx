@@ -1,9 +1,8 @@
-import { PAGES, PREVIEW_DAYS, SITE } from '../../data/site'
+import { PREVIEW_DAYS, SITE } from '../../data/site'
 import { usePageMeta } from '../../lib/meta'
 import { revealDelay } from '../../lib/motion'
 import { cx, nb } from '../../lib/text'
 import { useUi } from '../../store/ui'
-import { CtaLink } from '../Cta'
 import { ShopAfter, ShopBefore, ShopScreen } from '../home/Shop'
 
 /*
@@ -15,10 +14,10 @@ import { ShopAfter, ShopBefore, ShopScreen } from '../home/Shop'
  */
 
 const STEPS = [
-  { when: 'Teď', title: 'Zprávu máme', text: 'Právě nám přišla do schránky.', done: true },
-  { when: 'Do 2 pracovních dnů', title: 'Ozveme se vám', text: 'Napíšeme na váš e-mail a domluvíme se, z čeho návrh postavíme.' },
-  { when: `Do ${PREVIEW_DAYS} pracovních dnů od podkladů`, title: 'Uvidíte návrh', text: 'Hotovou úvodní stránku vašeho nového webu. Zdarma a nezávazně.' },
-  { when: 'Pak', title: 'Rozhodnete se', text: 'Líbí se vám? Dokončíme zbytek. Nelíbí? Nic neplatíte.' },
+  { when: 'Teď', title: 'Máme vaši zprávu', text: 'Nemusíte dělat nic dalšího. Podíváme se na váš web a na to, co jste nám poslali.', current: true },
+  { when: 'Do 2 pracovních dnů', title: 'Ozveme se vám', text: 'Napíšeme vám a případně si vyžádáme podklady, které nám pomůžou připravit návrh.' },
+  { when: `Do ${PREVIEW_DAYS} pracovních dnů od podkladů`, title: 'Uvidíte svůj návrh', text: 'Ukážeme vám hotovou úvodní stránku vašeho nového webu. Zdarma a nezávazně.' },
+  { when: 'Pak', title: 'Rozhodnete se vy', text: 'Pokud se vám návrh líbí, domluvíme se na dokončení. Pokud ne, nemusíte pokračovat a nic neplatíte.' },
 ]
 
 export function InquirySent() {
@@ -44,18 +43,18 @@ export function InquirySent() {
           {inquiry && (
             <div className="mt-8 rounded-[14px] border border-solid border-ink/15 bg-white p-5 lg:mt-10 lg:p-6">
               <p className="mono m-0 text-[11px] text-muted lg:text-[12px]">Co jsme od vás dostali</p>
-              <dl className="m-0 mt-3 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 text-[16px] leading-6 lg:text-[17px]">
+              <dl className="m-0 mt-3 grid grid-cols-1 gap-y-1 lg:grid-cols-[auto_1fr] lg:gap-x-5 lg:gap-y-2 text-[16px] leading-6 lg:text-[17px]">
                 <dt className="text-ink-soft">Odpovíme na</dt>
-                <dd className="m-0 break-all font-bold">{inquiry.email}</dd>
+                <dd className="m-0 mb-3 min-w-0 [overflow-wrap:anywhere] font-bold lg:mb-0">{inquiry.email}</dd>
                 {inquiry.currentSite && (
                   <>
-                    <dt className="text-ink-soft">Váš web</dt>
-                    <dd className="m-0 break-all">{inquiry.currentSite}</dd>
+                    <dt className="text-ink-soft">Váš web nebo Instagram</dt>
+                    <dd className="m-0 min-w-0 [overflow-wrap:anywhere]">{inquiry.currentSite}</dd>
                   </>
                 )}
               </dl>
               <p className="m-0 mt-4 text-[14px] leading-5 text-ink-soft">
-                {nb('Spletli jste se v e-mailu? Napište nám na ')}
+                {nb('Něco nesedí? Napište nám na ')}
                 <a href={`mailto:${SITE.email}`} className="text-ink underline underline-offset-2">
                   {SITE.email}
                 </a>
@@ -64,26 +63,21 @@ export function InquirySent() {
             </div>
           )}
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:mt-10">
-            <CtaLink href={`/#navrhy`} size="lg">
-              Mezitím se podívejte na ukázky
-            </CtaLink>
-            <CtaLink href={PAGES.home} size="lg" variant="secondary">
-              Zpět na úvod
-            </CtaLink>
-          </div>
+          <a href="/#navrhy" className="mt-6 inline-flex min-h-11 items-center gap-2 self-start text-[16px] text-ink-soft underline underline-offset-4 hover:text-terracotta lg:mt-8">
+            Prohlédnout ukázky <span aria-hidden="true">→</span>
+          </a>
         </div>
 
         {/* The promise, shown: an old site turning into a new one, like the one we will make for them. */}
-        <div data-reveal style={revealDelay(1, 200)} aria-hidden="true" className="relative flex flex-col items-center gap-4 rounded-[20px] bg-pink px-6 py-10 lg:col-span-5 lg:col-start-8 lg:flex-row lg:items-center lg:justify-end lg:py-16 lg:pr-14">
+        <div data-reveal style={revealDelay(1, 200)} className="relative flex flex-col items-center gap-4 rounded-[20px] bg-pink px-6 py-10 lg:col-span-5 lg:col-start-8 lg:flex-row lg:items-center lg:justify-end lg:py-16 lg:pr-14">
           <div className="order-first flex items-end gap-2 lg:mr-auto lg:flex-col lg:items-start lg:self-start">
             <p className="hand m-0 w-[180px] -rotate-3 text-[24px] lg:w-[130px] lg:text-[27px]">Takhle to chystáme i pro váš web.</p>
-            <svg viewBox="0 0 60 50" className="h-10 w-12 rotate-[60deg] text-pen lg:rotate-0" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg aria-hidden="true" viewBox="0 0 60 50" className="h-10 w-12 rotate-[60deg] text-pen lg:rotate-0" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M6 4 C 10 22, 26 36, 52 40" />
               <path d="M41 32 L 53 40 L 41 47" />
             </svg>
           </div>
-          <div className="thanks-phone relative h-[460px] w-[220px] overflow-hidden rounded-[30px] border-[7px] border-solid border-ink bg-ink shadow-[0_30px_50px_-28px_rgba(22,17,16,0.55)]">
+          <div aria-hidden="true" className="thanks-phone relative h-[460px] w-[220px] overflow-hidden rounded-[30px] border-[7px] border-solid border-ink bg-ink shadow-[0_30px_50px_-28px_rgba(22,17,16,0.55)]">
             <div className="absolute inset-0 bg-[#EFEFEF]">
               <ShopScreen scale={0.606}>
                 <ShopBefore />
@@ -103,46 +97,32 @@ export function InquirySent() {
       </section>
 
       <section aria-labelledby="dal-title" className="bg-cream text-ink">
-        <div className="container-x py-20 lg:py-28">
-          <h2 id="dal-title" data-reveal className="m-0 text-[36px] leading-[0.96] tracking-[-0.035em] lg:text-[clamp(44px,4.4vw,64px)]">
-            Co bude <em className="scribble italic text-terracotta">dál</em>
-          </h2>
-          <ol className="relative m-0 mt-12 grid list-none gap-10 p-0 lg:mt-16 lg:grid-cols-4 lg:gap-6">
-            {/* The dashed path that joins the steps (desktop). */}
-            <span aria-hidden="true" className="absolute left-0 right-0 top-[19px] hidden border-0 border-t-2 border-dashed border-ink/25 lg:block" />
+        {/* Editorial timeline and copy approved by Dan (2026-10-11). Always readable without motion. */}
+        <div className="container-x pb-[72px] pt-[72px] lg:grid lg:grid-cols-[35%_65%] lg:py-28">
+          <div>
+            <h2 id="dal-title" className="m-0 text-[40px] leading-[0.96] tracking-[-0.035em] lg:text-[64px]">
+              Co bude <em className="scribble italic text-terracotta">dál</em>
+            </h2>
+            <p className="m-0 mt-[18px] max-w-[28ch] text-[16px] leading-6 text-ink-soft lg:mt-6 lg:text-[18px] lg:leading-7">
+              Teď už víte, co bude následovat.
+            </p>
+          </div>
+          <ol className="m-0 ml-[7px] mt-11 list-none p-0 lg:ml-7 lg:mt-0">
             {STEPS.map((s, i) => (
-              <li key={s.title} data-reveal style={revealDelay(i, 140)} className="relative flex gap-4 lg:flex-col lg:gap-5">
-                <span
-                  className={cx(
-                    'relative grid size-10 shrink-0 place-items-center rounded-full text-[15px] font-bold',
-                    s.done ? 'bg-pink text-ink' : 'border-2 border-solid border-ink/40 bg-cream text-ink',
-                    i === 1 && 'thanks-next',
-                  )}
-                >
-                  {s.done ? (
-                    <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
-                    </svg>
-                  ) : (
-                    i + 1
-                  )}
-                  {s.done && <span className="sr-only">Hotovo: </span>}
-                </span>
-                <div className="flex flex-col gap-1.5">
-                  <span className="mono text-[11px] text-muted lg:text-[12px]">{s.when}</span>
-                  <h3 className="m-0 text-[22px] leading-7 lg:text-[24px] lg:leading-[30px]">{s.title}</h3>
-                  <p className="m-0 max-w-[340px] text-[16px] leading-6 text-ink-soft lg:text-[17px] lg:leading-[26px]">{nb(s.text)}</p>
-                </div>
+              <li key={s.title} aria-current={s.current ? 'step' : undefined} className={cx('relative border-0 border-l border-solid pb-9 pl-[27px] lg:pb-12 lg:pl-10', i === STEPS.length - 1 ? 'border-transparent !pb-0' : 'border-ink/22')}>
+                <span aria-hidden="true" className={cx('absolute -left-[7px] top-0 size-[13px] rounded-full border-[1.5px] border-solid', s.current ? 'border-terracotta bg-terracotta' : 'border-ink/45 bg-cream')} />
+                <span className={cx('mono block max-w-[29ch] text-[11px] leading-[17px] lg:max-w-none lg:text-[12px] lg:leading-4', s.current ? 'text-terracotta' : 'text-muted')}>{s.when}</span>
+                <h3 className="m-0 my-2.5 text-[27px] leading-[31px] tracking-[-0.025em] lg:my-3 lg:text-[36px] lg:leading-10">{s.title}</h3>
+                <p className="m-0 max-w-[49ch] text-[16px] leading-6 text-ink-soft lg:text-[18px] lg:leading-7">{nb(s.text)}</p>
+                {i === 1 && (
+                  <p className="m-0 mt-4 max-w-[60ch] text-[14px] leading-[21px] text-muted lg:text-[15px] lg:leading-[23px]">
+                    {nb('Máte po ruce fotky, menu nebo ceník? Můžete nám je poslat rovnou na ')}
+                    <a href={`mailto:${SITE.email}`} className="text-ink-soft underline underline-offset-4">{SITE.email}</a>.
+                  </p>
+                )}
               </li>
             ))}
           </ol>
-          <p data-reveal className="m-0 mt-14 text-[16px] leading-6 text-ink-soft lg:text-[18px]">
-            {nb('Chcete nám rovnou poslat fotky, menu nebo ceník? Pošlete je na ')}
-            <a href={`mailto:${SITE.email}`} className="text-ink underline underline-offset-4">
-              {SITE.email}
-            </a>
-            {nb(', návrh pak bude o to přesnější.')}
-          </p>
         </div>
       </section>
     </>
