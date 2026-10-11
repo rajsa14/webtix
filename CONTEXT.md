@@ -9,7 +9,7 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - Contact: info@webtix.cz. Enquiries arrive there through the form.
 
 ## What is live
-- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (hero implementation commit `688c95e`, version `40789eb6-0890-48a1-815b-e560467cc5f6`).
+- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (pricing implementation commit `62b784b`, version `d6edee08-63b2-46df-a39a-790af5d62ac0`; includes the approved hero changes).
 - GitHub: `rajsa14/webtix` (public, owned by Richard; Dan has write access, not admin). Only two branches: `redesign` (where we work) and `main` (the default branch, kept identical to `redesign`).
 - Archive: everything from before the cleanup (old configurator site on the old `main`, the koncepty, the English draft, all 12 old branches with full history) is in the private repo `swedishdan/webtix-archive`.
 - Pages: `/` (one-page site), `/poptavka-odeslana` (thank-you, noindex), `/ochrana-osobnich-udaju`, `/obchodni-podminky`, a 404 page (noindex). Old configurator addresses redirect with 301 (`public/_redirects`).
@@ -54,3 +54,5 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - 2026-10-10 to 10-11: redesign steps 1–7 on `redesign`, legal texts, launch on Cloudflare.
 - 2026-10-11: video-like hero, Návrhy deck, sticky menu, section colours, send animation, thank-you page, footer wordmark; then pre-rendering, structured data, sitemap dates, llms.txt and a stricter CSP. All live.
 - 2026-10-11: GitHub cleanup. The old repo state was archived to `swedishdan/webtix-archive`, `main` was set to `redesign`, and the 10 old feature branches were deleted (open PRs #6 and #9 closed with them).
+
+- 2026-10-11: approved pricing redesign deployed: typical business-site range, free first-month moment, optional CMS-independent Care/Care+, ownership CTA and seven pricing FAQs. Scroll reveals, reduced motion, live page responses and desktop/mobile overflow checked.
