@@ -9,7 +9,7 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - Contact: info@webtix.cz. Enquiries arrive there through the form.
 
 ## What is live
-- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (commit `0b7815e`, version `2cc7bdb2`).
+- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (hero implementation commit `688c95e`, version `40789eb6-0890-48a1-815b-e560467cc5f6`).
 - GitHub: `rajsa14/webtix` (public, owned by Richard; Dan has write access, not admin). Only two branches: `redesign` (where we work) and `main` (the default branch, kept identical to `redesign`).
 - Archive: everything from before the cleanup (old configurator site on the old `main`, the koncepty, the English draft, all 12 old branches with full history) is in the private repo `swedishdan/webtix-archive`.
 - Pages: `/` (one-page site), `/poptavka-odeslana` (thank-you, noindex), `/ochrana-osobnich-udaju`, `/obchodni-podminky`, a 404 page (noindex). Old configurator addresses redirect with 301 (`public/_redirects`).
