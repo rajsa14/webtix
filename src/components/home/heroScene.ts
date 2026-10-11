@@ -336,28 +336,29 @@ export function useScene(frame: (p: number) => Frame, reduced: boolean, options:
 
 /* ---------- timelines ---------- */
 
-/** First desktop play: question, diagnosis, wipe, quiet result, offer (10.8 s). */
-export const DESKTOP_PLAY_MS = 10800
+/** First desktop play: question, diagnosis, wipe, annotated result, offer (13.7 s). */
+export const DESKTOP_PLAY_MS = 13700
 export function desktopFrame(p: number, ctx: { scale: number; groupTop: number; allNotes: boolean; offerShown: boolean; reduced: boolean }): Frame {
   const t = p * DESKTOP_PLAY_MS / 1000
   const pad = ctx.groupTop / ctx.scale + 12
   const y = track(t, [[6.7, -pad], [7.7, 436], [8.2, 436], [9.2, 900 + pad]])
   const before = ctx.allNotes ? ['a0', 'a1', 'a2', 'a3'] : ['a0', 'a2']
   const after = ctx.allNotes ? ['c0', 'c1', 'c2', 'c3'] : ['c2', 'c3']
+  const fixedAt: Record<string, number> = { c0: 7.9, c1: 8.2, c2: 8.8, c3: 9.2 }
   const question = ctx.reduced || ctx.offerShown ? 0 : Math.min(ramp(t, 0, 0.4), 1 - ramp(t, 3.0, 3.4))
-  const offer = ctx.reduced || ctx.offerShown ? 1 : ramp(t, 10.2, 10.8)
+  const offer = ctx.reduced || ctx.offerShown ? 1 : ramp(t, 13.1, 13.7)
   return {
     y,
     screen: { top: 110, height: 720, band: 16 },
     notes: {
       ...Object.fromEntries(before.map((key, i) => [key, ctx.reduced ? 1 - p : Math.min(ramp(t, 3.4 + i * 0.18, 3.65 + i * 0.18), 1 - ramp(t, 6.7, 7.0))])),
-      // Keep the original result annotations for the untimed, reduced-motion comparison.
-      ...Object.fromEntries(after.map((key) => [key, ctx.reduced ? p : 0])),
+      // Explain each fix as it is revealed; leave all notes readable before handing attention to the offer.
+      ...Object.fromEntries(after.map((key) => [key, ctx.reduced ? p : Math.min(ramp(t, fixedAt[key], fixedAt[key] + 0.25), 1 - ramp(t, 12.7, 13.1))])),
     },
     texts: { offer, question },
     form: offer >= 0.99 ? 'offer' : undefined,
     question,
-    focus: ctx.reduced || ctx.offerShown ? 0 : 1 - ramp(t, 10.2, 10.8),
+    focus: ctx.reduced || ctx.offerShown ? 0 : 1 - ramp(t, 13.1, 13.7),
     offer,
     dark: ctx.groupTop + y * ctx.scale > 52,
     isNew: t >= 8.2,
