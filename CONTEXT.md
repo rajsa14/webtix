@@ -9,7 +9,9 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - Contact: info@webtix.cz. Enquiries arrive there through the form.
 
 ## What is live
-- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (commit `0b7815e`, version `2cc7bdb2`). Pushed to `origin/redesign`.
+- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (commit `0b7815e`, version `2cc7bdb2`).
+- GitHub: `rajsa14/webtix` (public, owned by Richard; Dan has write access, not admin). Only two branches: `redesign` (where we work) and `main` (the default branch, kept identical to `redesign`).
+- Archive: everything from before the cleanup (old configurator site on the old `main`, the koncepty, the English draft, all 12 old branches with full history) is in the private repo `swedishdan/webtix-archive`.
 - Pages: `/` (one-page site), `/poptavka-odeslana` (thank-you, noindex), `/ochrana-osobnich-udaju`, `/obchodni-podminky`, a 404 page (noindex). Old configurator addresses redirect with 301 (`public/_redirects`).
 - Every page is pre-rendered into HTML with its own title, description, canonical and JSON-LD (ProfessionalService with offers, WebSite, FAQPage); `sitemap.xml` with last-change dates and `llms.txt` are generated at build time. `robots.txt` allows everyone except `/api/`.
 
@@ -44,10 +46,11 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - **Legal note**: Resend keeps its copy of each e-mail for as long as Resend decides; the privacy text says so.
 
 ## Risks
-- `main` still holds the old site. The webtixx1@gmail.com Cloudflare login once redeployed it over the new one (version `d9c37df6`). If webtix.cz ever shows the old configurator, roll back or redeploy from `redesign`, and check whether anything deploys `main` automatically.
+- The webtixx1@gmail.com Cloudflare login once redeployed the old site over the new one (version `d9c37df6`). Since 2026-10-11 `main` holds the new site, so a redeploy from `main` no longer brings the old one back; an old local copy still could. If webtix.cz ever shows the old configurator, roll back or redeploy from `redesign`.
 - The thank-you page's recap is kept only in memory: reloading it shows the page without the recap (by design, nothing is stored).
 
 ## History (short)
 - Before October 2026: configurator site on Netlify (`main`), Netlify Forms, then a Cloudflare Worker for enquiries.
 - 2026-10-10 to 10-11: redesign steps 1–7 on `redesign`, legal texts, launch on Cloudflare.
 - 2026-10-11: video-like hero, Návrhy deck, sticky menu, section colours, send animation, thank-you page, footer wordmark; then pre-rendering, structured data, sitemap dates, llms.txt and a stricter CSP. All live.
+- 2026-10-11: GitHub cleanup. The old repo state was archived to `swedishdan/webtix-archive`, `main` was set to `redesign`, and the 10 old feature branches were deleted (open PRs #6 and #9 closed with them).

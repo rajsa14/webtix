@@ -5,8 +5,9 @@ Webtix is a two-person Prague web studio (Daniel "Dan" Švéda, Richard Buchní�
 Read `CONTEXT.md` for the current state, the decisions behind it and what is still open. `README.md` (Czech) says where to change what.
 
 ## Branches, deploys, approval
-- Work on `redesign`. Never touch `main` and never merge. (`main` still holds the old configurator site; see "Risks" in `CONTEXT.md`.)
-- Deploy to production only when Dan explicitly says "deploy". Then: `npm run lint`, `npm run build`, `npx wrangler deploy`, check webtix.cz (pages respond, no console errors, no sideways scroll at 1440 and 390), push `redesign`, report the version ID and wait.
+- Work on `redesign`. `main` is GitHub's default branch and is kept identical to `redesign`: after an approved deploy, move it with `git push origin redesign:main` (fast-forward only). Never merge anything else into `main`, never force-push it, and no other long-lived branches.
+- The old site and every old branch are archived in the private repo `swedishdan/webtix-archive`. Do not bring that code back here.
+- Deploy to production only when Dan explicitly says "deploy". Then: `npm run lint`, `npm run build`, `npx wrangler deploy`, check webtix.cz (pages respond, no console errors, no sideways scroll at 1440 and 390), push `redesign` and then `redesign:main`, report the version ID and wait.
 - A preview without touching production: `npx wrangler versions upload` (prints a workers.dev preview URL). Undo a deploy: `npx wrangler rollback`.
 - Commit or push only when asked or as part of an approved deploy.
 - Before deleting or rewriting files outside the task at hand, list them and wait.

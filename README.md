@@ -82,7 +82,7 @@ Jen Cloudflare Web Analytics (zapíná se v Cloudflare, ne v kódu). Web sám ni
 
 ## Nasazení
 
-`npm run build` a pak `npx wrangler deploy` nasadí Worker `webtix` i se stránkami. Nasazuje se z větve `redesign`, nikdy z `main`.
+`npm run build` a pak `npx wrangler deploy` nasadí Worker `webtix` i se stránkami. Pracuje se ve větvi `redesign`; `main` je s ní po každém nasazení stejná (`git push origin redesign:main`). Starý web a staré větve jsou v soukromém archivu `swedishdan/webtix-archive`.
 
 - Náhled bez dopadu na webtix.cz: `npm run build:staging` a `npx wrangler versions upload` (vrátí adresu náhledu na workers.dev, neindexuje se).
 - Návrat k předchozí verzi: `npx wrangler rollback`.
