@@ -33,9 +33,6 @@ export function HowWeWork() {
     <section id="jak-to-delame" aria-labelledby="jak-title" className="container-x pb-24 pt-10 lg:pb-40 lg:pt-16">
       <div data-reveal className="flex flex-col lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-6">
         <div className="flex flex-col lg:col-span-7">
-          <p className="section-num mono m-0 mb-4 text-[11px] text-muted lg:mb-6 lg:text-[12px]">
-            <span>01</span> Jak to děláme
-          </p>
           <h2
             id="jak-title"
             className="m-0 mb-5 text-[40px] leading-[0.96] tracking-[-0.035em] lg:mb-0 lg:text-[clamp(46px,4.6vw,72px)] lg:leading-[0.95]"

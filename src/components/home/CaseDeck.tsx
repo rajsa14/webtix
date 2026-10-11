@@ -88,9 +88,6 @@ export function CaseDeck() {
       <div className="container-x py-24 lg:py-40">
         <div data-reveal className="flex flex-col lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-6">
           <div className="flex flex-col lg:col-span-7">
-            <p className="section-num mono m-0 mb-4 text-[11px] text-[#A79C94] lg:mb-6 lg:text-[12px]">
-              <span>02</span> Návrhy
-            </p>
             <h2 id="navrhy-title" className="m-0 mb-5 text-[40px] leading-[0.96] tracking-[-0.035em] lg:mb-0 lg:text-[clamp(46px,4.6vw,72px)] lg:leading-[0.95]">
               Každý web měl jiný <em className="scribble italic text-pink">problém.</em>
             </h2>

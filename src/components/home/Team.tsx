@@ -17,9 +17,6 @@ export function Team() {
       <div className="container-x py-24 lg:py-40">
       <div className="flex flex-col gap-8 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6">
         <div data-reveal className="flex flex-col lg:col-span-5 lg:row-start-1">
-          <p className="section-num mono m-0 mb-4 text-[11px] text-ink-soft lg:mb-6 lg:text-[12px]">
-            <span>03</span> Kdo jsme
-          </p>
           <h2
             id="kdo-title"
             className="m-0 mb-5 text-[40px] leading-[0.96] tracking-[-0.035em] lg:mb-8 lg:text-[clamp(46px,4.6vw,72px)] lg:leading-[0.95]"

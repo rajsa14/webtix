@@ -12,7 +12,6 @@ export function Price() {
     <section id="cena" aria-labelledby="cena-title" className="bg-cream [--focus:var(--color-terracotta)]">
       <div className="container-x py-24 lg:py-36">
         <div data-reveal>
-          <p className="section-num mono m-0 mb-5 text-muted lg:mb-8"><span>04</span> Cena</p>
           <h2 id="cena-title" className="m-0 text-[40px] leading-[1.05] tracking-[-0.035em] lg:text-[64px]">Kolik stojí web?</h2>
         </div>
 

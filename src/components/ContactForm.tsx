@@ -103,9 +103,6 @@ export function ContactForm() {
     >
       <div className="container-x flex flex-col gap-8 py-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6 lg:py-40">
         <div data-reveal className="flex flex-col lg:col-span-6">
-          <p aria-hidden="true" className="section-num mono m-0 mb-4 text-[11px] text-cream/80 lg:mb-6 lg:text-[12px]">
-            <span>05</span> Kontakt
-          </p>
           <h2
             id="poptavka-title"
             className="m-0 mb-4 text-[48px] leading-[0.92] tracking-[-0.045em] lg:mb-8 lg:text-[clamp(56px,calc((100vw-128px)*0.06707),96px)] lg:leading-[0.9]"
