@@ -1,109 +1,95 @@
-import { useEffect, useRef, useState } from 'react'
 import { FAQ } from '../../data/faq'
-import { MANAGEMENT_CMS_FROM, MANAGEMENT_EDITS_FROM, PRICE_FROM, kc } from '../../data/site'
-import { revealDelay, useInView, useMotionOk } from '../../lib/motion'
+import { BUSINESS_PRICE_MIN, BUSINESS_PRICE_MAX, CARE_MONTHLY, CARE_PLUS_MONTHLY, INQUIRY_ANCHOR, PRICE_FROM, kc } from '../../data/site'
 import { nb } from '../../lib/text'
 
 /*
- * "Cena": the starting price, monthly care, and four questions. Built from
- * docs/design/source/Rest.dc.html (1440) and RestMobile.dc.html (390).
- * Prices and days come from src/data/site.ts. The answers are Dan's text
- * (2026-10-10), which replaced the design's; they live in src/data/faq.ts.
+ * Pricing structure and visible copy approved by Dan (2026-10-11).
+ * Creation, the first month and optional care are three separate moments.
+ * The FAQ also feeds structured data and llms.txt; prices live in site.ts.
  */
-
 export function Price() {
   return (
-    <section id="cena" aria-labelledby="cena-title" className="bg-cream">
-      <div className="container-x flex flex-col gap-8 py-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6 lg:py-40">
-        <div data-reveal className="flex flex-col lg:col-span-5">
-          <h2 id="cena-title" className="section-num mono m-0 mb-4 text-[11px] font-normal text-muted lg:mb-6 lg:text-[12px]">
-            <span>04</span> Cena
-          </h2>
-          <p className="m-0 mb-3 text-[56px] font-bold leading-[0.92] tracking-[-0.045em] lg:mb-4 lg:text-[clamp(64px,7vw,108px)] lg:leading-[0.9]">
-            od{' '}
-            <span className="relative inline-block">
-              <CountUp to={PRICE_FROM} />
-              {/* A pen circle drawn around the price. */}
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 300 120"
-                preserveAspectRatio="none"
-                className="doodle-draw pointer-events-none absolute -left-[6%] -top-[20%] h-[140%] w-[112%] text-terracotta"
-              >
-                <path
-                  pathLength={1}
-                  d="M160 9 C 70 4, 10 28, 9 62 C 8 99, 92 117, 172 112 C 252 107, 296 83, 290 51 C 284 17, 208 3, 118 13"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
-          </p>
-          <p className="m-0 max-w-[400px] text-[16px] leading-6 text-ink-soft lg:text-[20px] lg:leading-[30px]">
-            Za hotový web. Přesnou částku znáte dřív, než cokoli podepíšete.
-          </p>
-          {/* Not in the design: Dan's line about monthly care (2026-10-10). Breaks only at the separators. */}
-          <p className="m-0 mt-4 max-w-[400px] text-[14px] leading-5 text-ink-soft lg:mt-6 lg:text-meta">
-            Správa webu: <span className="whitespace-nowrap">S CMS od {kc(MANAGEMENT_CMS_FROM)} měsíčně</span> ·{' '}
-            <span className="whitespace-nowrap">S úpravami od nás od {kc(MANAGEMENT_EDITS_FROM)} měsíčně</span>
-          </p>
+    <section id="cena" aria-labelledby="cena-title" className="bg-cream [--focus:var(--color-terracotta)]">
+      <div className="container-x py-24 lg:py-36">
+        <div data-reveal>
+          <p className="section-num mono m-0 mb-5 text-muted lg:mb-8"><span>04</span> Cena</p>
+          <h2 id="cena-title" className="m-0 text-[40px] leading-[1.05] tracking-[-0.035em] lg:text-[64px]">Kolik stojí web?</h2>
         </div>
 
-        <div className="flex flex-col lg:col-span-6 lg:col-start-7">
-          {FAQ.map(({ q, a }, i) => (
-            <details
-              key={q}
-              data-reveal
-              style={revealDelay(i + 1, 90)}
-              open={i === 0}
-              className="group border-0 border-t border-solid border-ink py-5 last:border-b lg:py-6"
-            >
-              <summary className="flex cursor-pointer list-none justify-between gap-3 text-[19px] font-bold leading-[26px] lg:gap-4 lg:text-[clamp(20px,1.75vw,27px)] lg:leading-[1.25] [&::-webkit-details-marker]:hidden">
-                {q}
-                <span aria-hidden="true" className="text-terracotta">
-                  <span className="group-open:hidden">+</span>
-                  <span className="hidden group-open:inline">–</span>
-                </span>
-              </summary>
-              <p className="m-0 mt-2.5 max-w-[520px] text-[16px] leading-6 text-ink-soft lg:mt-3 lg:text-[18px] lg:leading-7">{nb(a)}</p>
-            </details>
-          ))}
+        <div className="mt-10 grid gap-10 lg:mt-16 lg:grid-cols-12 lg:items-end lg:gap-6">
+          <div data-reveal className="lg:col-span-8">
+            <h3 className="m-0 mb-3 text-[20px] font-medium lg:text-[24px]">Běžný firemní web</h3>
+            <p className="m-0 font-bold leading-[0.95] tracking-[-0.055em]">
+              <span className="whitespace-nowrap text-[clamp(36px,10.8vw,56px)] lg:text-[clamp(60px,6.1vw,96px)]">{BUSINESS_PRICE_MIN.toLocaleString('cs-CZ')}–{BUSINESS_PRICE_MAX.toLocaleString('cs-CZ')}</span>{' '}
+              <span className="text-[24px] tracking-[-0.02em] lg:text-[36px]">Kč</span>
+            </p>
+            <p className="m-0 mt-4 text-[16px] leading-6 text-ink-soft lg:mt-5 lg:text-[20px] lg:leading-[30px]">Nejčastější cena podle rozsahu, obsahu a funkcí.</p>
+          </div>
+          <div data-reveal className="lg:col-span-3 lg:col-start-10">
+            <h3 className="m-0 mb-3 max-w-[280px] text-[18px] font-medium leading-6 lg:text-[20px] lg:leading-7">Jednoduchý jednostránkový web</h3>
+            <p className="m-0 text-[34px] font-bold leading-none tracking-[-0.04em] text-terracotta lg:text-[clamp(28px,2.7vw,42px)]"><span className="text-[20px] font-medium tracking-normal">od </span>{kc(PRICE_FROM)}</p>
+            <p className="m-0 mt-4 max-w-[360px] text-[16px] leading-6 text-ink-soft">Pro menší web, kde vše důležité funguje na jedné stránce.</p>
+          </div>
+        </div>
+
+        <div data-reveal className="mt-9 lg:mt-12 lg:grid lg:grid-cols-12 lg:gap-6">
+          <p className="m-0 text-[16px] leading-6 text-ink-soft lg:col-span-5">Složitější weby a funkce naceníme individuálně.</p>
+          <p className="m-0 mt-5 max-w-[580px] text-[18px] font-medium leading-7 lg:col-span-6 lg:col-start-7 lg:mt-0 lg:text-[20px] lg:leading-[30px]">Přesnou cenu znáte předem. Návrh úvodní stránky je zdarma a k ničemu vás nezavazuje.</p>
+        </div>
+
+        <div data-reveal className="my-20 border-0 border-y border-solid border-terracotta/25 py-12 lg:my-28 lg:grid lg:grid-cols-12 lg:items-center lg:gap-6 lg:py-16">
+          <h3 className="m-0 max-w-[800px] text-[38px] leading-[1.05] tracking-[-0.035em] lg:col-span-8 lg:text-[clamp(48px,4.5vw,68px)]">První měsíc se o web staráme my.</h3>
+          <p className="hand mt-4! inline-block -rotate-6 text-[76px] lg:col-span-4 lg:col-start-9 lg:mt-0! lg:text-[clamp(64px,7.7vw,112px)]">Zdarma.</p>
+          <p className="m-0 mt-7 max-w-[590px] text-[18px] leading-7 text-ink-soft lg:col-span-6 lg:mt-8 lg:text-[20px] lg:leading-[30px]">Hosting, technická péče, podpora a drobné úpravy jsou první měsíc na nás.</p>
+        </div>
+
+        <div data-reveal>
+          <h3 className="m-0 mb-10 text-[32px] leading-[1.08] tracking-[-0.03em] lg:mb-12 lg:text-[48px]">A potom? Je to na vás.</h3>
+          <div className="grid gap-x-6 gap-y-4 border-0 border-t border-solid border-ink/25 py-7 lg:grid-cols-12 lg:items-baseline lg:py-8">
+            <h4 className="m-0 text-[24px] font-bold tracking-[-0.02em] lg:col-span-3 lg:text-[28px]">Webtix Care</h4>
+            <p className="m-0 text-[28px] font-bold tracking-[-0.035em] lg:col-span-3 lg:text-[32px]">{kc(CARE_MONTHLY)} <span className="text-[15px] font-normal tracking-normal text-ink-soft">/ měsíc</span></p>
+            <div className="text-[18px] leading-7 text-ink lg:col-span-6 lg:text-[20px] lg:leading-[30px]">
+              <p className="m-0">Hosting, technická péče, opravy chyb a podpora.</p>
+              <p className="m-0 mt-2 font-semibold">Pokud má web CMS, texty a fotky si můžete upravovat sami.</p>
+            </div>
+          </div>
+          <div className="grid gap-x-6 gap-y-4 border-0 border-y border-solid border-ink/25 py-7 lg:grid-cols-12 lg:items-baseline lg:py-8">
+            <h4 className="m-0 text-[24px] font-bold tracking-[-0.02em] lg:col-span-3 lg:text-[28px]">Webtix Care<span className="text-terracotta">+</span></h4>
+            <p className="m-0 text-[28px] font-bold tracking-[-0.035em] lg:col-span-3 lg:text-[32px]">{kc(CARE_PLUS_MONTHLY)} <span className="text-[15px] font-normal tracking-normal text-ink-soft">/ měsíc</span></p>
+            <p className="m-0 text-[18px] leading-7 text-ink lg:col-span-6 lg:text-[20px] lg:leading-[30px]">Všechno z Care + až <strong className="font-semibold text-terracotta">30 minut</strong> drobných úprav obsahu každý měsíc.</p>
+          </div>
+        </div>
+
+        <div data-reveal className="mt-12 lg:mt-16 lg:grid lg:grid-cols-12 lg:gap-6">
+          <div className="lg:col-span-7">
+            <h3 className="m-0 max-w-[760px] text-[30px] leading-[1.15] tracking-[-0.025em] lg:text-[42px]">Nechcete měsíční správu? Nemusíte. <span className="hand mt-3! block -rotate-2 text-[46px] lg:text-[64px]">Web je váš.</span></h3>
+            {/* Trust line and CTA wording approved by Dan (2026-10-11). */}
+            <p className="m-0 mt-5 text-[18px] leading-7 text-ink-soft lg:text-[20px]">Nezamykáme vás u nás.</p>
+            <a href={`/#${INQUIRY_ANCHOR}`} className="mt-6 inline-flex min-h-14 max-w-full items-center justify-center gap-3 rounded-input bg-ink px-5 py-4 text-[16px] font-medium text-cream no-underline transition-colors hover:bg-terracotta focus-visible:outline-offset-4 motion-reduce:transition-none lg:gap-4 lg:px-7 lg:text-[18px]">
+              <span>Chci vidět návrh svého webu</span><span aria-hidden="true">→</span>
+            </a>
+          </div>
+          <div className="mt-7 lg:col-span-4 lg:col-start-9 lg:mt-0">
+            <p className="m-0 text-[16px] leading-6 text-ink-soft lg:text-[18px] lg:leading-7">Předáme vám web i doménu pro provoz jinde. Náš hosting, technická péče a podpora tím končí.</p>
+            <p className="m-0 mt-5 text-[14px] leading-5 text-muted lg:text-[15px] lg:leading-6">Registrace a obnova domény se platí zvlášť.</p>
+          </div>
+        </div>
+
+        <div className="mt-20 lg:mt-28 lg:grid lg:grid-cols-12 lg:gap-6">
+          <h3 data-reveal className="m-0 mb-7 text-[22px] font-medium leading-7 lg:col-span-4 lg:mb-0 lg:text-[26px]">Ještě vás možná zajímá</h3>
+          <div className="lg:col-span-8">
+            {FAQ.map(({ q, a }) => (
+              <details key={q} className="group border-0 border-t border-solid border-ink/20 py-5 last:border-b">
+                <summary className="flex cursor-pointer list-none justify-between gap-4 rounded-[4px] focus-visible:outline-offset-4 text-[17px] font-medium leading-6 lg:text-[20px] lg:leading-7 [&::-webkit-details-marker]:hidden">
+                  {q}
+                  <span aria-hidden="true" className="shrink-0 text-terracotta"><span className="group-open:hidden">+</span><span className="hidden group-open:inline">−</span></span>
+                </summary>
+                <p className="m-0 mt-3 max-w-[680px] text-[16px] leading-6 text-ink-soft lg:text-[18px] lg:leading-7">{nb(a)}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </div>
     </section>
-  )
-}
-
-/** The price counts up every time it comes into view. Screen readers get the final amount only. */
-function CountUp({ to }: { to: number }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const seen = useInView(ref, 0.6)
-  // Without motion (and in the pre-rendered page): show the amount, do not count.
-  const counts = useMotionOk()
-  // Start from a four-digit amount, so the width barely changes while counting.
-  const from = Math.min(1000, to)
-  const [value, setValue] = useState(from)
-  useEffect(() => {
-    if (!seen || !counts) return
-    let raf = 0
-    const start = performance.now()
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / 1100)
-      const eased = 1 - (1 - t) ** 3
-      setValue(t >= 1 ? to : Math.round((from + (to - from) * eased) / 10) * 10)
-      if (t < 1) raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [seen, counts, from, to])
-  return (
-    <>
-      <span ref={ref} aria-hidden="true" className="tabular-nums">
-        {kc(counts ? value : to)}
-      </span>
-      <span className="sr-only">{kc(to)}</span>
-    </>
   )
 }

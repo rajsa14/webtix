@@ -8,11 +8,13 @@ export const SITE = {
 
 /** Every price and day count on the site comes from these values. */
 export const PRICE_FROM = 9990
+export const BUSINESS_PRICE_MIN = 18000
+export const BUSINESS_PRICE_MAX = 30000
 export const PREVIEW_DAYS = 5
 
-/** Monthly web care: with a CMS (the client edits the site) and with edits made by us. */
-export const MANAGEMENT_CMS_FROM = 790
-export const MANAGEMENT_EDITS_FROM = 1490
+/** Optional monthly care, independent of CMS. Care+ includes minor content edits. */
+export const CARE_MONTHLY = 790
+export const CARE_PLUS_MONTHLY = 1490
 
 /**
  * Who runs the site, as named in the legal texts (src/data/legal.ts). Change

@@ -1,6 +1,6 @@
 import { CASES } from '../data/cases'
 import { FAQ } from '../data/faq'
-import { ADASTRA_URL, HOME_META, INQUIRY_ANCHOR, MANAGEMENT_CMS_FROM, MANAGEMENT_EDITS_FROM, PAGES, SITE, kc, previewDaysWords, priceText } from '../data/site'
+import { ADASTRA_URL, BUSINESS_PRICE_MIN, BUSINESS_PRICE_MAX, HOME_META, INQUIRY_ANCHOR, CARE_MONTHLY, CARE_PLUS_MONTHLY, PAGES, SITE, kc, previewDaysWords, priceText } from '../data/site'
 import { team } from '../data/team'
 
 /*
@@ -31,8 +31,14 @@ export function llmsTxt() {
     '',
     '## Cena',
     '',
-    `- Web od ${priceText()}. Za hotový web. Přesnou částku znáte dřív, než cokoli podepíšete.`,
-    `- Správa webu: S CMS od ${kc(MANAGEMENT_CMS_FROM)} měsíčně · S úpravami od nás od ${kc(MANAGEMENT_EDITS_FROM)} měsíčně`,
+    `- Běžný firemní web: ${kc(BUSINESS_PRICE_MIN)} až ${kc(BUSINESS_PRICE_MAX)}. Nejčastější cena podle rozsahu, obsahu a funkcí.`,
+    `- Jednoduchý jednostránkový web od ${priceText()}. Pro menší web, kde vše důležité funguje na jedné stránce.`,
+    '- Složitější weby a funkce naceníme individuálně. Přesnou cenu znáte předem. Návrh úvodní stránky je zdarma a k ničemu vás nezavazuje.',
+    '- První měsíc se o web staráme my. Zdarma. Hosting, technická péče, podpora a drobné úpravy jsou první měsíc na nás.',
+    `- Webtix Care: ${kc(CARE_MONTHLY)} / měsíc. Hosting, technická péče, opravy chyb a podpora. Pokud má web CMS, texty a fotky si můžete upravovat sami.`,
+    `- Webtix Care+: ${kc(CARE_PLUS_MONTHLY)} / měsíc. Všechno z Care + až 30 minut drobných úprav obsahu každý měsíc.`,
+    '- Nechcete měsíční správu? Nemusíte. Web je váš. Nezamykáme vás u nás. Předáme vám web i doménu pro provoz jinde. Náš hosting, technická péče a podpora tím končí.',
+    '- Registrace a obnova domény se platí zvlášť.',
     '',
     '## Časté otázky',
     '',

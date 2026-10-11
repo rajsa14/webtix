@@ -1,11 +1,11 @@
 import { FAQ } from '../data/faq'
-import { HOME_META, MANAGEMENT_CMS_FROM, MANAGEMENT_EDITS_FROM, PAGES, PRICE_FROM, SITE } from '../data/site'
+import { HOME_META, CARE_MONTHLY, CARE_PLUS_MONTHLY, PAGES, PRICE_FROM, SITE } from '../data/site'
 import { team } from '../data/team'
 
 /*
  * Structured data (schema.org JSON-LD) for search engines and AI assistants.
  * Only facts and wording that are already on the page: the description, the
- * prices, the founders, Praha and the four questions. scripts/prerender.mjs
+ * prices, the founders, Praha and the pricing questions. scripts/prerender.mjs
  * writes it into each indexed page.
  */
 
@@ -34,18 +34,18 @@ const business = {
     },
     {
       '@type': 'Offer',
-      name: 'Hotový web',
+      name: 'Jednoduchý jednostránkový web',
       priceSpecification: { '@type': 'PriceSpecification', minPrice: PRICE_FROM, priceCurrency: CZK },
     },
     {
       '@type': 'Offer',
-      name: 'Správa webu s CMS',
-      priceSpecification: { '@type': 'UnitPriceSpecification', minPrice: MANAGEMENT_CMS_FROM, priceCurrency: CZK, unitCode: 'MON' },
+      name: 'Webtix Care',
+      priceSpecification: { '@type': 'UnitPriceSpecification', price: CARE_MONTHLY, priceCurrency: CZK, unitCode: 'MON' },
     },
     {
       '@type': 'Offer',
-      name: 'Správa webu s úpravami od nás',
-      priceSpecification: { '@type': 'UnitPriceSpecification', minPrice: MANAGEMENT_EDITS_FROM, priceCurrency: CZK, unitCode: 'MON' },
+      name: 'Webtix Care+',
+      priceSpecification: { '@type': 'UnitPriceSpecification', price: CARE_PLUS_MONTHLY, priceCurrency: CZK, unitCode: 'MON' },
     },
   ],
 }
