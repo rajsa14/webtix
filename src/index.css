@@ -376,6 +376,84 @@ body {
   }
 }
 
+/* "Návrhy" deck (CaseDeck.tsx): the fan moves, the story fades in, the progress segment fills. */
+.deck-card {
+  transition:
+    translate 700ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    rotate 700ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    scale 700ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 500ms ease;
+}
+
+.deck-story {
+  animation: deck-story 500ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+
+@keyframes deck-story {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+
+.deck-progress {
+  animation: deck-progress linear forwards;
+}
+
+.deck-progress.is-static {
+  animation: none;
+}
+
+@keyframes deck-progress {
+  from {
+    scale: 0 1;
+  }
+}
+
+/* Section numbers in the eyebrow labels: "02 — Návrhy". */
+.section-num span {
+  margin-right: 0.6em;
+}
+
+.section-num span::after {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  margin-left: 0.6em;
+  vertical-align: middle;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+/* Footer wordmark (PlayfulWordmark.tsx): letters jump and tilt on hover, a click paints them pink. */
+.wm-letter {
+  fill: currentColor;
+  cursor: pointer;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition:
+    translate 450ms cubic-bezier(0.34, 1.8, 0.5, 1),
+    rotate 450ms cubic-bezier(0.34, 1.8, 0.5, 1),
+    fill 300ms ease;
+}
+
+.wm-letter:hover {
+  translate: 0 -14%;
+}
+
+.wm-even:hover {
+  rotate: -6deg;
+}
+
+.wm-odd:hover {
+  rotate: 6deg;
+}
+
+.wm-letter.wm-painted {
+  fill: var(--color-pink);
+}
+
 /* Giant outlined step numbers behind the "Jak to děláme" cards. */
 .step-num {
   color: transparent;

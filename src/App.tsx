@@ -4,11 +4,10 @@ import { CookieBanner } from './components/CookieBanner'
 import { Cursor } from './components/Cursor'
 import { Footer } from './components/Footer'
 import { Hero } from './components/home/Hero'
-import { CaseGallery } from './components/home/CaseGallery'
+import { CaseDeck } from './components/home/CaseDeck'
 import { HowWeWork } from './components/home/HowWeWork'
 import { Marquee } from './components/home/Marquee'
 import { Price } from './components/home/Price'
-import { RealProposal } from './components/home/RealProposal'
 import { Team } from './components/home/Team'
 import { Navbar } from './components/Navbar'
 import { InquirySent } from './components/pages/InquirySent'
@@ -34,8 +33,7 @@ const ROUTES: Record<string, () => ReactNode> = {
       <Hero />
       <Marquee />
       <HowWeWork />
-      <RealProposal />
-      <CaseGallery />
+      <CaseDeck />
       <Team />
       <Price />
       <ContactForm />

@@ -1,9 +1,11 @@
 import { CONSENT_NEEDED, ICO, INQUIRY_ANCHOR, PAGES, SITE } from '../data/site'
 import { useConsent } from '../store/consent'
+import { PlayfulWordmark } from './PlayfulWordmark'
 
 /**
  * Closing footer: a full-width ink block with the hero's line, one last
- * "Chci návrh", the huge cream wordmark (from public/brand, never redrawn),
+ * "Chci návrh", the huge cream wordmark (letters from public/brand, never redrawn;
+ * they jump on hover),
  * then e-mail, IČO (only once ICO is set in src/data/site.ts) and legal links.
  */
 export function Footer() {
@@ -28,16 +30,8 @@ export function Footer() {
           </a>
         </div>
 
-        <a href={PAGES.home} aria-label={`${SITE.name}, úvodní stránka`} className="mt-16 block lg:mt-24">
-          <img
-            src={import.meta.env.BASE_URL + 'brand/wordmark/webtix-wordmark-cream.svg'}
-            alt=""
-            width={3125}
-            height={751}
-            loading="lazy"
-            className="block h-auto w-full"
-          />
-        </a>
+        {/* Hover a letter and it jumps; click it and it turns pink. */}
+        <PlayfulWordmark className="mt-16 text-cream lg:mt-24" />
 
         <div className="mt-8 flex flex-col gap-3 border-0 border-t border-solid border-paper/15 pt-6 text-[14px] leading-6 text-paper/70 lg:mt-10 lg:flex-row lg:items-center lg:justify-between lg:text-[15px]">
           <p className="m-0">
