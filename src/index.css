@@ -328,91 +328,35 @@ body {
   }
 }
 
-/*
- * Hero cinematic start and spotlight (Hero.tsx). [data-intro]: the panel fills
- * the screen while the first run plays, then the text column slides in.
- * [data-spot]: on replays the text steps back and a pen circle draws round
- * the phone. [data-cta]: when a run ends, "Chci návrh" pulses twice.
- */
-.hero-grid {
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+/* Hero reserves one stage; only opacity and transforms change during playback. */
+.hero-text { position: relative; z-index: 2; width: 50%; }
+.hero-panel { clip-path: inset(0 0 0 calc(-100% * var(--scene-focus, 0))); }
+.hero-panel::before {
+  content: ''; position: absolute; inset: 0; background: var(--color-pink);
+  transform-origin: right; transform: scaleX(calc(1 + var(--scene-focus, 0)));
 }
-
-.hero-grid[data-intro] {
-  grid-template-columns: minmax(0, 0fr) minmax(0, 1fr);
-}
-
-.hero-text {
-  transition:
-    opacity 600ms ease,
-    translate 800ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-[data-intro] .hero-text {
-  opacity: 0;
-  translate: -40px 0;
-}
-
-[data-spot] .hero-text {
-  opacity: 0.35;
-}
-
-.hero-spot path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 1200ms cubic-bezier(0.65, 0, 0.35, 1);
-}
-
-[data-spot] .hero-spot path {
-  stroke-dashoffset: 0;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .hero-grid {
-    transition: grid-template-columns 1000ms cubic-bezier(0.65, 0, 0.35, 1);
-  }
-
-  [data-cta] .hero-cta {
-    animation: cta-pulse 1.2s ease-in-out 2;
-  }
-}
-
-@keyframes cta-pulse {
-  50% {
-    scale: 1.06;
-    background: var(--color-terracotta);
-  }
-}
-
-/* Hero attention cue: the phone rises in, the pen arrow nudges towards it (Hero.tsx). */
-.hero-cue {
-  color: var(--color-pen);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .hero-phone-in {
-    animation: phone-in 1000ms cubic-bezier(0.2, 0.7, 0.2, 1) 150ms backwards;
-  }
-
-  .hero-cue {
-    animation: note-in 600ms ease-out 1100ms backwards;
-  }
-
-  .cue-arrow {
-    animation: nudge-x 1.4s ease-in-out 1.7s infinite;
-  }
-
-  .cue-bounce {
-    animation: nudge-y 1.4s ease-in-out 1.7s infinite;
-  }
-}
-
-@keyframes phone-in {
-  from {
-    opacity: 0;
-    translate: 0 60px;
-    rotate: 3deg;
-  }
+.hero-phone-group { transform: translateX(calc(-25cqw / var(--group-scale, 1) * var(--scene-focus, 0))); }
+.hero-question { display: none; }
+.hero-grid[data-cinematic] .hero-question { display: flex; opacity: var(--question, 0); }
+.hero-grid[data-cinematic] .hero-phone-group { opacity: calc(1 - 0.94 * var(--question, 0)); }
+.hero-grid[data-cinematic] .hero-static-question { position: absolute; width: 1px; height: 1px; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.hero-disclaimer { z-index: 3; }
+.hero-grid[data-cinematic] .hero-disclaimer { opacity: calc(1 - var(--question, 0)); }
+.hero-grid:has(.hero-nav[data-dark]) .hero-disclaimer { color: color-mix(in srgb, var(--color-cream) calc(100% * var(--scene-focus, 0)), var(--color-muted)); }
+.hero-controls { color: var(--color-ink); }
+.hero-grid:has(.hero-nav[data-dark]) .hero-controls { color: var(--color-cream); }
+.hero-skip:hover { text-decoration-thickness: 2px; }
+.hero-grid [data-note] { opacity: 0; }
+.hero-grid [data-note^='a'] { opacity: 1; }
+.homepage-hero [data-after] { clip-path: inset(0 0 100% 0); }
+.homepage-hero [data-band] { opacity: 0; }
+/* JS-free / delayed hydration: keep the question, offer, form and old site readable. */
+.hero-grid:not([data-cinematic]) .hero-question { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-grid .hero-question { display: none !important; }
+  .hero-phone-group { transform: none; opacity: 1 !important; }
+  .hero-text { opacity: 1 !important; }
+  .hero-panel::before { transform: none; }
 }
 
 @keyframes nudge-x {

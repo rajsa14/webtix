@@ -57,6 +57,7 @@ export function useGroupScale(base: { width: number; height?: number }, [min, ma
     const el = ref.current
     if (!el) return
     const update = () => {
+      if (!el.clientWidth || (base.height && !el.clientHeight)) return
       const fit = Math.min(el.clientWidth / base.width, base.height ? el.clientHeight / base.height : Infinity)
       const scale = Math.min(max, Math.max(min, fit))
       const boxHeight = el.clientHeight
@@ -74,8 +75,8 @@ export function useGroupScale(base: { width: number; height?: number }, [min, ma
 
 /** One run from the old site to the new one. */
 export const PLAY_MS = 7000
-/** Wait after the scene appears, so the red-pen notes have drawn in first. */
-const START_DELAY_MS = 1400
+/** Reading windows are part of the timeline, rather than a separate startup timer. */
+const START_DELAY_MS = 0
 /** Replay: wind back to the old site, wait a moment, play again. */
 const REWIND_MS = 900
 const REWIND_PAUSE_MS = 500
@@ -139,6 +140,9 @@ export type Frame = {
   dark?: boolean
   /** The phone shows the new site. */
   isNew: boolean
+  question?: number
+  focus?: number
+  offer?: number
 }
 
 /** Group height of the terracotta layer and the dashed line's svg (see the markup). */
@@ -173,6 +177,7 @@ export function paintScene(n: SceneNodes, f: Frame) {
     const o = f.texts?.[key] ?? 0
     el.style.opacity = String(o)
     el.style.pointerEvents = o < 0.5 ? 'none' : ''
+    el.inert = o < 0.5
   }
   for (const [key, el] of n.forms) el.inert = key !== f.form
 
@@ -195,7 +200,9 @@ function setProgress(root: HTMLElement, p: number) {
  * stale values behind, and returns the state and the action of the control
  * button. With `reduced`, nothing animates: `toggle` jumps between 0 and 1.
  */
-export function useScene(frame: (p: number) => Frame, reduced: boolean) {
+export function useScene(frame: (p: number) => Frame, reduced: boolean, options: { duration?: number; replayFrom?: number } = {}) {
+  const { duration = PLAY_MS, replayFrom = 0 } = options
+  const [ready, setReady] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const nodes = useRef<SceneNodes | null>(null)
   const pRef = useRef(0)
@@ -211,14 +218,41 @@ export function useScene(frame: (p: number) => Frame, reduced: boolean) {
     stateRef.current = state
     if (!rootRef.current) return
     nodes.current = collectNodes(rootRef.current)
+    if (!ready) return
     paintScene(nodes.current, frame(pRef.current))
     setProgress(rootRef.current, pRef.current)
+    const f = frame(pRef.current)
+    rootRef.current.style.setProperty('--question', String(f.question ?? 0))
+    rootRef.current.style.setProperty('--scene-focus', String(f.focus ?? 0))
+    rootRef.current.style.setProperty('--offer', String(f.offer ?? 1))
   })
 
   const paint = useCallback((p: number) => {
     pRef.current = p
     if (nodes.current) paintScene(nodes.current, frameRef.current(p))
-    if (rootRef.current) setProgress(rootRef.current, p)
+    if (rootRef.current) {
+      setProgress(rootRef.current, p)
+      const f = frameRef.current(p)
+      rootRef.current.style.setProperty('--question', String(f.question ?? 0))
+      rootRef.current.style.setProperty('--scene-focus', String(f.focus ?? 0))
+      rootRef.current.style.setProperty('--offer', String(f.offer ?? 1))
+    }
+  }, [])
+
+  // Preference changes also settle a run already in progress into a static comparison.
+  useEffect(() => {
+    if (!reduced) return
+    const timer = window.setTimeout(() => {
+      const next = pRef.current >= 0.5 ? 1 : 0
+      paint(next)
+      setState(next === 1 ? 'done' : 'paused')
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [reduced, paint])
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setReady(true), 0)
+    return () => clearTimeout(timer)
   }, [])
 
   // Start once at least half the scene is on screen; keep track of visibility.
@@ -228,8 +262,8 @@ export function useScene(frame: (p: number) => Frame, reduced: boolean) {
     let timer = 0
     const observer = new IntersectionObserver(
       ([entry]) => {
-        visible.current = entry.isIntersecting
-        if (entry.isIntersecting && stateRef.current === 'waiting' && !timer) {
+        visible.current = entry.isIntersecting && entry.intersectionRatio >= 0.5
+        if (visible.current && stateRef.current === 'waiting' && !timer) {
           timer = window.setTimeout(() => setState((s) => (s === 'waiting' ? 'playing' : s)), START_DELAY_MS)
         }
       },
@@ -253,15 +287,15 @@ export function useScene(frame: (p: number) => Frame, reduced: boolean) {
       if (visible.current) {
         if (phase.current === 'rewind') {
           const p = pRef.current - dt / REWIND_MS
-          if (p <= 0) {
-            paint(0)
+          if (p <= replayFrom) {
+            paint(replayFrom)
             phase.current = 'hold'
             holdUntil.current = now + REWIND_PAUSE_MS
           } else paint(p)
         } else if (phase.current === 'hold') {
           if (now >= holdUntil.current) phase.current = 'play'
         } else {
-          const p = pRef.current + dt / PLAY_MS
+          const p = pRef.current + dt / duration
           if (p >= 1) {
             paint(1)
             setState('done')
@@ -274,7 +308,7 @@ export function useScene(frame: (p: number) => Frame, reduced: boolean) {
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [state, reduced, paint])
+  }, [state, reduced, paint, duration, replayFrom])
 
   /** Pause, resume, replay; with reduced motion, switch old ↔ new at once. */
   const toggle = useCallback(() => {
@@ -291,75 +325,57 @@ export function useScene(frame: (p: number) => Frame, reduced: boolean) {
     })
   }, [reduced, paint])
 
-  return { rootRef, state, toggle }
+  const skip = useCallback(() => {
+    phase.current = 'play'
+    paint(1)
+    setState('done')
+  }, [paint])
+
+  return { rootRef, state, toggle, skip, ready }
 }
 
 /* ---------- timelines ---------- */
 
-/** Notes fade in or out one after another: note i of `keys` uses the window shifted by i × step. */
-function stagger(keys: string[], p: number, from: number, to: number, step: number, out: boolean) {
-  const result: Record<string, number> = {}
-  keys.forEach((key, i) => {
-    const v = ramp(p, from + i * step, to + i * step)
-    result[key] = out ? 1 - v : v
-  })
-  return result
-}
-
-/**
- * Desktop, in the 720 × 900 panel group of the design.
- *   0    – 0.18  state 1 (S1Pred), as it was drawn
- *   0.18 – 0.30  red-pen notes vanish one by one, text 1 fades out
- *   0.28 – 0.45  dashed line comes down to 436, text 2 fades in
- *   0.45 – 0.55  state 2 (S2Siti) held, its two notes shown
- *   0.55 – 0.74  line goes on down and out, text 3 fades in
- *   0.80 – 0.96  cream notes appear one by one, state 3 (S3Po)
- */
-export function desktopFrame(p: number, ctx: { scale: number; groupTop: number; allNotes: boolean }): Frame {
-  // Past the panel's edge (in group units), so the line starts and ends out of sight.
+/** First desktop play: question, diagnosis, wipe, quiet result, offer (10.8 s). */
+export const DESKTOP_PLAY_MS = 10800
+export function desktopFrame(p: number, ctx: { scale: number; groupTop: number; allNotes: boolean; offerShown: boolean; reduced: boolean }): Frame {
+  const t = p * DESKTOP_PLAY_MS / 1000
   const pad = ctx.groupTop / ctx.scale + 12
-  const y = track(p, [
-    [0.28, -pad],
-    [0.45, 436],
-    [0.55, 436],
-    [0.74, 900 + pad],
-  ])
+  const y = track(t, [[6.7, -pad], [7.7, 436], [8.2, 436], [9.2, 900 + pad]])
   const before = ctx.allNotes ? ['a0', 'a1', 'a2', 'a3'] : ['a0', 'a2']
   const after = ctx.allNotes ? ['c0', 'c1', 'c2', 'c3'] : ['c2', 'c3']
+  const question = ctx.reduced || ctx.offerShown ? 0 : Math.min(ramp(t, 0, 0.4), 1 - ramp(t, 3.0, 3.4))
+  const offer = ctx.reduced || ctx.offerShown ? 1 : ramp(t, 10.2, 10.8)
   return {
     y,
-    // The design draws the phone's band at screen y 326 when the panel line is at 436.
     screen: { top: 110, height: 720, band: 16 },
     notes: {
-      ...stagger(before, p, 0.18, 0.22, 0.025, true),
-      b0: Math.min(ramp(p, 0.42, 0.46), 1 - ramp(p, 0.56, 0.6)),
-      b1: Math.min(ramp(p, 0.44, 0.48), 1 - ramp(p, 0.54, 0.58)),
-      ...stagger(after, p, 0.8, 0.84, 0.04, false),
+      ...Object.fromEntries(before.map((key, i) => [key, ctx.reduced ? 1 - p : Math.min(ramp(t, 3.4 + i * 0.18, 3.65 + i * 0.18), 1 - ramp(t, 6.7, 7.0))])),
+      // Keep the original result annotations for the untimed, reduced-motion comparison.
+      ...Object.fromEntries(after.map((key) => [key, ctx.reduced ? p : 0])),
     },
-    texts: {
-      1: 1 - ramp(p, 0.24, 0.3),
-      2: Math.min(ramp(p, 0.28, 0.34), 1 - ramp(p, 0.68, 0.74)),
-      3: ramp(p, 0.72, 0.78),
-    },
-    form: p < 0.5 ? '1' : '3',
-    // The nav links sit around y 44 of the panel.
+    texts: { offer, question },
+    form: offer >= 0.99 ? 'offer' : undefined,
+    question,
+    focus: ctx.reduced || ctx.offerShown ? 0 : 1 - ramp(t, 10.2, 10.8),
+    offer,
     dark: ctx.groupTop + y * ctx.scale > 52,
-    isNew: p >= 0.5,
+    isNew: t >= 8.2,
   }
 }
 
 /** Phone, in the 390 × 520 pink block of S1Mobile: the two notes go, then the same wipe. */
 export function phoneFrame(p: number, ctx: { pad: number }): Frame {
   const y = track(p, [
-    [0.2, -ctx.pad],
-    [0.45, 258],
-    [0.6, 258],
-    [0.85, 520 + ctx.pad],
+    [0.47, -ctx.pad],
+    [0.62, 258],
+    [0.7, 258],
+    [0.92, 520 + ctx.pad],
   ])
   return {
     y,
     screen: { top: 35, height: 446, band: 10 },
-    notes: stagger(['m0', 'm1'], p, 0.1, 0.15, 0.05, true),
+    notes: Object.fromEntries(['m0', 'm1'].map((key, i) => [key, Math.min(ramp(p, i * 0.035, 0.035 + i * 0.035), 1 - ramp(p, 0.42, 0.47))])),
     isNew: p >= 0.5,
   }
 }

@@ -5,6 +5,7 @@ import { navigate } from '../../lib/router'
 import { useUi } from '../../store/ui'
 import { Navbar } from '../Navbar'
 import {
+  DESKTOP_PLAY_MS,
   FILL_HEIGHT,
   LINE_HEIGHT,
   PHONE_LABEL,
@@ -17,19 +18,9 @@ import {
 } from './heroScene'
 import { ShopAfter, ShopBefore, ShopScreen } from './Shop'
 
-/*
- * The hero, from docs/design/source/S1Pred (před), S2Siti (předělávka) and
- * S3Po (po), 1440 × 900, and S1Mobile for phones. Timing and painting live in
- * heroScene.ts.
- *
- * Desktop (1024px and up) is a fluid two-column layout: the text column (state
- * 1, it stays put) and the pink panel with the phone, its notes and arrows as
- * one group in the design's 720 × 900 coordinates, scaled to fit.
- * Phone: the header text, then the pink block with the phone and two notes.
- * In both, the phone scene plays once like a short video when it comes into
- * view: old site, the dashed line wipes down, new site. A button pauses,
- * resumes and replays it. Reduced motion: nothing moves, the button switches
- * between the old and the new site.
+/* Desktop hands attention from the opening question to the phone, then the offer.
+ * Mobile keeps the offer and form above the independently playing demonstration.
+ * The static server render stays usable until the scene is ready.
  */
 
 const PANEL = { width: 720, height: 900 }
@@ -37,15 +28,12 @@ const PHONE_SCENE = { width: 390, height: 520 }
 const PHONE_CLAMP: [number, number] = [0.8, 1.25]
 
 
-/** Notes draw in one by one when the page opens (index.css, .note-in). */
-const intro = (on: boolean, i: number) => (on ? { className: 'note-in', style: { animationDelay: `${300 + i * 220}ms` } } : {})
-
 const metaText = () => `Návrh do ${PREVIEW_DAYS} pracovních dnů. Web od ${priceText()}.`
 
 export function Hero() {
   const reduced = useReducedMotion()
   return (
-    <section aria-labelledby="hero-title">
+    <section className="homepage-hero" aria-label="Webtix — nový web pro váš podnik">
       <div className="lg:hidden">
         <PhoneHero reduced={reduced} />
       </div>
@@ -124,7 +112,7 @@ function HeroForm({ variant, value, onValueChange }: { variant: 'desktop' | 'pho
 
   const desktop = variant === 'desktop'
   return (
-    <form onSubmit={onSubmit} className={desktop ? 'flex w-[min(520px,100%)] gap-2' : 'flex gap-2'}>
+    <form action={`/#${INQUIRY_ANCHOR}`} onSubmit={onSubmit} className={desktop ? 'flex w-[min(520px,100%)] gap-2' : 'flex gap-2'}>
       <label htmlFor={id} className="absolute size-px overflow-hidden [clip:rect(0_0_0_0)]">
         Váš web nebo Instagram
       </label>
@@ -193,14 +181,14 @@ function Fill({ width, strokeWidth }: { width: number; strokeWidth: number }) {
   const span = width + 4000
   return (
     <>
-      <div data-fill aria-hidden="true" className="absolute bg-terracotta" style={{ left, top: -FILL_HEIGHT, width: span, height: FILL_HEIGHT }} />
+      <div data-fill aria-hidden="true" className="absolute bg-terracotta" style={{ left, top: -FILL_HEIGHT, width: span, height: FILL_HEIGHT, transform: 'translateY(-10000px)' }} />
       <svg
         data-line
         aria-hidden="true"
         width={span}
         height={LINE_HEIGHT}
         className="absolute"
-        style={{ left, top: -LINE_HEIGHT / 2 }}
+        style={{ left, top: -LINE_HEIGHT / 2, transform: 'translateY(-10000px)' }}
       >
         {/* The dash pattern (12 9) starts at the group's left edge, as in the design. */}
         <path
@@ -226,51 +214,31 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
   const [site, setSite] = useState('')
 
   const groupTop = (panelHeight - PANEL.height * scale) / 2
-  // The text column stays on state 1 ("Vpravo je typický web…"); only the panel plays.
-  const { rootRef, state, toggle } = useScene((p) => ({ ...desktopFrame(p, { scale, groupTop, allNotes }), texts: { 1: 1 }, form: '1' }), reduced)
-
-  // Cinematic start: the panel fills the screen and plays first; the text slides in when
-  // it ends, or as soon as the visitor scrolls, types or clicks.
-  const [introOn, setIntroOn] = useState(!reduced)
-  const showIntro = introOn && !reduced && state !== 'done'
+  const [offerShown, setOfferShown] = useState(false)
+  const { rootRef, state, toggle, skip, ready } = useScene(
+    (p) => desktopFrame(p, { scale, groupTop, allNotes, offerShown, reduced }),
+    reduced,
+    { duration: DESKTOP_PLAY_MS, replayFrom: 3400 / DESKTOP_PLAY_MS },
+  )
   useEffect(() => {
-    if (!introOn) return
-    const end = () => setIntroOn(false)
-    const events = ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const
-    events.forEach((e) => window.addEventListener(e, end, { passive: true, once: true }))
-    const t = window.setTimeout(end, state === 'done' ? 0 : 12000)
-    return () => {
-      events.forEach((e) => window.removeEventListener(e, end))
-      clearTimeout(t)
-    }
-  }, [introOn, state])
-  // Spotlight on replays: the text steps back, a pen circle draws round the phone.
-  const spot = !showIntro && !reduced && state === 'playing'
-  // When a run ends, the "Chci návrh" button pulses twice.
-  const [cta, setCta] = useState(false)
-  useEffect(() => {
-    if (state !== 'done' || reduced) return
-    const on = window.setTimeout(() => setCta(true), 0)
-    const off = window.setTimeout(() => setCta(false), 2600)
-    return () => {
-      clearTimeout(on)
-      clearTimeout(off)
-    }
-  }, [state, reduced])
-
-  const s1 = allNotes ? ['a0', 'a1', 'a2', 'a3'] : ['a0', 'a2']
-  const n1 = (key: string) => intro(!reduced, s1.indexOf(key))
+    if (state !== 'done') return
+    const timer = window.setTimeout(() => setOfferShown(true), 0)
+    return () => clearTimeout(timer)
+  }, [state])
+  const skipToOffer = () => {
+    setOfferShown(true)
+    skip()
+    rootRef.current?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true })
+  }
+  const cinematic = ready && !reduced
   const heading = 'm-0 text-[clamp(48px,5.5556cqw,88px)] leading-[0.92] tracking-[-0.04em] text-balance'
-  const lead = 'm-0 w-[min(500px,100%)] text-[clamp(17px,1.3889cqw,21px)] leading-[1.5] text-ink-soft'
 
   return (
     <div
       ref={rootRef}
       data-scene
-      data-intro={showIntro || undefined}
-      data-spot={spot || undefined}
-      data-cta={cta || undefined}
-      className="hero-grid h-screen-stable relative grid min-h-[640px] [container-type:inline-size]"
+      data-cinematic={cinematic || undefined}
+      className="hero-grid h-screen-stable relative isolate overflow-hidden min-h-[640px] [container-type:inline-size]"
       // Outer margin: 64px, and wider screens keep a 1600 content width centred.
       style={{ ['--edge' as string]: 'max(64px, calc(50cqw - 736px))' }}
     >
@@ -278,72 +246,60 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
       <div data-nav className="hero-nav absolute inset-x-[var(--edge)] top-0 z-10">
         <Navbar variant="desktop" />
       </div>
-      <div inert={showIntro} className="hero-text min-w-0 overflow-hidden pl-[var(--edge)] pt-[clamp(112px,18.667svh,168px)]">
-        <div data-text="1" className="flex w-[min(620px,calc(50cqw-var(--edge)-36px))] flex-col">
-          <p className="mono m-0 mb-6 text-muted">Webové studio · Praha</p>
-          <h1 id="hero-title" className={`${heading} mb-8`}>
-            Podíváme se na váš web. Pak vám ukážeme <em className="italic text-terracotta">lepší.</em>
+      <div className="hero-text min-w-0 overflow-hidden pl-[var(--edge)] pt-[clamp(112px,18.667svh,168px)]">
+        <div data-text="offer" className="flex w-[min(620px,calc(50cqw-var(--edge)-36px))] flex-col">
+          {/* Opening question approved by Dan; the small static version also survives delayed JS. */}
+          <h1 id="hero-title" className="hero-static-question m-0 mb-6 text-[22px] leading-tight">
+            Máte dobrý podnik. A web, který mu nestačí?
           </h1>
-          <p className={`${lead} mb-10`}>Vpravo je typický web malého podniku. Podnik jsme si vymysleli, chyby jsou skutečné.</p>
-          <div data-form="1" className="mb-4">
+          <h2 className={`${heading} mb-8`}>
+            Podíváme se na váš web. Pak vám ukážeme <em className="italic text-terracotta">lepší.</em>
+          </h2>
+          <div data-form="offer" className="mb-4">
             <HeroForm variant="desktop" value={site} onValueChange={setSite} />
           </div>
-          <p className="m-0 text-meta text-muted">{metaText()}</p>
-          {/* Points first-time visitors at the phone, so they watch before scrolling on. */}
-          <p aria-hidden="true" className="hand hero-cue mt-8 flex items-center gap-3 text-[30px]">
-            Sledujte, co s tím webem uděláme
-            <svg viewBox="0 0 100 26" className="cue-arrow h-6 w-20 shrink-0" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 15 C 30 6, 62 22, 94 12" />
-              <path d="M81 4 L 95 12 L 82 21" />
-            </svg>
-          </p>
+          <p className="m-0 text-[12px] leading-relaxed text-muted">{metaText()}</p>
         </div>
       </div>
 
-      <div ref={panelRef} className="relative flex items-center justify-center overflow-hidden bg-pink">
+      {/* A fixed stage moves by transform; the text and panel never reflow. */}
+      <div data-text="question" className="hero-question absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+        <p role="heading" aria-level={1} className="m-0 font-bold text-center text-[clamp(48px,5.3cqw,82px)] leading-[1.02] tracking-[-0.04em]">
+          Máte dobrý podnik.<br />A web, který mu nestačí?
+        </p>
+      </div>
+      <div ref={panelRef} className="hero-panel absolute inset-y-0 right-0 w-1/2 flex items-center justify-center bg-pink">
         {/* The phone with its notes and arrows: one group, scaled to fit the panel. */}
-        <div className="relative shrink-0" style={{ width: PANEL.width, height: PANEL.height, zoom: scale }}>
+        <div className="hero-phone-group relative shrink-0" style={{ width: PANEL.width, height: PANEL.height, zoom: scale, ['--group-scale' as string]: scale }}>
           <Fill width={PANEL.width} strokeWidth={3} />
           <ScenePhone
             band={{ height: 16, dash: 3 }}
-            className="hero-phone-in absolute left-[160px] top-[104px] h-[740px] w-[360px] overflow-hidden rounded-[44px] border-[10px] border-solid border-ink bg-ink shadow-[0_30px_60px_-30px_rgba(22,17,16,0.5)]"
+            className="absolute left-[160px] top-[104px] h-[740px] w-[360px] overflow-hidden rounded-[44px] border-[10px] border-solid border-ink bg-ink shadow-[0_30px_60px_-30px_rgba(22,17,16,0.5)]"
           />
-
-          {/* Spotlight: a pen circle drawn round the phone while a replay runs. */}
-          <svg aria-hidden="true" width="720" height="900" viewBox="720 0 720 900" className="hero-spot pointer-events-none absolute inset-0 text-pen">
-            <path
-              pathLength={1}
-              d="M1062 78 C 1292 80, 1306 300, 1294 482 C 1284 702, 1252 876, 1058 874 C 858 872, 828 700, 826 482 C 824 262, 842 70, 1086 92"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="4"
-              strokeLinecap="round"
-            />
-          </svg>
 
           {/* Design coordinates minus 720, the panel's left edge in the 1440 artboard. */}
           <svg aria-hidden="true" width="720" height="900" viewBox="720 0 720 900" className="pointer-events-none absolute inset-0">
             <g fill="none" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <g stroke="#9B2C1F">
-                <g data-note="a0" {...n1('a0')}>
+                <g data-note="a0">
                   <ellipse cx="1060" cy="240" rx="156" ry="19" transform="rotate(-2 1060 240)" />
                   <path d="M1264 200 C 1246 212, 1232 224, 1220 234" />
                   <path d="M1220 221 L 1219 235 L 1232 237" />
                 </g>
                 {allNotes && (
-                  <g data-note="a1" {...n1('a1')}>
+                  <g data-note="a1">
                     <ellipse cx="1060" cy="402" rx="116" ry="72" transform="rotate(3 1060 402)" />
                     <path d="M868 410 C 900 404, 920 402, 940 404" />
                     <path d="M928 396 L 941 404 L 928 412" />
                   </g>
                 )}
-                <g data-note="a2" {...n1('a2')}>
+                <g data-note="a2">
                   <path d="M954 538 q 10 -7 20 0 t 20 0 t 20 0 t 20 0 t 20 0 t 20 0 t 20 0 t 20 0 t 20 0 t 20 0 t 20 0" />
                   <path d="M1264 548 C 1240 548, 1220 546, 1196 542" />
                   <path d="M1208 534 L 1195 542 L 1207 550" />
                 </g>
                 {allNotes && (
-                  <g data-note="a3" {...n1('a3')}>
+                  <g data-note="a3">
                     <ellipse cx="1060" cy="746" rx="104" ry="15" transform="rotate(-1 1060 746)" />
                     <path d="M868 752 C 900 752, 924 748, 952 747" />
                     <path d="M940 739 L 953 747 L 940 755" />
@@ -351,10 +307,6 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
                 )}
               </g>
               <g stroke="#F6EFE5">
-                <g data-note="b0">
-                  <path d="M1268 200 C 1200 200, 1110 198, 1050 196" />
-                  <path d="M1062 188 L 1049 196 L 1062 204" />
-                </g>
                 {allNotes && (
                   <>
                     <g data-note="c0">
@@ -380,29 +332,22 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
           </svg>
 
           <div aria-hidden="true" style={{ fontSize: noteSize(26, scale) }}>
-            <Note k="a0" at="left-[552px] top-[156px] w-[156px] rotate-2" {...n1('a0')}>
+            <Note k="a0" at="left-[552px] top-[156px] w-[156px] rotate-2">
               Nově v sobotu? Dole stojí „dle dohody“.
             </Note>
             {allNotes && (
-              <Note k="a1" at="left-[24px] top-[368px] w-[124px] -rotate-2" {...n1('a1')}>
+              <Note k="a1" at="left-[24px] top-[368px] w-[124px] -rotate-2">
                 Fotka dílny se nenačte.
               </Note>
             )}
-            <Note k="a2" at="left-[552px] top-[504px] w-[156px] rotate-2" {...n1('a2')}>
+            <Note k="a2" at="left-[552px] top-[504px] w-[156px] rotate-2">
               Ceník jen v PDF. Na mobilu? Hodně štěstí.
             </Note>
             {allNotes && (
-              <Note k="a3" at="left-[24px] top-[712px] w-[124px] -rotate-2" {...n1('a3')}>
+              <Note k="a3" at="left-[24px] top-[712px] w-[124px] -rotate-2">
                 Naposledy změněno 2014.
               </Note>
             )}
-
-            <Note k="b0" at="left-[552px] top-[180px] w-[156px] rotate-2 text-cream">
-              Nahoře už nový web.
-            </Note>
-            <Note k="b1" at="left-[552px] top-[560px] w-[156px] -rotate-2">
-              Tohle ještě předěláváme…
-            </Note>
 
             {allNotes && (
               <>
@@ -422,7 +367,16 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
             </Note>
           </div>
         </div>
-        <PlayButton state={state} reduced={reduced} onClick={toggle} className="absolute bottom-6 right-[var(--edge)] z-10" />
+      </div>
+      <p className="hero-disclaimer absolute bottom-6 left-[var(--edge)] m-0 max-w-[310px] text-[12px] leading-relaxed text-muted">
+        Podnik jsme si vymysleli, chyby jsou skutečné.
+      </p>
+      <div className="hero-controls absolute bottom-6 right-[var(--edge)] z-30 flex items-center gap-5">
+        {cinematic && !offerShown && state !== 'done' && (
+          // Utility label approved with the hero; the quiet skip is separate from the sales CTA.
+          <button type="button" onClick={skipToOffer} className="hero-skip cursor-pointer border-0 bg-transparent px-2 py-3 text-[12px] underline underline-offset-4">Přeskočit ukázku</button>
+        )}
+        {ready && <PlayButton state={state} reduced={reduced} onClick={toggle} className="" />}
       </div>
     </div>
   )
@@ -443,19 +397,19 @@ function PhoneHero({ reduced }: { reduced: boolean }) {
     <>
       <Navbar variant="phone" />
       <div className="flex flex-col gap-4 px-4 pt-3">
-        <p className="mono m-0 text-[11px] text-muted">Webové studio · Praha</p>
+        {/* Opening copy approved by Dan; mobile never waits for the animation. */}
         <h1 id="hero-title-telefon" className="m-0 text-hero-m">
-          Podíváme se na váš web. Pak vám ukážeme <em className="italic text-terracotta">lepší.</em>
+          Máte dobrý podnik.<br />A web, který mu nestačí?
         </h1>
-        <p className="m-0 text-body-m text-ink-soft">Níž je typický web malého podniku. Podnik je vymyšlený, chyby jsou skutečné.</p>
-      </div>
-      {/* On phones the animation comes first, inside the first screen; the form follows it. */}
-      <div ref={sceneRef} className="mt-6">
-        <PhoneScene scale={scale} reduced={reduced} />
-      </div>
-      <div className="flex flex-col gap-4 px-4 pt-6">
+        <p className="m-0 text-[24px] leading-[1.15] tracking-[-0.02em]">
+          Podíváme se na váš web. Pak vám ukážeme <em className="italic text-terracotta">lepší.</em>
+        </p>
         <HeroForm variant="phone" value={site} onValueChange={setSite} />
-        <p className="m-0 text-meta-m text-muted">{metaText()}</p>
+        <p className="m-0 text-[12px] leading-relaxed text-muted">{metaText()}</p>
+      </div>
+      <div ref={sceneRef} className="mt-6">
+        <p className="mx-4 mb-3 text-[12px] leading-relaxed text-muted">Podnik jsme si vymysleli, chyby jsou skutečné.</p>
+        <PhoneScene scale={scale} reduced={reduced} />
       </div>
     </>
   )
@@ -463,8 +417,7 @@ function PhoneHero({ reduced }: { reduced: boolean }) {
 
 /** Phone: the pink block of S1Mobile, playing the same wipe; the control sits below it. */
 function PhoneScene({ scale, reduced }: { scale: number; reduced: boolean }) {
-  const { rootRef, state, toggle } = useScene((p) => phoneFrame(p, { pad: 12 }), reduced)
-  const live = !reduced
+  const { rootRef, state, toggle, ready } = useScene((p) => ({ ...phoneFrame(p, { pad: 12 }), ...(reduced ? { notes: { m0: 1 - p, m1: 1 - p } } : {}) }), reduced)
 
   const group = (
     <div ref={rootRef} className="relative mx-auto" style={{ width: PHONE_SCENE.width, height: PHONE_SCENE.height, zoom: scale }}>
@@ -477,12 +430,12 @@ function PhoneScene({ scale, reduced }: { scale: number; reduced: boolean }) {
       <>
           <svg aria-hidden="true" width="390" height="424" viewBox="0 0 390 424" className="pointer-events-none absolute left-0 top-0">
             <g fill="none" stroke="#9B2C1F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <g data-note="m0" {...intro(live, 0)}>
+              <g data-note="m0">
                 <ellipse cx="260" cy="111" rx="96" ry="12" transform="rotate(-2 260 111)" />
                 <path d="M112 104 C 130 104, 146 106, 160 108" />
                 <path d="M151 101 L 161 108 L 151 115" />
               </g>
-              <g data-note="m1" {...intro(live, 1)}>
+              <g data-note="m1">
                 <ellipse cx="240" cy="210" rx="56" ry="44" transform="rotate(3 240 210)" />
                 <path d="M112 218 C 140 216, 160 214, 180 212" />
                 <path d="M170 205 L 181 212 L 171 219" />
@@ -490,10 +443,10 @@ function PhoneScene({ scale, reduced }: { scale: number; reduced: boolean }) {
             </g>
           </svg>
           <div aria-hidden="true" style={{ fontSize: noteSize(22, scale) }}>
-            <Note k="m0" at="left-[14px] top-20 w-24 -rotate-4" {...intro(live, 0)}>
+            <Note k="m0" at="left-[14px] top-20 w-24 -rotate-4">
               Křičí to. A kdy?
             </Note>
-            <Note k="m1" at="left-[14px] top-48 w-24 -rotate-3" {...intro(live, 1)}>
+            <Note k="m1" at="left-[14px] top-48 w-24 -rotate-3">
               Fotka se nenačte.
             </Note>
           </div>
@@ -505,7 +458,7 @@ function PhoneScene({ scale, reduced }: { scale: number; reduced: boolean }) {
     <div data-scene>
       <div className="overflow-clip bg-pink">{group}</div>
       <div className="flex justify-end px-4 pt-3">
-        <PlayButton state={state} reduced={reduced} onClick={toggle} className="" />
+        {ready && <PlayButton state={state} reduced={reduced} onClick={toggle} className="" />}
       </div>
     </div>
   )
