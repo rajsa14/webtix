@@ -9,7 +9,7 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - Contact: info@webtix.cz. Enquiries arrive there through the form.
 
 ## What is live
-- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (section-label removal commit `9fe708f`, version `0afd1571-650f-4d0b-ac21-da2e005f3782`; includes approved hero and pricing changes).
+- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (team polish commit `7a06762`, version `2c9cf4a7-6ef2-4004-a6b2-08d5dcc49730`; includes approved hero, pricing and section-label removal changes).
 - GitHub: `rajsa14/webtix` (public, owned by Richard; Dan has write access, not admin). Only two branches: `redesign` (where we work) and `main` (the default branch, kept identical to `redesign`).
 - Archive: everything from before the cleanup (old configurator site on the old `main`, the koncepty, the English draft, all 12 old branches with full history) is in the private repo `swedishdan/webtix-archive`.
 - Pages: `/` (one-page site), `/poptavka-odeslana` (thank-you, noindex), `/ochrana-osobnich-udaju`, `/obchodni-podminky`, a 404 page (noindex). Old configurator addresses redirect with 301 (`public/_redirects`).
@@ -58,3 +58,5 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - 2026-10-11: approved pricing redesign deployed: typical business-site range, free first-month moment, optional CMS-independent Care/Care+, ownership CTA and seven pricing FAQs. Scroll reveals, reduced motion, live page responses and desktop/mobile overflow checked.
 
 - 2026-10-11: removed all five decorative numbered section labels above homepage headings. Main headings, anchors and process-step numbers remain. Approved production deployment checked at 1440 and 390 pixels.
+
+- 2026-10-11: approved team roles, short responsibilities and a subtle one-time sample conversation deployed; Richard is the primary client contact. Latest pricing and section-label removal retained.
