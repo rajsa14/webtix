@@ -6,7 +6,7 @@ import { team } from '../data/team'
 /*
  * webtix.cz/llms.txt: a plain-text summary of the site for AI assistants
  * (llmstxt.org). Every sentence is the site's own copy (approved by Dan,
- * 2026-10-11); prices, days, questions and bios come from the same data as
+ * 2026-10-11); prices, days, questions and responsibilities come from the same data as
  * the page. The process steps and section intros repeat the copy in
  * HowWeWork.tsx, Team.tsx and ContactForm.tsx: change them there and here.
  * scripts/prerender.mjs writes it to dist/llms.txt.
@@ -46,9 +46,15 @@ export function llmsTxt() {
     '',
     '## Kdo jsme',
     '',
-    'Dva lidé. Mluvíte přímo s námi. Žádný account manager. Kdo váš web navrhne, ten vám ho taky ukáže.',
+    'Dva lidé. Mluvíte přímo s námi. Jsme Daniel a Richard, malé webové studio z Prahy. Váš web navrhujeme a stavíme my dva.',
     '',
-    ...team.map((person) => `- ${person.name}: ${person.bio}`),
+    ...team.map((person) => `- ${person.name} — ${person.role}: ${person.responsibilities.join(' ')}`),
+    '',
+    'Jak může začít naše domluva (ukázkový rozhovor):',
+    'Vy: S kým budu řešit svůj web?',
+    'Richard: Se mnou. Domluvíme se, co potřebujete, a postarám se o vývoj. Daniel navrhne, jak bude váš web vypadat a působit.',
+    '',
+    'Dva lidé. Přímá domluva. Bez prostředníků.',
     '',
     '## Návrhy',
     '',

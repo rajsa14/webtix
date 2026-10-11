@@ -1,25 +1,29 @@
-/**
- * The two people in "Kdo jsme", in the design's order.
- *
- * Portraits are one image per person in public/team/, shown in a 4:5 frame on
- * white. The current files are the placeholder line drawings from the design;
- * to use a real portrait, replace the file (or point `portrait` at a new one).
- */
+/** Illustrated portraits stay in their existing white 4:5 frames. */
 export interface TeamMember {
   name: string
-  bio: string
+  role: string
+  responsibilities: string[]
   portrait: string
 }
 
+// Copy approved by Dan on 2026-10-11.
 export const team: TeamMember[] = [
   {
     name: 'Daniel Švéda',
-    bio: 'Daniel je spoluzakladatel Webtixu. Navrhuje weby a značky a vždycky je dotáhne do konce, od prvního nápadu po spuštění. Sestavoval týmy a řídil online komunity i školní redakci, takže ví, jak z rozpracované věci udělat hotovou. Za vaším projektem stojí od první schůzky do posledního detailu.',
+    role: 'Design webu a značky',
+    responsibilities: [
+      'Navrhuje vzhled a směr vašeho webu.',
+      'Hlídá, aby web i značka působily jednotně.',
+    ],
     portrait: 'team/daniel.svg',
   },
   {
     name: 'Richard Buchníček',
-    bio: 'Richard je spoluzakladatel Webtixu. Stará se o všechno, co běží pod kapotou: kód, rychlost, bezpečnost a nasazení. Díky němu web nejen skvěle vypadá, ale také se rychle načte a funguje bez výpadků.',
+    role: 'Vývoj a komunikace s klientem',
+    responsibilities: [
+      'Je vaším hlavním kontaktem při domluvě na webu.',
+      'Stará se o kód, rychlost, bezpečnost a spuštění.',
+    ],
     portrait: 'team/richard.svg',
   },
 ]

@@ -3,7 +3,7 @@
 State as of 2026-10-11. Update this file when something here stops being true.
 
 ## The business
-- Webtix: Daniel Švéda (design, brand, client contact) and Richard Buchníček (code, speed, security, deployment), Prague. Company being founded: no s.r.o., no IČO yet.
+- Webtix: Daniel Švéda (design, brand) and Richard Buchníček (primary client contact, code, speed, security, deployment), Prague. Company being founded: no s.r.o., no IČO yet.
 - Offer: send us a link (web, Instagram or just the business name). Within `PREVIEW_DAYS` (5) working days of the materials we show a finished first page of the new site, free and non-binding. Simple one-page sites from 9 990 Kč; typical business sites usually 18 000–30 000 Kč by scope. First month of hosting, technical care, support, up to 30 minutes of minor content edits and three small revision rounds is included. Afterwards optional Care is 790 Kč/month, Care+ is 1 490 Kč/month with up to 30 minutes of minor content edits (unused time does not roll over). Care is independent of CMS; optional CMS is chosen during scoping and edits text/photos, not layout. Without care, Webtix hosting, maintenance and support end; the client owns the site/domain and can receive source code/repository for hosting elsewhere. Paid third-party services must be taken over or stop. Domain registration/renewal is separate; connecting an existing domain has no separate fee. Prices live in `src/data/site.ts`.
 - Promise on the site: we reply within two working days.
 - Contact: info@webtix.cz. Enquiries arrive there through the form.
@@ -20,7 +20,7 @@ State as of 2026-10-11. Update this file when something here stops being true.
 2. **Marquee**: two crossing bands.
 3. **01 Jak to děláme** (paper): three steps with scene cards.
 4. **02 Návrhy** (ink): a deck of six phones. Café AdAstra first (real, "Otevřít návrh" to adastra.webtix.cz), then five invented businesses, each with a different problem and a new site that fixes exactly that: Vlnka (hair salon, booking only by phone), Hoblík (carpenter, no photos), U Tří buků (guesthouse, desktop site on a phone), Klíč (car service, "cena dohodou"), Kopretina (florist, pop-ups). Mini sites are HTML/SVG in `caseSites.tsx`, not images. Auto-advances until touched; swipe, drag, arrows, toggle old/new.
-5. **03 Kdo jsme** (pink): two portraits (placeholders), bios, a short sample chat.
+5. **03 Kdo jsme** (pink): two illustrated portraits, clear roles and short responsibilities. Richard is the primary client contact. A small two-message sample chat complements the profiles, animates subtly once, and stays fully readable without motion. A direct-communication statement and a link to contact follow it (copy approved by Dan on 2026-10-11).
 6. **04 Cena** (cream): three visual beats: typical business-site cost (18–30k, with a smaller one-page entry price), a handwritten free first-month moment, and optional Care/Care+ editorial rows. Ownership statement, enquiry CTA and a secondary collapsed pricing FAQ. Copy and structure approved 2026-10-11; no price count-up.
 7. **05 Kontakt** (terracotta): the enquiry form. Sending shows dots, success draws a check mark ("Odesláno"), then the thank-you page shows where we will reply, a looping Šlapadlo wipe and a four-step "Co bude dál" timeline.
 8. **Footer** (ink): hero line, "Chci návrh", e-mail, legal links, and a full-width wordmark whose letters jump on hover (click paints one pink).

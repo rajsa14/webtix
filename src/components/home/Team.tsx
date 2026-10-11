@@ -1,16 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
-import { PRICE_FROM, kc, previewDaysGenitive } from '../../data/site'
+import { useEffect, useRef } from 'react'
+import { INQUIRY_ANCHOR } from '../../data/site'
 import { team } from '../../data/team'
-import { revealDelay, useInView, useMotionOk } from '../../lib/motion'
+import { revealDelay, useMotionOk } from '../../lib/motion'
 import { cx, nb } from '../../lib/text'
 
-/*
- * "Kdo jsme": the two of us. Built from docs/design/source/Rest.dc.html (1440)
- * and RestMobile.dc.html (390). Portraits come from src/data/team.ts.
- * Below the heading (desktop) or the portraits (phone), a short sample chat
- * shows that you talk to us directly: you ask, Daniel and Richard answer.
- */
-
+// Team copy approved by Dan on 2026-10-11. Richard is the primary client contact.
 export function Team() {
   return (
     <section id="kdo-jsme" aria-labelledby="kdo-title" className="bg-pink">
@@ -24,8 +18,7 @@ export function Team() {
             Dva lidé. Mluvíte <em className="scribble italic text-terracotta">přímo</em> s&nbsp;námi.
           </h2>
           <p className="m-0 max-w-[420px] text-[16px] leading-6 text-ink-soft lg:text-[20px] lg:leading-[30px]">
-            {/* The phone copy drops the first sentence. */}
-            <span className="hidden lg:inline">Žádný account manager. </span>Kdo váš web navrhne, ten vám ho taky ukáže.
+            Jsme Daniel a Richard, malé webové studio z Prahy. Váš web navrhujeme a stavíme my dva.
           </p>
         </div>
 
@@ -56,128 +49,73 @@ export function Team() {
               </div>
               <div>
                 <h3 className="m-0 text-[17px] leading-[22px] lg:text-[24px] lg:leading-[30px]">{member.name}</h3>
-                <p className="m-0 mt-0.5 text-[14px] leading-5 text-ink-soft lg:mt-1 lg:text-[17px] lg:leading-[26px]">{nb(member.bio)}</p>
+                <p className="m-0 mt-2 text-[15px] font-semibold leading-5 lg:text-[18px] lg:leading-6">{member.role}</p>
+                <div className="mt-3 flex flex-col gap-2 text-[15px] leading-[22px] text-ink-soft lg:text-[17px] lg:leading-[26px]">
+                  {member.responsibilities.map((text) => <p key={text} className="m-0">{nb(text)}</p>)}
+                </div>
               </div>
             </li>
           ))}
         </ul>
 
-        <Chat />
+        <div className="lg:col-span-5 lg:row-start-2 lg:mt-10 lg:max-w-[420px]">
+          <TeamChat />
+          <p className="m-0 mt-8 text-[17px] font-semibold leading-[25px] lg:text-[18px] lg:leading-[27px]">
+            Dva lidé. Přímá domluva. Bez prostředníků.
+          </p>
+          <a href={`#${INQUIRY_ANCHOR}`} className="mt-6 inline-block py-1 text-[16px] font-semibold underline decoration-1 underline-offset-4 transition-colors hover:text-terracotta hover:decoration-2 focus-visible:outline-2 focus-visible:outline-offset-4 lg:text-[18px]">
+            Napište nám o svém webu →
+          </a>
+        </div>
       </div>
       </div>
     </section>
   )
 }
 
-type Message = { from: 'you' | 'daniel' | 'richard'; text: string }
-
-// Copy approved by Dan (deployed 2026-10-11). Only promises the site already makes.
-const MESSAGES: Message[] = [
-  { from: 'you', text: 'Dobrý den, kolik by stál nový web pro naši kavárnu?' },
-  {
-    from: 'daniel',
-    text: `Dobrý den! Pošlete nám odkaz na váš současný web nebo Instagram. Do ${previewDaysGenitive()} vám zdarma ukážeme hotovou úvodní stránku.`,
-  },
-  { from: 'you', text: 'A když se mi bude líbit?' },
-  {
-    from: 'richard',
-    text: `Pak web dokončíme, nasadíme na vaši doménu a postaráme se, aby běžel. Web stojí od ${kc(PRICE_FROM)}, přesnou cenu znáte předem.`,
-  },
-]
-
-/** When each message appears (ms after the chat comes into view). Our replies "type" for TYPING_MS first. */
-const SHOW_AT = [200, 1900, 3300, 5100]
-const TYPING_MS = 1000
-
-const NAME = { you: 'Vy', daniel: 'Daniel', richard: 'Richard' }
-const PORTRAIT = { daniel: team[0].portrait, richard: team[1].portrait }
-
-function Chat() {
+// Approved sample conversation; illustrative, not a client testimonial.
+function TeamChat() {
   const ref = useRef<HTMLOListElement>(null)
-  const seen = useInView(ref, 0.35)
-  // Without motion (and in the pre-rendered page): show the whole chat, no typing.
-  // Otherwise the chat replays every time it comes back on screen.
-  const animated = useMotionOk()
-  const [played, setElapsed] = useState(-1)
-  const elapsed = animated ? played : Infinity
+  const played = useRef(false)
+  const motionOk = useMotionOk()
 
   useEffect(() => {
-    if (!seen || !animated) return
-    const start = performance.now()
-    let raf = 0
-    const tick = () => {
-      const t = performance.now() - start
-      setElapsed(t)
-      if (t < SHOW_AT[SHOW_AT.length - 1] + 100) raf = requestAnimationFrame(tick)
+    const el = ref.current
+    if (!el || !motionOk || played.current) return
+    const animations: Animation[] = []
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting || played.current) return
+      played.current = true
+      observer.disconnect()
+      el.querySelectorAll('li').forEach((message, i) => {
+        animations.push(message.animate(
+          [{ opacity: 0.65, transform: 'translateY(5px)' }, { opacity: 1, transform: 'translateY(0)' }],
+          { duration: 400, delay: i * 250, easing: 'ease-out' },
+        ))
+      })
+    }, { threshold: 0.5 })
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      animations.forEach((animation) => animation.cancel())
     }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [seen, animated])
+  }, [motionOk])
 
   return (
-    <ol
-      ref={ref}
-      aria-label="Ukázka rozhovoru s námi"
-      className="m-0 flex list-none flex-col gap-4 p-0 lg:col-span-5 lg:row-start-2 lg:mt-14 lg:max-w-[460px]"
-    >
-      {MESSAGES.map((m, i) => {
-        const ours = m.from !== 'you'
-        const shown = elapsed >= SHOW_AT[i]
-        const typing = ours && !shown && elapsed >= SHOW_AT[i] - TYPING_MS
-        return (
-          <li
-            key={i}
-            className={cx(
-              'flex items-end gap-2.5 transition-opacity duration-300',
-              !ours && 'flex-row-reverse',
-              shown || typing ? 'opacity-100' : 'opacity-0',
-            )}
-          >
-            {ours ? (
-              <img
-                src={import.meta.env.BASE_URL + PORTRAIT[m.from as 'daniel' | 'richard']}
-                alt=""
-                width={36}
-                height={36}
-                loading="lazy"
-                className="size-9 shrink-0 rounded-full border-[1.5px] border-solid border-ink bg-white object-cover object-[50%_25%]"
-              />
-            ) : null}
-            <div className={cx('relative flex max-w-[85%] flex-col gap-1', !ours && 'items-end')}>
-              <span className={cx('mono text-[11px] text-ink-soft transition-opacity duration-500 lg:text-[12px]', shown ? 'opacity-100' : 'opacity-0')}>{NAME[m.from]}</span>
-              {/* The message is always in the page (screen readers read the whole chat); it only fades in. */}
-              <p
-                className={cx(
-                  'm-0 rounded-[14px] px-4 py-3 text-[15px] leading-[22px] transition-[opacity,translate] duration-500 lg:text-[17px] lg:leading-[26px]',
-                  m.from === 'you' && 'rounded-br-[4px] border border-solid border-ink bg-white text-ink',
-                  m.from === 'daniel' && 'rounded-bl-[4px] bg-paper text-ink',
-                  m.from === 'richard' && 'rounded-bl-[4px] bg-terracotta text-cream',
-                  shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
-                )}
-              >
-                {nb(m.text)}
-              </p>
-              {typing && (
-                <span
-                  aria-hidden="true"
-                  className={cx(
-                    'absolute bottom-0 left-0 flex gap-1 rounded-[14px] rounded-bl-[4px] px-4 py-4',
-                    m.from === 'daniel' ? 'bg-paper' : 'bg-terracotta',
-                  )}
-                >
-                  {[0, 1, 2].map((d) => (
-                    <span
-                      key={d}
-                      className={cx('typing-dot size-1.5 rounded-full', m.from === 'daniel' ? 'bg-ink' : 'bg-cream')}
-                      style={{ animationDelay: `${d * 160}ms` }}
-                    />
-                  ))}
-                </span>
-              )}
-            </div>
-          </li>
-        )
-      })}
-    </ol>
+    <div className="max-w-[340px] lg:max-w-[380px]">
+      <p className="m-0 mb-4 text-[12px] leading-4 text-ink-soft">Jak může začít naše domluva</p>
+      <ol ref={ref} aria-label="Jak může začít naše domluva" className="m-0 flex list-none flex-col gap-4 p-0">
+        <li className="ml-10 flex flex-col items-end gap-1">
+          <span className="mono text-[11px] text-ink-soft">Vy</span>
+          <p className="m-0 rounded-[14px] rounded-br-[4px] border border-solid border-ink bg-white px-4 py-3 text-[15px] leading-[22px]">S kým budu řešit svůj web?</p>
+        </li>
+        <li className="mr-4 flex">
+          <div className="flex flex-col gap-1">
+            <span className="mono text-[11px] text-ink-soft">Richard</span>
+            <p className="m-0 rounded-[14px] rounded-bl-[4px] bg-paper px-4 py-3 text-[15px] leading-[22px]">{nb('Se mnou. Domluvíme se, co potřebujete, a postarám se o vývoj. Daniel navrhne, jak bude váš web vypadat a působit.')}</p>
+          </div>
+        </li>
+      </ol>
+    </div>
   )
 }
