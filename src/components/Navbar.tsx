@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { NAV_LINKS, PAGES, SITE } from '../data/site'
 import { useActiveSection, useEscape } from '../lib/hooks'
 import { cx } from '../lib/text'
@@ -24,11 +24,11 @@ function useCurrentSection() {
   return onHome ? active : null
 }
 
-export function Navbar({ variant, className }: { variant: 'desktop' | 'phone'; className?: string }) {
+export function Navbar({ variant, className, compact }: { variant: 'desktop' | 'phone'; className?: string; compact?: boolean }) {
   const active = useCurrentSection()
   if (variant === 'desktop') {
     return (
-      <header className={cx('flex h-[88px] items-center justify-between', className)}>
+      <header className={cx('flex items-center justify-between', compact ? 'h-16' : 'h-[88px]', className)}>
         <a href={PAGES.home} aria-label={`${SITE.name}, úvodní stránka`}>
           <Wordmark height={28} />
         </a>
@@ -57,6 +57,7 @@ function PhoneHeader({ className, active }: { className?: string; active: string
   const [open, setOpen] = useState(false)
   const close = useCallback(() => setOpen(false), [])
   const toggleRef = useRef<HTMLButtonElement>(null)
+  const menuId = useId()
   useEscape(open, () => {
     close()
     toggleRef.current?.focus()
@@ -81,7 +82,7 @@ function PhoneHeader({ className, active }: { className?: string; active: string
           type="button"
           aria-label="Menu"
           aria-expanded={open}
-          aria-controls="menu-telefon"
+          aria-controls={menuId}
           onClick={() => setOpen((v) => !v)}
           data-open={open || undefined}
           className="menu-toggle flex size-11 cursor-pointer flex-col items-end justify-center gap-1.5 border-0 bg-transparent p-0"
@@ -92,7 +93,7 @@ function PhoneHeader({ className, active }: { className?: string; active: string
       </div>
       {/* The open menu is not in the design; it lists the same four links in the nav style. */}
       <nav
-        id="menu-telefon"
+        id={menuId}
         aria-label="Hlavní"
         inert={!open}
         data-open={open || undefined}

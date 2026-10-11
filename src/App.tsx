@@ -10,6 +10,7 @@ import { Marquee } from './components/home/Marquee'
 import { Price } from './components/home/Price'
 import { Team } from './components/home/Team'
 import { Navbar } from './components/Navbar'
+import { StickyHeader } from './components/StickyHeader'
 import { InquirySent } from './components/pages/InquirySent'
 import { LegalPage } from './components/pages/LegalPage'
 import { NotFound } from './components/pages/NotFound'
@@ -65,6 +66,7 @@ export default function App() {
           <Navbar variant="phone" className="-mx-4 lg:hidden" />
         </div>
       )}
+      <StickyHeader />
       <main key={path} id="obsah" tabIndex={-1} className="min-h-[70dvh] outline-none">
         {page()}
       </main>

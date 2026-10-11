@@ -318,7 +318,12 @@ function DeckPhone({ old, fresh, before }: { old: ReactNode; fresh: ReactNode; b
       // Interrupted mid-wipe: carry on from where the line is now.
       const progress = a.effect?.getComputedTiming().progress ?? 1
       reach.current = from + (target - from) * progress
-      a.commitStyles?.()
+      // Keep the clip where it is. Throws if the phone is already gone (leaving the page).
+      try {
+        a.commitStyles()
+      } catch {
+        // Nothing to keep.
+      }
       a.cancel()
       b.cancel()
     }

@@ -31,11 +31,11 @@ const FAQ: { q: string; a: string }[] = [
 
 export function Price() {
   return (
-    <section id="cena" aria-labelledby="cena-title" className="container-x pb-24 lg:pb-40">
-      <div className="flex flex-col gap-8 border-0 border-t border-solid border-ink pt-10 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6 lg:pt-16">
+    <section id="cena" aria-labelledby="cena-title" className="bg-cream">
+      <div className="container-x flex flex-col gap-8 py-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6 lg:py-40">
         <div data-reveal className="flex flex-col lg:col-span-5">
-          <h2 id="cena-title" className="mono m-0 mb-4 text-[11px] font-normal text-muted lg:mb-6 lg:text-[12px]">
-            Cena
+          <h2 id="cena-title" className="section-num mono m-0 mb-4 text-[11px] font-normal text-muted lg:mb-6 lg:text-[12px]">
+            <span>04</span> Cena
           </h2>
           <p className="m-0 mb-3 text-[56px] font-bold leading-[0.92] tracking-[-0.045em] lg:mb-4 lg:text-[clamp(64px,7vw,108px)] lg:leading-[0.9]">
             od{' '}

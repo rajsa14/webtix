@@ -13,10 +13,13 @@ import { cx, nb } from '../../lib/text'
 
 export function Team() {
   return (
-    <section id="kdo-jsme" aria-labelledby="kdo-title" className="container-x py-24 lg:py-40">
+    <section id="kdo-jsme" aria-labelledby="kdo-title" className="bg-pink">
+      <div className="container-x py-24 lg:py-40">
       <div className="flex flex-col gap-8 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6">
         <div data-reveal className="flex flex-col lg:col-span-5 lg:row-start-1">
-          <p className="mono m-0 mb-4 text-[11px] text-muted lg:mb-6 lg:text-[12px]">Kdo jsme</p>
+          <p className="section-num mono m-0 mb-4 text-[11px] text-ink-soft lg:mb-6 lg:text-[12px]">
+            <span>03</span> Kdo jsme
+          </p>
           <h2
             id="kdo-title"
             className="m-0 mb-5 text-[40px] leading-[0.96] tracking-[-0.035em] lg:mb-8 lg:text-[clamp(46px,4.6vw,72px)] lg:leading-[0.95]"
@@ -63,6 +66,7 @@ export function Team() {
         </ul>
 
         <Chat />
+      </div>
       </div>
     </section>
   )
@@ -142,13 +146,13 @@ function Chat() {
               />
             ) : null}
             <div className={cx('relative flex max-w-[85%] flex-col gap-1', !ours && 'items-end')}>
-              <span className={cx('mono text-[11px] text-muted transition-opacity duration-500 lg:text-[12px]', shown ? 'opacity-100' : 'opacity-0')}>{NAME[m.from]}</span>
+              <span className={cx('mono text-[11px] text-ink-soft transition-opacity duration-500 lg:text-[12px]', shown ? 'opacity-100' : 'opacity-0')}>{NAME[m.from]}</span>
               {/* The message is always in the page (screen readers read the whole chat); it only fades in. */}
               <p
                 className={cx(
                   'm-0 rounded-[14px] px-4 py-3 text-[15px] leading-[22px] transition-[opacity,translate] duration-500 lg:text-[17px] lg:leading-[26px]',
                   m.from === 'you' && 'rounded-br-[4px] border border-solid border-ink bg-white text-ink',
-                  m.from === 'daniel' && 'rounded-bl-[4px] bg-pink text-ink',
+                  m.from === 'daniel' && 'rounded-bl-[4px] bg-paper text-ink',
                   m.from === 'richard' && 'rounded-bl-[4px] bg-terracotta text-cream',
                   shown ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0',
                 )}
@@ -160,7 +164,7 @@ function Chat() {
                   aria-hidden="true"
                   className={cx(
                     'absolute bottom-0 left-0 flex gap-1 rounded-[14px] rounded-bl-[4px] px-4 py-4',
-                    m.from === 'daniel' ? 'bg-pink' : 'bg-terracotta',
+                    m.from === 'daniel' ? 'bg-paper' : 'bg-terracotta',
                   )}
                 >
                   {[0, 1, 2].map((d) => (

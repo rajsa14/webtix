@@ -40,7 +40,8 @@ export function ContactForm() {
   const [form, setForm] = useState<InquiryForm>(() => ({ ...EMPTY, currentSite: useUi.getState().heroSite }))
   const [errors, setErrors] = useState<Errors>({})
   const [submitted, setSubmitted] = useState(false)
-  const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle')
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const setLastInquiry = useUi((s) => s.setLastInquiry)
   const [result, setResult] = useState<InquiryResult | null>(null)
   const honeypot = useRef<HTMLInputElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
@@ -78,14 +79,15 @@ export function ContactForm() {
     setStatus('sending')
     try {
       const res = await sendInquiry(payload, { website: '', elapsed: msSincePageOpened() })
-      setStatus('idle')
       if (res.status === 'sent') {
-        setForm(EMPTY)
-        setSubmitted(false)
-        setErrors({})
-        navigate(PAGES.inquirySent)
+        setLastInquiry({ name: form.name.trim(), email: form.email.trim(), currentSite: form.currentSite.trim() })
+        // A moment for the check mark to draw, then the thank-you page.
+        setStatus('sent')
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        window.setTimeout(() => navigate(PAGES.inquirySent), reduced ? 300 : 1500)
         return
       }
+      setStatus('idle')
       setResult({ type: 'not-configured', payload })
     } catch {
       setStatus('error')
@@ -101,6 +103,9 @@ export function ContactForm() {
     >
       <div className="container-x flex flex-col gap-8 py-24 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-6 lg:py-40">
         <div data-reveal className="flex flex-col lg:col-span-6">
+          <p aria-hidden="true" className="section-num mono m-0 mb-4 text-[11px] text-cream/80 lg:mb-6 lg:text-[12px]">
+            <span>05</span> Kontakt
+          </p>
           <h2
             id="poptavka-title"
             className="m-0 mb-4 text-[48px] leading-[0.92] tracking-[-0.045em] lg:mb-8 lg:text-[clamp(56px,calc((100vw-128px)*0.06707),96px)] lg:leading-[0.9]"
@@ -122,7 +127,8 @@ export function ContactForm() {
           noValidate
           onSubmit={onSubmit}
           aria-describedby="form-note"
-          className="relative flex flex-col gap-4 rounded-form bg-paper p-5 text-ink lg:col-span-5 lg:col-start-8 lg:gap-5 lg:p-10"
+          data-status={status}
+          className="contact-form relative flex flex-col gap-4 rounded-form bg-paper p-5 text-ink lg:col-span-5 lg:col-start-8 lg:gap-5 lg:p-10"
           style={{ ['--focus' as string]: 'var(--color-ink)', ['--reveal-delay' as string]: '150ms' }}
         >
           <Field label="Jméno" name="name" autoComplete="name" value={form.name} onChange={set('name')} error={errors.name} />
@@ -157,10 +163,21 @@ export function ContactForm() {
 
           <button
             type="submit"
-            disabled={status === 'sending'}
-            className="cursor-pointer rounded-input border-0 bg-ink p-4 font-sans text-[16px] font-medium text-paper disabled:cursor-wait lg:mt-2 lg:p-[18px] lg:text-[17px]"
+            disabled={status === 'sending' || status === 'sent'}
+            className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-input border-0 bg-ink p-4 font-sans text-[16px] font-medium text-paper transition-colors hover:bg-terracotta disabled:cursor-wait disabled:hover:bg-ink lg:mt-2 lg:p-[18px] lg:text-[17px]"
           >
-            {status === 'sending' ? 'Odesílám…' : 'Chci návrh'}
+            {status === 'sending' ? (
+              <>
+                Odesílám
+                <span aria-hidden="true" className="flex gap-1">
+                  {[0, 1, 2].map((d) => (
+                    <span key={d} className="typing-dot size-1.5 rounded-full bg-paper" style={{ animationDelay: `${d * 160}ms` }} />
+                  ))}
+                </span>
+              </>
+            ) : (
+              'Chci návrh'
+            )}
           </button>
 
           {/* Not in the design: kept from the earlier form, as the privacy notice at the point of collection. */}
@@ -170,6 +187,17 @@ export function ContactForm() {
               Ochrana osobních údajů
             </a>
           </p>
+
+          {/* Sent: the card turns into a drawn check mark for a moment before the thank-you page. */}
+          {status === 'sent' && (
+            <div role="status" className="sent-card absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-form bg-paper text-center">
+              <svg aria-hidden="true" viewBox="0 0 80 80" className="sent-check size-24 text-terracotta" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                <path pathLength={1} d="M40 6 C 60 6, 74 20, 74 40 C 74 60, 60 74, 40 74 C 20 74, 6 60, 6 40 C 6 20, 20 6, 42 7" />
+                <path pathLength={1} d="M24 41 L 35 52 L 57 29" />
+              </svg>
+              <p className="m-0 text-[28px] font-bold tracking-[-0.03em]">Odesláno</p>
+            </div>
+          )}
 
           {status === 'error' && (
             <p role="alert" className="m-0 rounded-input border-2 border-solid border-pen p-3 text-[14px] leading-5 text-pen">

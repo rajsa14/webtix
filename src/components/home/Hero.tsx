@@ -1,4 +1,4 @@
-import { useId, useState, type CSSProperties, type FormEvent } from 'react'
+import { useEffect, useId, useState, type CSSProperties, type FormEvent } from 'react'
 import { INQUIRY_ANCHOR, PREVIEW_DAYS, priceText } from '../../data/site'
 import { NOTE_MIN_PX, noteSize } from '../../lib/notes'
 import { navigate } from '../../lib/router'
@@ -15,7 +15,6 @@ import {
   useScene,
   type PlayState,
 } from './heroScene'
-import { scrollToTarget } from '../../lib/smoothScroll'
 import { ShopAfter, ShopBefore, ShopScreen } from './Shop'
 
 /*
@@ -148,7 +147,7 @@ function HeroForm({ variant, value, onValueChange }: { variant: 'desktop' | 'pho
         type="submit"
         className={
           desktop
-            ? 'cursor-pointer rounded-card border-0 bg-ink px-6 font-sans text-[16px] font-medium text-paper'
+            ? 'hero-cta cursor-pointer rounded-card border-0 bg-ink px-6 font-sans text-[16px] font-medium text-paper'
             : 'cursor-pointer rounded-card border-0 bg-ink px-4 font-sans text-[15px] font-medium text-paper'
         }
       >
@@ -230,6 +229,35 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
   // The text column stays on state 1 ("Vpravo je typický web…"); only the panel plays.
   const { rootRef, state, toggle } = useScene((p) => ({ ...desktopFrame(p, { scale, groupTop, allNotes }), texts: { 1: 1 }, form: '1' }), reduced)
 
+  // Cinematic start: the panel fills the screen and plays first; the text slides in when
+  // it ends, or as soon as the visitor scrolls, types or clicks.
+  const [introOn, setIntroOn] = useState(!reduced)
+  const showIntro = introOn && !reduced && state !== 'done'
+  useEffect(() => {
+    if (!introOn) return
+    const end = () => setIntroOn(false)
+    const events = ['wheel', 'touchstart', 'keydown', 'pointerdown'] as const
+    events.forEach((e) => window.addEventListener(e, end, { passive: true, once: true }))
+    const t = window.setTimeout(end, state === 'done' ? 0 : 12000)
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, end))
+      clearTimeout(t)
+    }
+  }, [introOn, state])
+  // Spotlight on replays: the text steps back, a pen circle draws round the phone.
+  const spot = !showIntro && !reduced && state === 'playing'
+  // When a run ends, the "Chci návrh" button pulses twice.
+  const [cta, setCta] = useState(false)
+  useEffect(() => {
+    if (state !== 'done' || reduced) return
+    const on = window.setTimeout(() => setCta(true), 0)
+    const off = window.setTimeout(() => setCta(false), 2600)
+    return () => {
+      clearTimeout(on)
+      clearTimeout(off)
+    }
+  }, [state, reduced])
+
   const s1 = allNotes ? ['a0', 'a1', 'a2', 'a3'] : ['a0', 'a2']
   const n1 = (key: string) => intro(!reduced, s1.indexOf(key))
   const heading = 'm-0 text-[clamp(48px,5.5556cqw,88px)] leading-[0.92] tracking-[-0.04em] text-balance'
@@ -239,7 +267,10 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
     <div
       ref={rootRef}
       data-scene
-      className="h-screen-stable relative grid min-h-[640px] grid-cols-2 [container-type:inline-size]"
+      data-intro={showIntro || undefined}
+      data-spot={spot || undefined}
+      data-cta={cta || undefined}
+      className="hero-grid h-screen-stable relative grid min-h-[640px] [container-type:inline-size]"
       // Outer margin: 64px, and wider screens keep a 1600 content width centred.
       style={{ ['--edge' as string]: 'max(64px, calc(50cqw - 736px))' }}
     >
@@ -247,7 +278,7 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
       <div data-nav className="hero-nav absolute inset-x-[var(--edge)] top-0 z-10">
         <Navbar variant="desktop" />
       </div>
-      <div className="pl-[var(--edge)] pt-[clamp(112px,18.667svh,168px)]">
+      <div inert={showIntro} className="hero-text min-w-0 overflow-hidden pl-[var(--edge)] pt-[clamp(112px,18.667svh,168px)]">
         <div data-text="1" className="flex w-[min(620px,calc(50cqw-var(--edge)-36px))] flex-col">
           <p className="mono m-0 mb-6 text-muted">Webové studio · Praha</p>
           <h1 id="hero-title" className={`${heading} mb-8`}>
@@ -277,6 +308,18 @@ function DesktopScene({ reduced }: { reduced: boolean }) {
             band={{ height: 16, dash: 3 }}
             className="hero-phone-in absolute left-[160px] top-[104px] h-[740px] w-[360px] overflow-hidden rounded-[44px] border-[10px] border-solid border-ink bg-ink shadow-[0_30px_60px_-30px_rgba(22,17,16,0.5)]"
           />
+
+          {/* Spotlight: a pen circle drawn round the phone while a replay runs. */}
+          <svg aria-hidden="true" width="720" height="900" viewBox="720 0 720 900" className="hero-spot pointer-events-none absolute inset-0 text-pen">
+            <path
+              pathLength={1}
+              d="M1062 78 C 1292 80, 1306 300, 1294 482 C 1284 702, 1252 876, 1058 874 C 858 872, 828 700, 826 482 C 824 262, 842 70, 1086 92"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="4"
+              strokeLinecap="round"
+            />
+          </svg>
 
           {/* Design coordinates minus 720, the panel's left edge in the 1440 artboard. */}
           <svg aria-hidden="true" width="720" height="900" viewBox="720 0 720 900" className="pointer-events-none absolute inset-0">
@@ -405,22 +448,14 @@ function PhoneHero({ reduced }: { reduced: boolean }) {
           Podíváme se na váš web. Pak vám ukážeme <em className="italic text-terracotta">lepší.</em>
         </h1>
         <p className="m-0 text-body-m text-ink-soft">Níž je typický web malého podniku. Podnik je vymyšlený, chyby jsou skutečné.</p>
+      </div>
+      {/* On phones the animation comes first, inside the first screen; the form follows it. */}
+      <div ref={sceneRef} className="mt-6">
+        <PhoneScene scale={scale} reduced={reduced} />
+      </div>
+      <div className="flex flex-col gap-4 px-4 pt-6">
         <HeroForm variant="phone" value={site} onValueChange={setSite} />
         <p className="m-0 text-meta-m text-muted">{metaText()}</p>
-        <button
-          type="button"
-          onClick={() => scrollToTarget(sceneRef.current)}
-          className="hand hero-cue flex cursor-pointer items-center gap-2 self-start border-0 bg-transparent p-0 text-left text-[25px]"
-        >
-          Koukněte níž, co s tím webem uděláme
-          <svg aria-hidden="true" viewBox="0 0 26 40" className="cue-bounce h-8 w-5 shrink-0" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M13 3 C 9 14, 16 24, 13 36" />
-            <path d="M4 27 L 13 37 L 22 27" />
-          </svg>
-        </button>
-      </div>
-      <div ref={sceneRef} className="mt-7">
-        <PhoneScene scale={scale} reduced={reduced} />
       </div>
     </>
   )

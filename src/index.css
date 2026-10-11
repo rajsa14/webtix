@@ -333,6 +333,62 @@ body {
   }
 }
 
+/*
+ * Hero cinematic start and spotlight (Hero.tsx). [data-intro]: the panel fills
+ * the screen while the first run plays, then the text column slides in.
+ * [data-spot]: on replays the text steps back and a pen circle draws round
+ * the phone. [data-cta]: when a run ends, "Chci návrh" pulses twice.
+ */
+.hero-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.hero-grid[data-intro] {
+  grid-template-columns: minmax(0, 0fr) minmax(0, 1fr);
+}
+
+.hero-text {
+  transition:
+    opacity 600ms ease,
+    translate 800ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+[data-intro] .hero-text {
+  opacity: 0;
+  translate: -40px 0;
+}
+
+[data-spot] .hero-text {
+  opacity: 0.35;
+}
+
+.hero-spot path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1200ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+[data-spot] .hero-spot path {
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-grid {
+    transition: grid-template-columns 1000ms cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  [data-cta] .hero-cta {
+    animation: cta-pulse 1.2s ease-in-out 2;
+  }
+}
+
+@keyframes cta-pulse {
+  50% {
+    scale: 1.06;
+    background: var(--color-terracotta);
+  }
+}
+
 /* Hero attention cue: the phone rises in, the pen arrow nudges towards it (Hero.tsx). */
 .hero-cue {
   color: var(--color-pen);
@@ -374,6 +430,122 @@ body {
   50% {
     translate: 0 6px;
   }
+}
+
+/* Enquiry form (ContactForm.tsx): fields dim while sending; when sent, a check mark draws itself. */
+.contact-form[data-status='sending'] > :not(button[type='submit']) {
+  opacity: 0.55;
+  transition: opacity 300ms ease;
+}
+
+.sent-card {
+  animation: note-in 300ms ease-out backwards;
+}
+
+.sent-check path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sent-check path {
+    animation: draw 700ms cubic-bezier(0.65, 0, 0.35, 1) backwards;
+  }
+
+  .sent-check path + path {
+    animation-delay: 450ms;
+  }
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+/*
+ * Thank-you page (InquirySent.tsx): the phone keeps turning the old site into
+ * the new one; the next step's dot pulses. Reduced motion: the new site, still.
+ */
+.thanks-after {
+  clip-path: inset(0 0 0 0);
+}
+
+.thanks-band {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .thanks-after {
+    animation: thanks-wipe 7s cubic-bezier(0.65, 0, 0.35, 1) 600ms infinite backwards;
+  }
+
+  .thanks-band {
+    animation: thanks-band 7s cubic-bezier(0.65, 0, 0.35, 1) 600ms infinite;
+  }
+
+  .thanks-next::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 999px;
+    border: 2px solid var(--color-terracotta);
+    animation: thanks-ping 1.8s ease-out infinite;
+  }
+}
+
+@keyframes thanks-wipe {
+  0%,
+  18% {
+    clip-path: inset(0 0 100% 0);
+  }
+  44%,
+  92% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+@keyframes thanks-band {
+  0%,
+  18% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  21% {
+    opacity: 1;
+  }
+  41% {
+    opacity: 1;
+  }
+  44%,
+  100% {
+    translate: 0 446px;
+    opacity: 0;
+  }
+}
+
+@keyframes thanks-ping {
+  from {
+    opacity: 0.9;
+    scale: 0.9;
+  }
+  to {
+    opacity: 0;
+    scale: 1.5;
+  }
+}
+
+/* Smart sticky menu (StickyHeader.tsx): slides in on scroll up, away on scroll down. */
+.sticky-header {
+  translate: 0 -100%;
+  transition: translate 350ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.sticky-header[data-shown] {
+  translate: 0 0;
 }
 
 /* "Návrhy" deck (CaseDeck.tsx): the fan moves, the story fades in, the progress segment fills. */
