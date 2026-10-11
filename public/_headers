@@ -2,6 +2,9 @@
 # They apply to files and pages from dist/, not to /api/* (worker/index.ts).
 # Moved from netlify.toml. Cloudflare Web Analytics: the beacon script comes
 # from static.cloudflareinsights.com and reports to cloudflareinsights.com.
+# Styles: stylesheets only from our own files (no <style> blocks). Inline
+# style="" attributes stay allowed: the pre-rendered HTML carries React's
+# style props (CSS variables, sizes), and an attribute cannot run script.
 
 /*
   Strict-Transport-Security: max-age=31536000; includeSubDomains
@@ -10,7 +13,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
   Cross-Origin-Opener-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://cloudflareinsights.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
 
 # Built files carry a content hash in their name, so they never change.
 /assets/*
