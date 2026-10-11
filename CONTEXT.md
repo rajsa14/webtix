@@ -9,7 +9,7 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - Contact: info@webtix.cz. Enquiries arrive there through the form.
 
 ## What is live
-- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (thank-you polish commit `32b542d`, version `a252c93c-e29b-44ee-a5b3-ff4722716fd2`; includes approved hero, pricing, team, section-label removal and thank-you changes).
+- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (tab-title commit `e8b5ac3`, version `257e7efc-54d9-4ed6-83fd-67a3a290b503`; includes approved hero, pricing, team, section-label removal and thank-you changes).
 - GitHub: `rajsa14/webtix` (public, owned by Richard; Dan has write access, not admin). Only two branches: `redesign` (where we work) and `main` (the default branch, kept identical to `redesign`).
 - Archive: everything from before the cleanup (old configurator site on the old `main`, the koncepty, the English draft, all 12 old branches with full history) is in the private repo `swedishdan/webtix-archive`.
 - Pages: `/` (one-page site), `/poptavka-odeslana` (thank-you, noindex), `/ochrana-osobnich-udaju`, `/obchodni-podminky`, a 404 page (noindex). Old configurator addresses redirect with 301 (`public/_redirects`).
@@ -65,3 +65,5 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - 2026-10-11: approved editorial thank-you timeline: desktop 35/65 heading and vertical steps, filled current marker, outlined future markers, always-visible copy; supporting-materials note belongs to the reply step.
 
 - 2026-10-11: full approved thank-you redesign deployed to production, version a252c93c-e29b-44ee-a5b3-ff4722716fd2. Latest approved team changes retained.
+
+- 2026-10-11: approved app-wide Page Visibility title interaction deployed, version 257e7efc-54d9-4ed6-83fd-67a3a290b503. Hidden tabs show Váš web ještě čeká 👀; visibility restores the dynamically retained page title, including route changes while hidden. Initial SEO titles unchanged. Automated checks use simulated visibility events because the test browser reports both tabs as visible.
