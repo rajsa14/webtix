@@ -9,7 +9,7 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - Contact: info@webtix.cz. Enquiries arrive there through the form.
 
 ## What is live
-- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (team polish commit `7a06762`, version `2c9cf4a7-6ef2-4004-a6b2-08d5dcc49730`; includes approved hero, pricing and section-label removal changes).
+- webtix.cz and www.webtix.cz, Cloudflare Worker `webtix`, built from branch `redesign` (thank-you polish commit `32b542d`, version `a252c93c-e29b-44ee-a5b3-ff4722716fd2`; includes approved hero, pricing, team, section-label removal and thank-you changes).
 - GitHub: `rajsa14/webtix` (public, owned by Richard; Dan has write access, not admin). Only two branches: `redesign` (where we work) and `main` (the default branch, kept identical to `redesign`).
 - Archive: everything from before the cleanup (old configurator site on the old `main`, the koncepty, the English draft, all 12 old branches with full history) is in the private repo `swedishdan/webtix-archive`.
 - Pages: `/` (one-page site), `/poptavka-odeslana` (thank-you, noindex), `/ochrana-osobnich-udaju`, `/obchodni-podminky`, a 404 page (noindex). Old configurator addresses redirect with 301 (`public/_redirects`).
@@ -63,3 +63,5 @@ State as of 2026-10-11. Update this file when something here stops being true.
 - 2026-10-11: approved post-conversion thank-you page: mobile recap labels above values, quiet examples link, accessible phone note, explicit freedom not to continue and a dedicated footer saying “Teď je řada na nás.” without a sales CTA. Other pages retain their original footer. Recap remains memory-only; no customer confirmation e-mail is sent.
 
 - 2026-10-11: approved editorial thank-you timeline: desktop 35/65 heading and vertical steps, filled current marker, outlined future markers, always-visible copy; supporting-materials note belongs to the reply step.
+
+- 2026-10-11: full approved thank-you redesign deployed to production, version a252c93c-e29b-44ee-a5b3-ff4722716fd2. Latest approved team changes retained.
