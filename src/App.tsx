@@ -19,6 +19,7 @@ import { usePageMeta } from './lib/meta'
 import { useRevealAll } from './lib/motion'
 import { startSmoothScroll } from './lib/smoothScroll'
 import { usePath } from './lib/router'
+import { useTabTitle } from './lib/tabTitle'
 
 /** Sets the browser title and description of a page, then shows its sections. */
 function Titled({ title, description, children }: { title?: string; description?: string; children: ReactNode }) {
@@ -48,6 +49,7 @@ const ROUTES: Record<string, () => ReactNode> = {
 export default function App() {
   const path = usePath()
   const page = ROUTES[path] ?? (() => <NotFound />)
+  useTabTitle()
   useRevealAll(path)
   useEffect(() => startSmoothScroll(), [])
 

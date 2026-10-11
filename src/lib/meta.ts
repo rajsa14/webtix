@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect } from 'react'
 import { HOME_META, SITE } from '../data/site'
+import { setPageTitle } from './tabTitle'
 
 function setMeta(name: string, content: string | null) {
   let tag = document.head.querySelector<HTMLMetaElement>(`meta[name="${name}"]`)
@@ -37,7 +38,7 @@ export function usePageMeta({ title, description, noindex: pageNoindex }: { titl
   const fullDescription = description ?? HOME_META.description
   useContext(MetaSink)?.({ title: fullTitle, description: fullDescription, noindex })
   useEffect(() => {
-    document.title = fullTitle
+    setPageTitle(fullTitle)
     setMeta('description', fullDescription)
     setMeta('robots', noindex ? 'noindex, nofollow' : null)
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')
