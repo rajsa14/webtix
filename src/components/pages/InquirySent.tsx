@@ -11,8 +11,7 @@ import { ShopAfter, ShopBefore, ShopScreen } from '../home/Shop'
  * the customer: a clear confirmation; where we will reply (so a mistyped
  * e-mail is caught now, with the fix right there); what happens next, using
  * only promises the site already makes; and something to do while waiting.
- * The headline and the reply promise are Dan's approved copy; the rest is a
- * draft (2026-10-11) waiting for approval.
+ * All copy approved by Dan (2026-10-11).
  */
 
 const STEPS = [

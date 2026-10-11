@@ -4,7 +4,7 @@
  * invented ones are invented; never present them as clients. Each invented
  * one has a different problem on its old site and a new site that fixes
  * exactly that. Results describe what the new site does, never made-up
- * numbers. Copy is a draft (2026-10-11), waiting for approval; AdAstra's
+ * numbers. Copy approved by Dan on 2026-10-11; AdAstra's
  * story is the approved text from the former "Skutečný návrh" section.
  */
 

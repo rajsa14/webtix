@@ -3,7 +3,7 @@
 Captured 10 Oct 2026 with Playwright (Chromium): 1280×800, and 400×860 as a phone (touch, 2× pixels).
 `-scrolled` is the same 1280 page after one wheel scroll of 1400 px. Third-party screenshots, internal reference only: do not publish them or ship them with the site.
 
-For each site: what we take, as decided in CLAUDE.md "Reference direction", then two lines for a small Prague business.
+For each site: what we take, as decided for the redesign (October 2026), then two lines for a small Prague business.
 
 ---
 

@@ -1,17 +1,17 @@
 # Webtix
 
-Web studia Webtix (Daniel Švéda a Richard Buchníček). Jedna stránka: na vymyšleném servisu kol Šlapadlo ukazuje, jak předěláme web malého podniku, pak náš postup, skutečný návrh (Café AdAstra), nás dva, cenu a poptávkový formulář.
+Web studia Webtix (Daniel Švéda a Richard Buchníček). Jedna stránka: na vymyšleném servisu kol Šlapadlo ukazuje, jak předěláme web malého podniku, pak náš postup, šest návrhů (Café AdAstra je skutečný, ostatní podniky jsme si vymysleli), nás dva, cenu a poptávkový formulář. Běží na webtix.cz.
 
 React 19 + TypeScript + Vite + Tailwind CSS v4 + Zustand. Hosting: Cloudflare Workers, poptávky přes Resend.
 
-Schválený design je v `docs/design/` (začněte `docs/design/README.md`). Pravidla pro práci jsou v `CLAUDE.md`.
+Pravidla pro práci (i pro AI agenty) jsou v `AGENTS.md`, aktuální stav, rozhodnutí a otevřené body v `CONTEXT.md`. Původní schválený design je v `docs/design/`; web od něj na pokyn Dana v několika věcech odešel (viz `CONTEXT.md`).
 
 ## Spuštění
 
 ```bash
 npm install
 npm run dev            # vývoj na http://localhost:5178
-npm run build          # produkční build do dist/
+npm run build          # produkční build do dist/ (i předrenderované stránky, sitemap.xml, llms.txt)
 npm run build:staging  # stejný build, ale celý web noindex (meta i hlavička X-Robots-Tag)
 npm run build:draft    # build k místní kontrole, bez kontrol níže
 npm run preview        # náhled buildu
@@ -29,7 +29,12 @@ npm run lint
 | Navigace, adresy stránek, e-mail | `src/data/site.ts` |
 | Lidé (jméno, text, portrét) | `src/data/team.ts`, portréty v `public/team/` (4:5, bílé pozadí) |
 | Úvodní scéna se Šlapadlem | `src/components/home/Hero.tsx`, časování v `heroScene.ts`, weby v `Shop.tsx` |
-| Sekce pod ní | `src/components/home/` (`HowWeWork`, `RealProposal`, `Team`, `Price`) a `src/components/ContactForm.tsx` |
+| Návrhy (šest telefonů) | texty v `src/data/cases.ts`, mini weby v `src/components/home/caseSites.tsx`, balíček v `CaseDeck.tsx` |
+| Časté otázky v Ceně | `src/data/faq.ts` (jdou i do strukturovaných dat a llms.txt) |
+| Sekce pod hero | `src/components/home/` (`Marquee`, `HowWeWork`, `CaseDeck`, `Team`, `Price`) a `src/components/ContactForm.tsx` |
+| Stránka po odeslání poptávky | `src/components/pages/InquirySent.tsx` |
+| Lepivé menu, patička | `src/components/StickyHeader.tsx`, `Footer.tsx` (písmena loga v `src/data/wordmarkLetters.ts`) |
+| Strukturovaná data, llms.txt | `src/lib/structuredData.ts`, `src/lib/llmsTxt.ts` |
 | Ochrana osobních údajů, obchodní podmínky | `src/data/legal.ts` |
 | Barvy, písma, velikosti | `@theme` v `src/index.css` |
 | Bezpečnostní hlavičky, staré adresy | `public/_headers`, `public/_redirects` |
@@ -61,6 +66,10 @@ Integrace je v `src/lib/sendInquiry.ts`, text e-mailu se skládá v `src/lib/inq
 | staré adresy (`/katalog`, `/o-nas`, …) | přesměrování na odpovídající sekci (`public/_redirects`) |
 | cokoliv jiného | Vlastní stránka 404, neindexuje se |
 
+## Vyhledávače a AI asistenti
+
+`npm run build` po sestavení spustí `scripts/prerender.mjs`: každou stránku vyrenderuje do HTML (vyhledávače i AI asistenti, kteří nespouštějí JavaScript, vidí celý text), doplní titulek, popis, kanonickou adresu a strukturovaná data, a zapíše `dist/sitemap.xml` a `dist/llms.txt`. V prohlížeči pak stejné HTML převezme React. Novou stránku přidejte do `PAGES` v `src/data/site.ts` a do `ROUTES` v `src/App.tsx`; do sitemapy se dostane sama.
+
 ## Návštěvnost
 
 Jen Cloudflare Web Analytics (zapíná se v Cloudflare, ne v kódu). Web sám nic neměří a neukládá žádné cookies; lišta se souhlasem se proto nezobrazuje (`CONSENT_NEEDED` v `src/data/site.ts`).
@@ -73,4 +82,8 @@ Jen Cloudflare Web Analytics (zapíná se v Cloudflare, ne v kódu). Web sám ni
 
 ## Nasazení
 
-`npm run build` a pak `npx wrangler deploy` nasadí Worker `webtix` i se stránkami. Náhled bez dopadu na webtix.cz: `npx wrangler versions upload` (vrátí adresu náhledu na workers.dev).
+`npm run build` a pak `npx wrangler deploy` nasadí Worker `webtix` i se stránkami. Nasazuje se z větve `redesign`, nikdy z `main`.
+
+- Náhled bez dopadu na webtix.cz: `npm run build:staging` a `npx wrangler versions upload` (vrátí adresu náhledu na workers.dev, neindexuje se).
+- Návrat k předchozí verzi: `npx wrangler rollback`.
+- Seznam nasazení: `npx wrangler deployments list`.

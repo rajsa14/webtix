@@ -1,5 +1,7 @@
 # Webtix homepage: approved design
 
+> **Status (2026-10-11):** this is the original design the site was built from in steps 1–7. Since then Dan approved changes that go past it: the hero plays like a short video instead of a scroll scene, "Skutečný návrh" became the six-phone Návrhy deck, sections got their own colours and numbers, plus a sticky menu, a rich footer and a new thank-you page. Where the live site and this folder differ, the live site wins (see `CONTEXT.md`). Tokens, type scale and spacing below still apply.
+
 One page (`/`). The screenshots in `screens/` are the target. The HTML in `source/` is what they were rendered from: copy sizes, spacing, colours and Czech text from there exactly. The `.dc.html` files are design-tool files; read them as plain HTML (ignore `<x-dc>`, `<helmet>`, the `data-dc-script` block; `<dc-import name="ShopBefore">` means "insert the ShopBefore component here").
 
 ## Screens

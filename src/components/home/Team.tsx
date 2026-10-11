@@ -74,7 +74,7 @@ export function Team() {
 
 type Message = { from: 'you' | 'daniel' | 'richard'; text: string }
 
-// Draft copy (2026-10-10), waiting for Dan's approval. Only promises the site already makes.
+// Copy approved by Dan (deployed 2026-10-11). Only promises the site already makes.
 const MESSAGES: Message[] = [
   { from: 'you', text: 'Dobrý den, kolik by stál nový web pro naši kavárnu?' },
   {
