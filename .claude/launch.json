@@ -7,6 +7,12 @@
       "runtimeArgs": ["run", "dev"],
       "port": 5178,
       "autoPort": true
+    },
+    {
+      "name": "webtix-cloudflare",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["wrangler", "dev", "--port", "8787"],
+      "port": 8787
     }
   ]
 }

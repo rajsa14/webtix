@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:draft": "tsc -b && vite build --mode draft",
-    "build:staging": "tsc -b && vite build --mode staging",
+    "build": "tsc -b && vite build && node scripts/prerender.mjs",
+    "build:draft": "tsc -b && vite build --mode draft && node scripts/prerender.mjs --mode draft",
+    "build:staging": "tsc -b && vite build --mode staging && node scripts/prerender.mjs --mode staging",
     "lint": "oxlint",
     "preview": "vite preview"
   },

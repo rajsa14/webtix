@@ -7,14 +7,22 @@ import { scrollToTarget } from './smoothScroll'
  * lives in the hash instead (#/obchodni-podminky).
  */
 const offline = import.meta.env.MODE === 'offline'
+/** False while pages are pre-rendered at build time (scripts/prerender.mjs). */
+const browser = typeof window !== 'undefined'
 const listeners = new Set<() => void>()
 
 function read() {
+  if (!browser) return null
   if (!offline) return window.location.pathname.replace(/(.)\/$/, '$1')
   return window.location.hash.startsWith('#/') ? window.location.hash.slice(1) : null
 }
 
 let path = read() ?? '/'
+
+/** The page being pre-rendered. */
+export function setServerPath(to: string) {
+  path = to
+}
 
 function sync() {
   const next = read()
@@ -51,19 +59,24 @@ export function usePath() {
       return () => listeners.delete(listener)
     },
     () => path,
+    () => path,
   )
 }
 
 /** Links to pages, not to files (/og.png), brand images, or the API. */
 const PAGE_LINK = /^\/(?!brand\/|api\/)[^.]*$/
 
-window.addEventListener('popstate', sync)
-window.addEventListener('hashchange', sync)
-document.addEventListener('click', (event) => {
+if (browser) {
+  window.addEventListener('popstate', sync)
+  window.addEventListener('hashchange', sync)
+  document.addEventListener('click', onLinkClick)
+}
+
+function onLinkClick(event: MouseEvent) {
   if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
   const link = (event.target as Element).closest?.('a')
   const href = link?.getAttribute('href')
   if (!link || !href || link.target || link.hasAttribute('download') || !PAGE_LINK.test(href)) return
   event.preventDefault()
   navigate(href)
-})
+}

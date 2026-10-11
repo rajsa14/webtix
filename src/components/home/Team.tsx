@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { PRICE_FROM, kc, previewDaysGenitive } from '../../data/site'
 import { team } from '../../data/team'
-import { revealDelay, useInView } from '../../lib/motion'
+import { revealDelay, useInView, useMotionOk } from '../../lib/motion'
 import { cx, nb } from '../../lib/text'
 
 /*
@@ -98,10 +98,11 @@ const PORTRAIT = { daniel: team[0].portrait, richard: team[1].portrait }
 function Chat() {
   const ref = useRef<HTMLOListElement>(null)
   const seen = useInView(ref, 0.35)
-  // In view at once means no motion is allowed: show the whole chat, no typing.
+  // Without motion (and in the pre-rendered page): show the whole chat, no typing.
   // Otherwise the chat replays every time it comes back on screen.
-  const [animated] = useState(() => !seen)
-  const [elapsed, setElapsed] = useState(() => (seen ? Infinity : -1))
+  const animated = useMotionOk()
+  const [played, setElapsed] = useState(-1)
+  const elapsed = animated ? played : Infinity
 
   useEffect(() => {
     if (!seen || !animated) return

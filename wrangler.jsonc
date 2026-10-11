@@ -7,8 +7,9 @@
   "compatibility_date": "2026-09-01",
   "assets": {
     "directory": "./dist",
-    // Every page address loads the app, which decides what to show.
-    "not_found_handling": "single-page-application",
+    // Every page is pre-rendered into its own HTML file (scripts/prerender.mjs).
+    // Any other address gets dist/404.html with a real 404 status.
+    "not_found_handling": "404-page",
     "run_worker_first": ["/api/*"]
   },
   "vars": {

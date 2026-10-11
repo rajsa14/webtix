@@ -1,4 +1,4 @@
-import { useEffect, useState, type RefObject } from 'react'
+import { useEffect, useState, useSyncExternalStore, type RefObject } from 'react'
 
 /*
  * Entrance animations. Mark an element with `data-reveal` (optionally
@@ -9,7 +9,23 @@ import { useEffect, useState, type RefObject } from 'react'
  * without JavaScript, or with reduced motion, everything is simply visible.
  */
 
-const motionOk = () => typeof window !== 'undefined' && 'IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+const REDUCE = '(prefers-reduced-motion: reduce)'
+const motionOk = () => typeof window !== 'undefined' && 'IntersectionObserver' in window && !window.matchMedia(REDUCE).matches
+
+const subscribeMotion = (onChange: () => void) => {
+  const mq = window.matchMedia(REDUCE)
+  mq.addEventListener('change', onChange)
+  return () => mq.removeEventListener('change', onChange)
+}
+
+/**
+ * Whether animations may run. The pre-rendered HTML (and the first render in
+ * the browser, which must match it) says no, so the page is built in its final
+ * state: the whole chat, the real price. Animations take over right after.
+ */
+export function useMotionOk() {
+  return useSyncExternalStore(subscribeMotion, motionOk, () => false)
+}
 
 /** Reveal every `[data-reveal]` on the page as it scrolls in, again and again. Run again when the page (`key`) changes. */
 export function useRevealAll(key: string) {
@@ -46,15 +62,16 @@ export function useRevealAll(key: string) {
  * animations that replay on every visit. With reduced motion: always true.
  */
 export function useInView(ref: RefObject<Element | null>, threshold = 0.4) {
-  const [inView, setInView] = useState(() => !motionOk())
+  const ok = useMotionOk()
+  const [inView, setInView] = useState(false)
   useEffect(() => {
     const el = ref.current
-    if (!el || !motionOk()) return
+    if (!el || !ok) return
     const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold })
     observer.observe(el)
     return () => observer.disconnect()
-  }, [ref, threshold])
-  return inView
+  }, [ref, threshold, ok])
+  return !ok || inView
 }
 
 /** `style` for a staggered `data-reveal` element: the i-th item waits i × step ms. */

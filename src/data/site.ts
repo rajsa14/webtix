@@ -70,7 +70,7 @@ export const priceText = () => kc(PRICE_FROM)
 /**
  * Browser title and description of the homepage. The one place they are
  * written: vite.config.ts puts them into index.html (title, description,
- * Open Graph, structured data), src/lib/meta.ts uses them in the app.
+ * Open Graph); src/lib/meta.ts and src/lib/structuredData.ts use them too.
  */
 export const HOME_META = {
   title: 'Webtix: nový web pro váš podnik, návrh zdarma',
@@ -84,7 +84,8 @@ export const HOME_META = {
 export const CONSENT_NEEDED = false
 
 /**
- * Addresses of the pages. When you add one, add it to public/sitemap.xml too.
+ * Addresses of the pages. When you add one, add it to PRERENDER in
+ * src/entry-server.tsx too (that also puts it in the sitemap).
  * The homepage is the only marketing page; the rest are legal and system pages.
  */
 export const PAGES = {

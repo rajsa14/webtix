@@ -19,7 +19,6 @@ export const team: TeamMember[] = [
   },
   {
     name: 'Richard Buchníček',
-    // Not yet confirmed by Richard (text and the co-founder title).
     bio: 'Richard je spoluzakladatel Webtixu. Stará se o všechno, co běží pod kapotou: kód, rychlost, bezpečnost a nasazení. Díky němu web nejen skvěle vypadá, ale také se rychle načte a funguje bez výpadků.',
     portrait: 'team/richard.svg',
   },

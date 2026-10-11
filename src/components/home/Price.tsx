@@ -1,33 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { MANAGEMENT_CMS_FROM, MANAGEMENT_EDITS_FROM, PRICE_FROM, kc, previewDaysStart } from '../../data/site'
-import { revealDelay, useInView } from '../../lib/motion'
+import { FAQ } from '../../data/faq'
+import { MANAGEMENT_CMS_FROM, MANAGEMENT_EDITS_FROM, PRICE_FROM, kc } from '../../data/site'
+import { revealDelay, useInView, useMotionOk } from '../../lib/motion'
 import { nb } from '../../lib/text'
 
 /*
  * "Cena": the starting price, monthly care, and four questions. Built from
  * docs/design/source/Rest.dc.html (1440) and RestMobile.dc.html (390).
  * Prices and days come from src/data/site.ts. The answers are Dan's text
- * (2026-10-10), which replaced the design's.
+ * (2026-10-10), which replaced the design's; they live in src/data/faq.ts.
  */
-
-const FAQ: { q: string; a: string }[] = [
-  {
-    q: 'Co když se mi návrh nelíbí?',
-    a: 'Návrh je zdarma a nezávazný: dostanete hotovou úvodní stránku svého nového webu. Nic nepodepisujete a nic neplatíte.',
-  },
-  {
-    q: 'Jak dlouho to celé trvá?',
-    a: `${previewDaysStart()}, jakmile nám pošlete podklady, třeba odkaz na váš stávající web.`,
-  },
-  {
-    q: 'Můžu si web pak upravovat sám?',
-    a: `Ano. S redakčním systémem (CMS) si web upravujete sami a správa stojí od ${kc(MANAGEMENT_CMS_FROM)} měsíčně. Nebo úpravy děláme za vás, od ${kc(MANAGEMENT_EDITS_FROM)} měsíčně.`,
-  },
-  {
-    q: 'Co doména a hosting?',
-    a: 'Pokud už je máte, web na ně přesuneme. Pokud ne, zařídíme všechno za vás.',
-  },
-]
 
 export function Price() {
   return (
@@ -98,11 +80,11 @@ export function Price() {
 function CountUp({ to }: { to: number }) {
   const ref = useRef<HTMLSpanElement>(null)
   const seen = useInView(ref, 0.6)
+  // Without motion (and in the pre-rendered page): show the amount, do not count.
+  const counts = useMotionOk()
   // Start from a four-digit amount, so the width barely changes while counting.
   const from = Math.min(1000, to)
-  const [value, setValue] = useState(() => (seen ? to : from))
-  // In view from the start means no motion is allowed: show the amount, do not count.
-  const [counts] = useState(() => !seen)
+  const [value, setValue] = useState(from)
   useEffect(() => {
     if (!seen || !counts) return
     let raf = 0
@@ -119,7 +101,7 @@ function CountUp({ to }: { to: number }) {
   return (
     <>
       <span ref={ref} aria-hidden="true" className="tabular-nums">
-        {kc(value)}
+        {kc(counts ? value : to)}
       </span>
       <span className="sr-only">{kc(to)}</span>
     </>

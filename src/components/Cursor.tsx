@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useSyncExternalStore } from 'react'
 
 /*
  * Custom cursor: a small dot that sits exactly on the pointer and a ring that
@@ -18,18 +18,18 @@ const TEXT = 'input:not([type="submit"]):not([type="checkbox"]):not([type="radio
 
 const usable = () => window.matchMedia(FINE).matches && !window.matchMedia(REDUCE).matches
 
+// Follow changes (a mouse plugged in, reduced motion switched on).
+const subscribe = (onChange: () => void) => {
+  const queries = [window.matchMedia(FINE), window.matchMedia(REDUCE)]
+  queries.forEach((q) => q.addEventListener('change', onChange))
+  return () => queries.forEach((q) => q.removeEventListener('change', onChange))
+}
+
 export function Cursor() {
-  const [on, setOn] = useState(() => typeof window !== 'undefined' && usable())
+  // Off in the pre-rendered page; on right after, where usable.
+  const on = useSyncExternalStore(subscribe, usable, () => false)
   const dot = useRef<HTMLDivElement>(null)
   const ring = useRef<HTMLDivElement>(null)
-
-  // Follow changes (a mouse plugged in, reduced motion switched on).
-  useEffect(() => {
-    const queries = [window.matchMedia(FINE), window.matchMedia(REDUCE)]
-    const update = () => setOn(usable())
-    queries.forEach((q) => q.addEventListener('change', update))
-    return () => queries.forEach((q) => q.removeEventListener('change', update))
-  }, [])
 
   useEffect(() => {
     if (!on) return

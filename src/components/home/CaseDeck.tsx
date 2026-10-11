@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { CASES, SCREEN, type CaseId, type CaseStudy } from '../../data/cases'
-import { useInView } from '../../lib/motion'
+import { useInView, useMotionOk } from '../../lib/motion'
 import { cx, nb } from '../../lib/text'
 import {
   AdAstraShot,
@@ -74,7 +74,8 @@ export function CaseDeck() {
   }, [active])
 
   // Moves on by itself while on screen, until the visitor takes over.
-  const running = auto && inView && !paused && !reducedMotion()
+  const motionOk = useMotionOk()
+  const running = auto && inView && !paused && motionOk
   useEffect(() => {
     if (!running) return
     const t = window.setTimeout(() => setActive((a) => (a + 1) % count), AUTO_MS)

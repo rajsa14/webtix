@@ -85,8 +85,8 @@ function stagingNoindex(): Plugin {
 /**
  * The homepage title and description are written once, in src/data/site.ts
  * (HOME_META, built from PREVIEW_DAYS and PRICE_FROM). This fills them into
- * index.html: %HOME_TITLE%, %HOME_DESCRIPTION% and, inside the JSON-LD,
- * %HOME_DESCRIPTION_JSON%.
+ * index.html: %HOME_TITLE% and %HOME_DESCRIPTION%. (Structured data is added
+ * per page by scripts/prerender.mjs.)
  */
 function homeMeta(): Plugin {
   const attr = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
@@ -97,7 +97,6 @@ function homeMeta(): Plugin {
       handler: (html) =>
         html
           .replaceAll('%HOME_TITLE%', attr(HOME_META.title))
-          .replaceAll('%HOME_DESCRIPTION_JSON%', JSON.stringify(HOME_META.description).slice(1, -1).replace(/</g, '\\u003c'))
           .replaceAll('%HOME_DESCRIPTION%', attr(HOME_META.description)),
     },
   }

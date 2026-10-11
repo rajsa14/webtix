@@ -1,6 +1,6 @@
 # Addresses of the old site (configurator era), sent to the matching part of
-# the one-page site. Every other address loads the app (single-page
-# application in wrangler.jsonc), which shows its own 404 page.
+# the one-page site. Every other unknown address gets dist/404.html with a
+# 404 status (wrangler.jsonc).
 /katalog          /                   301
 /jak-to-funguje   /#jak-to-delame     301
 /reference        /#navrhy            301
